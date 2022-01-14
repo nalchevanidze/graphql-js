@@ -17,7 +17,6 @@ import type {
   DirectiveNode,
   DocumentNode,
   EnumTypeDefinitionNode,
-  EnumTypeExtensionNode,
   EnumValueDefinitionNode,
   EnumValueNode,
   FieldDefinitionNode,
@@ -27,10 +26,8 @@ import type {
   FragmentSpreadNode,
   InlineFragmentNode,
   InputObjectTypeDefinitionNode,
-  InputObjectTypeExtensionNode,
   InputValueDefinitionNode,
   InterfaceTypeDefinitionNode,
-  InterfaceTypeExtensionNode,
   IntValueNode,
   ListTypeNode,
   ListValueNode,
@@ -40,22 +37,17 @@ import type {
   NullValueNode,
   ObjectFieldNode,
   ObjectTypeDefinitionNode,
-  ObjectTypeExtensionNode,
   ObjectValueNode,
   OperationDefinitionNode,
   OperationTypeDefinitionNode,
   ScalarTypeDefinitionNode,
-  ScalarTypeExtensionNode,
   SchemaDefinitionNode,
-  SchemaExtensionNode,
   SelectionNode,
   SelectionSetNode,
   StringValueNode,
   Token,
   TypeNode,
-  TypeSystemExtensionNode,
   UnionTypeDefinitionNode,
-  UnionTypeExtensionNode,
   ValueNode,
   VariableDefinitionNode,
   VariableNode,
@@ -283,8 +275,6 @@ export class Parser {
           return this.parseOperationDefinition();
         case 'fragment':
           return this.parseFragmentDefinition();
-        case 'extend':
-          return this.parseTypeSystemExtension();
       }
     }
 
@@ -1094,219 +1084,6 @@ export class Parser {
     );
   }
 
-  /**
-   * TypeSystemExtension :
-   *   - SchemaExtension
-   *   - TypeExtension
-   *
-   * TypeExtension :
-   *   - ScalarTypeExtension
-   *   - ObjectTypeExtension
-   *   - InterfaceTypeExtension
-   *   - UnionTypeExtension
-   *   - EnumTypeExtension
-   *   - InputObjectTypeDefinition
-   */
-  parseTypeSystemExtension(): TypeSystemExtensionNode {
-    const keywordToken = this._lexer.lookahead();
-
-    if (keywordToken.kind === TokenKind.NAME) {
-      switch (keywordToken.value) {
-        case 'schema':
-          return this.parseSchemaExtension();
-        case 'scalar':
-          return this.parseScalarTypeExtension();
-        case 'type':
-          return this.parseObjectTypeExtension();
-        case 'interface':
-          return this.parseInterfaceTypeExtension();
-        case 'union':
-          return this.parseUnionTypeExtension();
-        case 'enum':
-          return this.parseEnumTypeExtension();
-        case 'input':
-          return this.parseInputObjectTypeExtension();
-      }
-    }
-
-    throw this.unexpected(keywordToken);
-  }
-
-  /**
-   * ```
-   * SchemaExtension :
-   *  - extend schema Directives[Const]? { OperationTypeDefinition+ }
-   *  - extend schema Directives[Const]
-   * ```
-   */
-  parseSchemaExtension(): SchemaExtensionNode {
-    const start = this._lexer.token;
-    this.expectKeyword('extend');
-    this.expectKeyword('schema');
-    const directives = this.parseConstDirectives();
-    const operationTypes = this.optionalMany(
-      TokenKind.BRACE_L,
-      this.parseOperationTypeDefinition,
-      TokenKind.BRACE_R,
-    );
-    if (directives.length === 0 && operationTypes.length === 0) {
-      throw this.unexpected();
-    }
-    return this.node<SchemaExtensionNode>(start, {
-      kind: Kind.SCHEMA_EXTENSION,
-      directives,
-      operationTypes,
-    });
-  }
-
-  /**
-   * ScalarTypeExtension :
-   *   - extend scalar Name Directives[Const]
-   */
-  parseScalarTypeExtension(): ScalarTypeExtensionNode {
-    const start = this._lexer.token;
-    this.expectKeyword('extend');
-    this.expectKeyword('scalar');
-    const name = this.parseName();
-    const directives = this.parseConstDirectives();
-    if (directives.length === 0) {
-      throw this.unexpected();
-    }
-    return this.node<ScalarTypeExtensionNode>(start, {
-      kind: Kind.SCALAR_TYPE_EXTENSION,
-      name,
-      directives,
-    });
-  }
-
-  /**
-   * ObjectTypeExtension :
-   *  - extend type Name ImplementsInterfaces? Directives[Const]? FieldsDefinition
-   *  - extend type Name ImplementsInterfaces? Directives[Const]
-   *  - extend type Name ImplementsInterfaces
-   */
-  parseObjectTypeExtension(): ObjectTypeExtensionNode {
-    const start = this._lexer.token;
-    this.expectKeyword('extend');
-    this.expectKeyword('type');
-    const name = this.parseName();
-    const interfaces = this.parseImplementsInterfaces();
-    const directives = this.parseConstDirectives();
-    const fields = this.parseFieldsDefinition();
-    if (
-      interfaces.length === 0 &&
-      directives.length === 0 &&
-      fields.length === 0
-    ) {
-      throw this.unexpected();
-    }
-    return this.node<ObjectTypeExtensionNode>(start, {
-      kind: Kind.OBJECT_TYPE_EXTENSION,
-      name,
-      interfaces,
-      directives,
-      fields,
-    });
-  }
-
-  /**
-   * InterfaceTypeExtension :
-   *  - extend interface Name ImplementsInterfaces? Directives[Const]? FieldsDefinition
-   *  - extend interface Name ImplementsInterfaces? Directives[Const]
-   *  - extend interface Name ImplementsInterfaces
-   */
-  parseInterfaceTypeExtension(): InterfaceTypeExtensionNode {
-    const start = this._lexer.token;
-    this.expectKeyword('extend');
-    this.expectKeyword('interface');
-    const name = this.parseName();
-    const interfaces = this.parseImplementsInterfaces();
-    const directives = this.parseConstDirectives();
-    const fields = this.parseFieldsDefinition();
-    if (
-      interfaces.length === 0 &&
-      directives.length === 0 &&
-      fields.length === 0
-    ) {
-      throw this.unexpected();
-    }
-    return this.node<InterfaceTypeExtensionNode>(start, {
-      kind: Kind.INTERFACE_TYPE_EXTENSION,
-      name,
-      interfaces,
-      directives,
-      fields,
-    });
-  }
-
-  /**
-   * UnionTypeExtension :
-   *   - extend union Name Directives[Const]? UnionMemberTypes
-   *   - extend union Name Directives[Const]
-   */
-  parseUnionTypeExtension(): UnionTypeExtensionNode {
-    const start = this._lexer.token;
-    this.expectKeyword('extend');
-    this.expectKeyword('union');
-    const name = this.parseName();
-    const directives = this.parseConstDirectives();
-    const types = this.parseUnionMemberTypes();
-    if (directives.length === 0 && types.length === 0) {
-      throw this.unexpected();
-    }
-    return this.node<UnionTypeExtensionNode>(start, {
-      kind: Kind.UNION_TYPE_EXTENSION,
-      name,
-      directives,
-      types,
-    });
-  }
-
-  /**
-   * EnumTypeExtension :
-   *   - extend enum Name Directives[Const]? EnumValuesDefinition
-   *   - extend enum Name Directives[Const]
-   */
-  parseEnumTypeExtension(): EnumTypeExtensionNode {
-    const start = this._lexer.token;
-    this.expectKeyword('extend');
-    this.expectKeyword('enum');
-    const name = this.parseName();
-    const directives = this.parseConstDirectives();
-    const values = this.parseEnumValuesDefinition();
-    if (directives.length === 0 && values.length === 0) {
-      throw this.unexpected();
-    }
-    return this.node<EnumTypeExtensionNode>(start, {
-      kind: Kind.ENUM_TYPE_EXTENSION,
-      name,
-      directives,
-      values,
-    });
-  }
-
-  /**
-   * InputObjectTypeExtension :
-   *   - extend input Name Directives[Const]? InputFieldsDefinition
-   *   - extend input Name Directives[Const]
-   */
-  parseInputObjectTypeExtension(): InputObjectTypeExtensionNode {
-    const start = this._lexer.token;
-    this.expectKeyword('extend');
-    this.expectKeyword('input');
-    const name = this.parseName();
-    const directives = this.parseConstDirectives();
-    const fields = this.parseInputFieldsDefinition();
-    if (directives.length === 0 && fields.length === 0) {
-      throw this.unexpected();
-    }
-    return this.node<InputObjectTypeExtensionNode>(start, {
-      kind: Kind.INPUT_OBJECT_TYPE_EXTENSION,
-      name,
-      directives,
-      fields,
-    });
-  }
 
   /**
    * ```

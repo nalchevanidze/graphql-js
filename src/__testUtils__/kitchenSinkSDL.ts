@@ -150,9 +150,7 @@ directive @myRepeatableDir(name: String!) repeatable on
   | OBJECT
   | INTERFACE
 
-extend schema @onSchema
-
-extend schema @onSchema {
+ schema @onSchema {
   subscription: SubscriptionType
 }
 `;
