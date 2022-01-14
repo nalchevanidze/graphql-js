@@ -193,7 +193,7 @@ describe('Schema Builder', () => {
       }
 
       """There is nothing inside!"""
-      union BlackHole
+      resolver BlackHole
 
       """With an enum"""
       enum Color {
@@ -416,14 +416,14 @@ describe('Schema Builder', () => {
 
   it('Empty union', () => {
     const sdl = dedent`
-      union EmptyUnion
+      resolver EmptyUnion
     `;
     expect(cycleSDL(sdl)).to.equal(sdl);
   });
 
   it('Simple Union', () => {
     const sdl = dedent`
-      union Hello = World
+      resolver Hello = World
 
       type Query {
         hello: Hello
@@ -438,7 +438,7 @@ describe('Schema Builder', () => {
 
   it('Multiple Union', () => {
     const sdl = dedent`
-      union Hello = WorldOne | WorldTwo
+      resolver Hello = WorldOne | WorldTwo
 
       type Query {
         hello: Hello
@@ -457,7 +457,7 @@ describe('Schema Builder', () => {
 
   it('Can build recursive Union', () => {
     const schema = buildSchema(`
-      union Hello = Hello
+      resolver Hello = Hello
 
       type Query {
         hello: Hello
@@ -602,7 +602,7 @@ describe('Schema Builder', () => {
         union: Union
       }
 
-      union Union = Concrete
+      resolver Union = Concrete
     `;
     expect(cycleSDL(sdl)).to.equal(sdl);
   });
@@ -722,7 +722,7 @@ describe('Schema Builder', () => {
         TEST_VALUE
       }
 
-      union TestUnion = TestType
+      resolver TestUnion = TestType
 
       interface TestInterface {
         interfaceField: String

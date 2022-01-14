@@ -258,56 +258,6 @@ describe('Validate: Known directives', () => {
       `);
     });
 
-    it('with directive defined in schema extension', () => {
-      const schema = buildSchema(`
-        type Query {
-          foo: String
-        }
-      `);
-      expectValidSDL(
-        `
-          directive @test on OBJECT
-
-          extend type Query @test
-        `,
-        schema,
-      );
-    });
-
-    it('with directive used in schema extension', () => {
-      const schema = buildSchema(`
-        directive @test on OBJECT
-
-        type Query {
-          foo: String
-        }
-      `);
-      expectValidSDL(
-        `
-          extend type Query @test
-        `,
-        schema,
-      );
-    });
-
-    it('with unknown directive in schema extension', () => {
-      const schema = buildSchema(`
-        type Query {
-          foo: String
-        }
-      `);
-      expectSDLErrors(
-        `
-          extend type Query @unknown
-        `,
-        schema,
-      ).toDeepEqual([
-        {
-          message: 'Unknown directive "@unknown".',
-          locations: [{ line: 2, column: 29 }],
-        },
-      ]);
-    });
 
     it('with well placed directives', () => {
       expectValidSDL(
@@ -316,39 +266,25 @@ describe('Validate: Known directives', () => {
             myField(myArg: Int @onArgumentDefinition): String @onFieldDefinition
           }
 
-          extend type MyObj @onObject
-
           scalar MyScalar @onScalar
-
-          extend scalar MyScalar @onScalar
 
           interface MyInterface @onInterface {
             myField(myArg: Int @onArgumentDefinition): String @onFieldDefinition
           }
 
-          extend interface MyInterface @onInterface
-
-          union MyUnion @onUnion = MyObj | Other
-
-          extend union MyUnion @onUnion
+          resolver MyUnion @onUnion = MyObj | Other
 
           enum MyEnum @onEnum {
             MY_VALUE @onEnumValue
           }
 
-          extend enum MyEnum @onEnum
-
           input MyInput @onInputObject {
             myField: Int @onInputFieldDefinition
           }
 
-          extend input MyInput @onInputObject
-
           schema @onSchema {
             query: MyQuery
           }
-
-          extend schema @onSchema
         `,
         schemaWithSDLDirectives,
       );
@@ -367,7 +303,7 @@ describe('Validate: Known directives', () => {
             myField(myArg: Int @onInputFieldDefinition): String @onInputFieldDefinition
           }
 
-          union MyUnion @onEnumValue = MyObj | Other
+          resolver MyUnion @onEnumValue = MyObj | Other
 
           enum MyEnum @onScalar {
             MY_VALUE @onUnion
@@ -380,8 +316,6 @@ describe('Validate: Known directives', () => {
           schema @onObject {
             query: MyQuery
           }
-
-          extend schema @onObject
         `,
         schemaWithSDLDirectives,
       ).toDeepEqual([
@@ -419,7 +353,7 @@ describe('Validate: Known directives', () => {
         },
         {
           message: 'Directive "@onEnumValue" may not be used on UNION.',
-          locations: [{ line: 12, column: 25 }],
+          locations: [{ line: 12, column: 28 }],
         },
         {
           message: 'Directive "@onScalar" may not be used on ENUM.',
@@ -441,11 +375,7 @@ describe('Validate: Known directives', () => {
         {
           message: 'Directive "@onObject" may not be used on SCHEMA.',
           locations: [{ line: 22, column: 18 }],
-        },
-        {
-          message: 'Directive "@onObject" may not be used on SCHEMA.',
-          locations: [{ line: 26, column: 25 }],
-        },
+        }
       ]);
     });
   });

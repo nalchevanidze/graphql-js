@@ -604,40 +604,18 @@ describe('Schema Parser', () => {
     });
   });
 
-  it('Simple union', () => {
-    const doc = parse('union Hello = World');
+  it('Simple resolver', () => {
+    const doc = parse('resolver Hello = World');
 
     expectJSON(doc).toDeepEqual({
       kind: 'Document',
       definitions: [
         {
           kind: 'UnionTypeDefinition',
-          name: nameNode('Hello', { start: 6, end: 11 }),
+          name: nameNode('Hello', { start: 9, end: 14 }),
           description: undefined,
           directives: [],
-          types: [typeNode('World', { start: 14, end: 19 })],
-          loc: { start: 0, end: 19 },
-        },
-      ],
-      loc: { start: 0, end: 19 },
-    });
-  });
-
-  it('Union with two types', () => {
-    const doc = parse('union Hello = Wo | Rld');
-
-    expectJSON(doc).toDeepEqual({
-      kind: 'Document',
-      definitions: [
-        {
-          kind: 'UnionTypeDefinition',
-          name: nameNode('Hello', { start: 6, end: 11 }),
-          description: undefined,
-          directives: [],
-          types: [
-            typeNode('Wo', { start: 14, end: 16 }),
-            typeNode('Rld', { start: 19, end: 22 }),
-          ],
+          types: [typeNode('World', { start: 17, end: 22 })],
           loc: { start: 0, end: 22 },
         },
       ],
@@ -645,53 +623,75 @@ describe('Schema Parser', () => {
     });
   });
 
-  it('Union with two types and leading pipe', () => {
-    const doc = parse('union Hello = | Wo | Rld');
+  it('Union with two types', () => {
+    const doc = parse('resolver Hello = Wo | Rld');
 
     expectJSON(doc).toDeepEqual({
       kind: 'Document',
       definitions: [
         {
           kind: 'UnionTypeDefinition',
-          name: nameNode('Hello', { start: 6, end: 11 }),
+          name: nameNode('Hello', { start: 9, end: 14 }),
           description: undefined,
           directives: [],
           types: [
-            typeNode('Wo', { start: 16, end: 18 }),
-            typeNode('Rld', { start: 21, end: 24 }),
+            typeNode('Wo', { start: 17, end: 19 }),
+            typeNode('Rld', { start: 22, end: 25 }),
           ],
-          loc: { start: 0, end: 24 },
+          loc: { start: 0, end: 25 },
         },
       ],
-      loc: { start: 0, end: 24 },
+      loc: { start: 0, end: 25 },
+    });
+  });
+
+  it('Union with two types and leading pipe', () => {
+    const doc = parse('resolver Hello = | Wo | Rld');
+
+    expectJSON(doc).toDeepEqual({
+      kind: 'Document',
+      definitions: [
+        {
+          kind: 'UnionTypeDefinition',
+          name: nameNode('Hello', { start: 9, end: 14 }),
+          description: undefined,
+          directives: [],
+          types: [
+            typeNode('Wo', { start: 19, end: 21 }),
+            typeNode('Rld', { start: 24, end: 27 }),
+          ],
+          loc: { start: 0, end: 27 },
+        },
+      ],
+      loc: { start: 0, end: 27 },
     });
   });
 
   it('Union fails with no types', () => {
-    expectSyntaxError('union Hello = |').to.deep.equal({
+    expectSyntaxError('resolver Hello = |').to.deep.equal({
       message: 'Syntax Error: Expected Name, found <EOF>.',
-      locations: [{ line: 1, column: 16 }],
+      locations: [{ line: 1, column: 19 }],
     });
   });
 
   it('Union fails with leading double pipe', () => {
-    expectSyntaxError('union Hello = || Wo | Rld').to.deep.equal({
-      message: 'Syntax Error: Expected Name, found "|".',
-      locations: [{ line: 1, column: 16 }],
-    });
-  });
-
-  it('Union fails with double pipe', () => {
-    expectSyntaxError('union Hello = Wo || Rld').to.deep.equal({
+    expectSyntaxError('resolver Hello = || Wo | Rld').to.deep.equal({
       message: 'Syntax Error: Expected Name, found "|".',
       locations: [{ line: 1, column: 19 }],
     });
   });
 
+  it('Union fails with double pipe', () => {
+    expectSyntaxError('resolver Hello = Wo || Rld').to.deep.equal({
+      message: 'Syntax Error: Expected Name, found "|".',
+      locations: [{ line: 1, column: 22 }],
+    });
+  });
+
   it('Union fails with trailing pipe', () => {
-    expectSyntaxError('union Hello = | Wo | Rld |').to.deep.equal({
+    expectSyntaxError('resolver Hello = | Wo | Rld |').to.deep.equal({
       message: 'Syntax Error: Expected Name, found <EOF>.',
-      locations: [{ line: 1, column: 27 }],
+      locations: [{ line: 1, column: 30 }],
     });
   });
 

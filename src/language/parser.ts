@@ -250,8 +250,8 @@ export class Parser {
           return this.parseObjectTypeDefinition();
         case 'interface':
           return this.parseInterfaceTypeDefinition();
-        case 'union':
-          return this.parseUnionTypeDefinition();
+        case 'resolver':
+          return this.parseResolverTypeDefinition();
         case 'enum':
           return this.parseEnumTypeDefinition();
         case 'input':
@@ -951,14 +951,11 @@ export class Parser {
     });
   }
 
-  /**
-   * UnionTypeDefinition :
-   *   - Description? union Name Directives[Const]? UnionMemberTypes?
-   */
-  parseUnionTypeDefinition(): UnionTypeDefinitionNode {
+
+  parseResolverTypeDefinition(): UnionTypeDefinitionNode {
     const start = this._lexer.token;
     const description = this.parseDescription();
-    this.expectKeyword('union');
+    this.expectKeyword('resolver');
     const name = this.parseName();
     const directives = this.parseConstDirectives();
     const types = this.parseUnionMemberTypes();

@@ -269,7 +269,7 @@ describe('Type System: build schema from introspection', () => {
         bestFriend: Friendly
       }
 
-      union Friendly = Dog | Human
+      resolver Friendly = Dog | Human
 
       type Human {
         bestFriend: Friendly
@@ -617,7 +617,7 @@ describe('Type System: build schema from introspection', () => {
         foo: String
       }
 
-      union SomeUnion = Query
+      resolver SomeUnion = Query
 
       enum SomeEnum { FOO }
 
@@ -950,7 +950,7 @@ describe('Type System: build schema from introspection', () => {
           foo: Foo
         }
 
-        union Foo = Foo
+        resolver Foo = Foo
       `;
       const schema = buildSchema(sdl, { assumeValid: true });
       const introspection = introspectionFromSchema(schema);

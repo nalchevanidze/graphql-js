@@ -195,7 +195,7 @@ describe('Validate: Directives Are Unique Per Location', () => {
       scalar TestScalar @nonRepeatable @nonRepeatable
       type TestObject @nonRepeatable @nonRepeatable
       interface TestInterface @nonRepeatable @nonRepeatable
-      union TestUnion @nonRepeatable @nonRepeatable
+      resolver TestUnion @nonRepeatable @nonRepeatable
       input TestInput @nonRepeatable @nonRepeatable
     `).toDeepEqual([
       {
@@ -234,8 +234,8 @@ describe('Validate: Directives Are Unique Per Location', () => {
         message:
           'The directive "@nonRepeatable" can only be used once at this location.',
         locations: [
-          { line: 10, column: 23 },
-          { line: 10, column: 38 },
+          { line: 10, column: 26 },
+          { line: 10, column: 41 },
         ],
       },
       {

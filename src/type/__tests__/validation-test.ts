@@ -47,7 +47,7 @@ const SomeSchema = buildSchema(`
 
   type SomeObject implements SomeInterface { f: SomeObject }
 
-  union SomeUnion = SomeObject
+  resolver SomeUnion = SomeObject
 
   enum SomeEnum { ONLY }
 
@@ -336,7 +336,6 @@ describe('Type System: A Schema must have Object root types', () => {
     ]);
   });
 
-
   it('rejects a Schema whose types are incorrectly typed', () => {
     const schema = new GraphQLSchema({
       query: SomeObjectType,
@@ -506,7 +505,7 @@ describe('Type System: Union types must be valid', () => {
         field: String
       }
 
-      union GoodUnion =
+      resolver GoodUnion =
         | TypeA
         | TypeB
     `);
@@ -519,31 +518,26 @@ describe('Type System: Union types must be valid', () => {
         test: BadUnion
       }
 
-      union BadUnion
+      resolver BadUnion
     `);
 
     schema = extendSchema(
       schema,
       parse(`
         directive @test on UNION
-
-        extend union BadUnion @test
       `),
     );
 
     expectJSON(validateSchema(schema)).toDeepEqual([
       {
         message: 'Union type BadUnion must define one or more member types.',
-        locations: [
-          { line: 6, column: 7 },
-          { line: 4, column: 9 },
-        ],
+        locations: [{ line: 6, column: 7 }],
       },
     ]);
   });
 
   it('rejects a Union type with duplicated member type', () => {
-    let schema = buildSchema(`
+    const schema = buildSchema(`
       type Query {
         test: BadUnion
       }
@@ -556,7 +550,7 @@ describe('Type System: Union types must be valid', () => {
         field: String
       }
 
-      union BadUnion =
+      resolver BadUnion =
         | TypeA
         | TypeB
         | TypeA
@@ -572,28 +566,19 @@ describe('Type System: Union types must be valid', () => {
       },
     ]);
 
-    schema = extendSchema(schema, parse('extend union BadUnion = TypeB'));
-
     expectJSON(validateSchema(schema)).toDeepEqual([
       {
         message: 'Union type BadUnion can only include type TypeA once.',
         locations: [
           { line: 15, column: 11 },
           { line: 17, column: 11 },
-        ],
-      },
-      {
-        message: 'Union type BadUnion can only include type TypeB once.',
-        locations: [
-          { line: 16, column: 11 },
-          { line: 1, column: 25 },
         ],
       },
     ]);
   });
 
   it('rejects a Union type with non-Object members types', () => {
-    let schema = buildSchema(`
+    const schema = buildSchema(`
       type Query {
         test: BadUnion
       }
@@ -606,13 +591,12 @@ describe('Type System: Union types must be valid', () => {
         field: String
       }
 
-      union BadUnion =
+      resolver BadUnion =
         | TypeA
         | String
         | TypeB
+        | Int
     `);
-
-    schema = extendSchema(schema, parse('extend union BadUnion = Int'));
 
     expectJSON(validateSchema(schema)).toDeepEqual([
       {
@@ -623,7 +607,7 @@ describe('Type System: Union types must be valid', () => {
       {
         message:
           'Union type BadUnion can only include Object types, it cannot include Int.',
-        locations: [{ line: 1, column: 25 }],
+        locations: [{ line: 18, column: 11 }],
       },
     ]);
 
@@ -669,7 +653,7 @@ describe('Type System: Input Objects must have fields', () => {
   });
 
   it('rejects an Input Object type with missing fields', () => {
-    let schema = buildSchema(`
+    const schema = buildSchema(`
       type Query {
         field(arg: SomeInputObject): String
       }
@@ -677,23 +661,11 @@ describe('Type System: Input Objects must have fields', () => {
       input SomeInputObject
     `);
 
-    schema = extendSchema(
-      schema,
-      parse(`
-        directive @test on INPUT_OBJECT
-
-        extend input SomeInputObject @test
-      `),
-    );
-
     expectJSON(validateSchema(schema)).toDeepEqual([
       {
         message:
           'Input Object type SomeInputObject must define one or more fields.',
-        locations: [
-          { line: 6, column: 7 },
-          { line: 4, column: 9 },
-        ],
+        locations: [{ line: 6, column: 7 }],
       },
     ]);
   });
@@ -828,7 +800,7 @@ describe('Type System: Input Objects must have fields', () => {
         field: String
       }
 
-      union SomeUnion = SomeObject
+      resolver SomeUnion = SomeObject
 
       input SomeInputObject {
         badObject: SomeObject
@@ -877,7 +849,7 @@ describe('Type System: Input Objects must have fields', () => {
 
 describe('Type System: Enum types must be well defined', () => {
   it('rejects an Enum type without values', () => {
-    let schema = buildSchema(`
+    const schema = buildSchema(`
       type Query {
         field: SomeEnum
       }
@@ -885,22 +857,10 @@ describe('Type System: Enum types must be well defined', () => {
       enum SomeEnum
     `);
 
-    schema = extendSchema(
-      schema,
-      parse(`
-        directive @test on ENUM
-
-        extend enum SomeEnum @test
-      `),
-    );
-
     expectJSON(validateSchema(schema)).toDeepEqual([
       {
         message: 'Enum type SomeEnum must define one or more values.',
-        locations: [
-          { line: 6, column: 7 },
-          { line: 4, column: 9 },
-        ],
+        locations: [{ line: 6, column: 7 }],
       },
     ]);
   });
@@ -1078,35 +1038,6 @@ describe('Type System: Objects can only implement unique interfaces', () => {
       },
     ]);
   });
-
-  it('rejects an Object implementing the same interface twice due to extension', () => {
-    const schema = buildSchema(`
-      type Query {
-        test: AnotherObject
-      }
-
-      interface AnotherInterface {
-        field: String
-      }
-
-      type AnotherObject implements AnotherInterface {
-        field: String
-      }
-    `);
-    const extendedSchema = extendSchema(
-      schema,
-      parse('extend type AnotherObject implements AnotherInterface'),
-    );
-    expectJSON(validateSchema(extendedSchema)).toDeepEqual([
-      {
-        message: 'Type AnotherObject can only implement AnotherInterface once.',
-        locations: [
-          { line: 10, column: 37 },
-          { line: 1, column: 38 },
-        ],
-      },
-    ]);
-  });
 });
 
 describe('Type System: Interface extensions should be valid', () => {
@@ -1118,121 +1049,23 @@ describe('Type System: Interface extensions should be valid', () => {
 
       interface AnotherInterface {
         field: String
+        newField: String
       }
 
       type AnotherObject implements AnotherInterface {
         field: String
+        differentNewField: String
+
       }
     `);
-    const extendedSchema = extendSchema(
-      schema,
-      parse(`
-        extend interface AnotherInterface {
-          newField: String
-        }
 
-        extend type AnotherObject {
-          differentNewField: String
-        }
-      `),
-    );
-    expectJSON(validateSchema(extendedSchema)).toDeepEqual([
+    expectJSON(validateSchema(schema)).toDeepEqual([
       {
         message:
           'Interface field AnotherInterface.newField expected but AnotherObject does not provide it.',
         locations: [
-          { line: 3, column: 11 },
-          { line: 10, column: 7 },
-          { line: 6, column: 9 },
-        ],
-      },
-    ]);
-  });
-
-  it('rejects an Object implementing the extended interface due to missing field args', () => {
-    const schema = buildSchema(`
-      type Query {
-        test: AnotherObject
-      }
-
-      interface AnotherInterface {
-        field: String
-      }
-
-      type AnotherObject implements AnotherInterface {
-        field: String
-      }
-    `);
-    const extendedSchema = extendSchema(
-      schema,
-      parse(`
-        extend interface AnotherInterface {
-          newField(test: Boolean): String
-        }
-
-        extend type AnotherObject {
-          newField: String
-        }
-      `),
-    );
-    expectJSON(validateSchema(extendedSchema)).toDeepEqual([
-      {
-        message:
-          'Interface field argument AnotherInterface.newField(test:) expected but AnotherObject.newField does not provide it.',
-        locations: [
-          { line: 3, column: 20 },
-          { line: 7, column: 11 },
-        ],
-      },
-    ]);
-  });
-
-  it('rejects Objects implementing the extended interface due to mismatching interface type', () => {
-    const schema = buildSchema(`
-      type Query {
-        test: AnotherObject
-      }
-
-      interface AnotherInterface {
-        field: String
-      }
-
-      type AnotherObject implements AnotherInterface {
-        field: String
-      }
-    `);
-    const extendedSchema = extendSchema(
-      schema,
-      parse(`
-        extend interface AnotherInterface {
-          newInterfaceField: NewInterface
-        }
-
-        interface NewInterface {
-          newField: String
-        }
-
-        interface MismatchingInterface {
-          newField: String
-        }
-
-        extend type AnotherObject {
-          newInterfaceField: MismatchingInterface
-        }
-
-        # Required to prevent unused interface errors
-        type DummyObject implements NewInterface & MismatchingInterface {
-          newField: String
-        }
-      `),
-    );
-    expectJSON(validateSchema(extendedSchema)).toDeepEqual([
-      {
-        message:
-          'Interface field AnotherInterface.newInterfaceField expects type NewInterface but AnotherObject.newInterfaceField is type MismatchingInterface.',
-        locations: [
-          { line: 3, column: 30 },
-          { line: 15, column: 30 },
+          { line: 8, column: 9 },
+          { line: 11, column: 7 },
         ],
       },
     ]);
@@ -1772,7 +1605,7 @@ describe('Objects must adhere to Interface they implement', () => {
         field: String
       }
 
-      union SomeUnionType = SomeObject
+      resolver SomeUnionType = SomeObject
 
       interface AnotherInterface {
         field: SomeUnionType
@@ -2206,7 +2039,7 @@ describe('Interfaces must adhere to Interface they implement', () => {
         field: String
       }
 
-      union SomeUnionType = SomeObject
+      resolver SomeUnionType = SomeObject
 
       interface ParentInterface {
         field: SomeUnionType

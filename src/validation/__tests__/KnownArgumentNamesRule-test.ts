@@ -2,8 +2,6 @@ import { describe, it } from 'mocha';
 
 import type { GraphQLSchema } from '../../type/schema';
 
-import { buildSchema } from '../../utilities/buildASTSchema';
-
 import {
   KnownArgumentNamesOnDirectivesRule,
   KnownArgumentNamesRule,
@@ -280,48 +278,6 @@ describe('Validate: Known argument names', () => {
         {
           message: 'Unknown argument "reason" on directive "@deprecated".',
           locations: [{ line: 3, column: 35 }],
-        },
-      ]);
-    });
-
-    it('unknown arg on directive defined in schema extension', () => {
-      const schema = buildSchema(`
-        type Query {
-          foo: String
-        }
-      `);
-      expectSDLErrors(
-        `
-          directive @test(arg: String) on OBJECT
-
-          extend type Query  @test(unknown: "")
-        `,
-        schema,
-      ).toDeepEqual([
-        {
-          message: 'Unknown argument "unknown" on directive "@test".',
-          locations: [{ line: 4, column: 36 }],
-        },
-      ]);
-    });
-
-    it('unknown arg on directive used in schema extension', () => {
-      const schema = buildSchema(`
-        directive @test(arg: String) on OBJECT
-
-        type Query {
-          foo: String
-        }
-      `);
-      expectSDLErrors(
-        `
-          extend type Query @test(unknown: "")
-        `,
-        schema,
-      ).toDeepEqual([
-        {
-          message: 'Unknown argument "unknown" on directive "@test".',
-          locations: [{ line: 2, column: 35 }],
         },
       ]);
     });

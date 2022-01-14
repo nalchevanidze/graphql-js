@@ -54,7 +54,7 @@ describe('Validate: Unique type names', () => {
       scalar Foo
       type Foo
       interface Foo
-      union Foo
+      resolver Foo
       enum Foo
       input Foo
     `).toDeepEqual([
@@ -83,7 +83,7 @@ describe('Validate: Unique type names', () => {
         message: 'There can be only one type named "Foo".',
         locations: [
           { line: 2, column: 12 },
-          { line: 7, column: 13 },
+          { line: 7, column: 16 },
         ],
       },
       {
@@ -121,7 +121,7 @@ describe('Validate: Unique type names', () => {
       scalar Foo
       type Foo
       interface Foo
-      union Foo
+      resolver Foo
       enum Foo
       input Foo
     `;
@@ -145,7 +145,7 @@ describe('Validate: Unique type names', () => {
       {
         message:
           'Type "Foo" already exists in the schema. It cannot also be defined in this type definition.',
-        locations: [{ line: 5, column: 13 }],
+        locations: [{ line: 5, column: 16 }],
       },
       {
         message:

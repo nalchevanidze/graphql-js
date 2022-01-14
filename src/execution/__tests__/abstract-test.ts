@@ -439,7 +439,7 @@ describe('Execute: Handles execution of abstract types', () => {
         pets: [Pet]
       }
 
-      union Pet = Cat | Dog
+      resolver Pet = Cat | Dog
 
       type Cat {
         name: String

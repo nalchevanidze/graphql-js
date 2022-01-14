@@ -448,14 +448,14 @@ function validateTypeImplementsAncestors(
 
 function validateUnionMembers(
   context: SchemaValidationContext,
-  union: GraphQLUnionType,
+  adt: GraphQLUnionType,
 ): void {
-  const memberTypes = union.getTypes();
+  const memberTypes = adt.getTypes();
 
   if (memberTypes.length === 0) {
     context.reportError(
-      `Union type ${union.name} must define one or more member types.`,
-      [union.astNode, ...union.extensionASTNodes],
+      `Union type ${adt.name} must define one or more member types.`,
+      [adt.astNode, ...adt.extensionASTNodes],
     );
   }
 
@@ -463,17 +463,17 @@ function validateUnionMembers(
   for (const memberType of memberTypes) {
     if (includedTypeNames[memberType.name]) {
       context.reportError(
-        `Union type ${union.name} can only include type ${memberType.name} once.`,
-        getUnionMemberTypeNodes(union, memberType.name),
+        `Union type ${adt.name} can only include type ${memberType.name} once.`,
+        getUnionMemberTypeNodes(adt, memberType.name),
       );
       continue;
     }
     includedTypeNames[memberType.name] = true;
     if (!isObjectType(memberType)) {
       context.reportError(
-        `Union type ${union.name} can only include Object types, ` +
+        `Union type ${adt.name} can only include Object types, ` +
           `it cannot include ${inspect(memberType)}.`,
-        getUnionMemberTypeNodes(union, String(memberType)),
+        getUnionMemberTypeNodes(adt, String(memberType)),
       );
     }
   }

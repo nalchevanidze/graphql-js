@@ -3,6 +3,7 @@ export const kitchenSinkSDL = `
 schema {
   query: QueryType
   mutation: MutationType
+  subscription: SubscriptionType
 }
 
 """
@@ -12,13 +13,9 @@ of the \`Foo\` type.
 type Foo implements Bar & Baz & Two {
   "Description of the \`one\` field."
   one: Type
-  """
-  This is a description of the \`two\` field.
-  """
+  """This is a description of the \`two\` field."""
   two(
-    """
-    This is a description of the \`argument\` argument.
-    """
+    """This is a description of the \`argument\` argument."""
     argument: InputType!
   ): Type
   """This is a description of the \`three\` field."""
@@ -35,12 +32,6 @@ type AnnotatedObject @onObject(arg: "value") {
 
 type UndefinedType
 
-extend type Foo {
-  seven(argument: [String]): Type
-}
-
-extend type Foo @onType
-
 interface Bar {
   one: Type
   four(argument: String = "string"): String
@@ -52,50 +43,32 @@ interface AnnotatedInterface @onInterface {
 
 interface UndefinedInterface
 
-extend interface Bar implements Two {
-  two(argument: InputType!): Type
-}
-
-extend interface Bar @onInterface
-
 interface Baz implements Bar & Two {
   one: Type
   two(argument: InputType!): Type
   four(argument: String = "string"): String
 }
 
-union Feed =
-  | Story
-  | Article
-  | Advert
+resolver Feed = Story | Article | Advert | Photo | Video
 
-union AnnotatedUnion @onUnion = A | B
+resolver AnnotatedUnion @onUnion = A | B
 
-union AnnotatedUnionTwo @onUnion = | A | B
+resolver AnnotatedUnionTwo @onUnion = A | B
 
-union UndefinedUnion
-
-extend union Feed = Photo | Video
-
-extend union Feed @onUnion
+resolver UndefinedUnion
 
 scalar CustomScalar
 
 scalar AnnotatedScalar @onScalar
 
-extend scalar CustomScalar @onScalar
-
 enum Site {
-  """
-  This is a description of the \`DESKTOP\` value
-  """
+  """This is a description of the \`DESKTOP\` value"""
   DESKTOP
-
   """This is a description of the \`MOBILE\` value"""
   MOBILE
-
   "This is a description of the \`WEB\` value"
   WEB
+  VR
 }
 
 enum AnnotatedEnum @onEnum {
@@ -105,15 +78,10 @@ enum AnnotatedEnum @onEnum {
 
 enum UndefinedEnum
 
-extend enum Site {
-  VR
-}
-
-extend enum Site @onEnum
-
 input InputType {
   key: String!
   answer: Int = 42
+  other: Float = 1.23e4 @onInputFieldDefinition
 }
 
 input AnnotatedInput @onInputObject {
@@ -122,35 +90,8 @@ input AnnotatedInput @onInputObject {
 
 input UndefinedInput
 
-extend input InputType {
-  other: Float = 1.23e4 @onInputFieldDefinition
-}
+directive @include(if: Boolean!) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
 
-extend input InputType @onInputObject
+directive @myRepeatableDir(name: String!) repeatable on OBJECT | INTERFACE
 
-"""
-This is a description of the \`@skip\` directive
-"""
-directive @skip(
-  """This is a description of the \`if\` argument"""
-  if: Boolean! @onArgumentDefinition
-) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
-
-directive @include(if: Boolean!)
-  on FIELD
-   | FRAGMENT_SPREAD
-   | INLINE_FRAGMENT
-
-directive @include2(if: Boolean!) on
-  | FIELD
-  | FRAGMENT_SPREAD
-  | INLINE_FRAGMENT
-
-directive @myRepeatableDir(name: String!) repeatable on
-  | OBJECT
-  | INTERFACE
-
- schema @onSchema {
-  subscription: SubscriptionType
-}
 `;

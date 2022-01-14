@@ -37,7 +37,7 @@ const testSchema = buildSchema(`
     meowVolume: Int
   }
 
-  union CatOrDog = Cat | Dog
+  resolver CatOrDog = Cat | Dog
 
   interface Intelligent {
     iq: Int
@@ -54,9 +54,9 @@ const testSchema = buildSchema(`
     iq: Int
   }
 
-  union DogOrHuman = Dog | Human
+  resolver DogOrHuman = Dog | Human
 
-  union HumanOrAlien = Human | Alien
+  resolver HumanOrAlien = Human | Alien
 
   type Query {
     catOrDog: CatOrDog

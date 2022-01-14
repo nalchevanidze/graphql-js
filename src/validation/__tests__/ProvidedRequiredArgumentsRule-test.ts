@@ -266,16 +266,16 @@ describe('Validate: Provided required arguments', () => {
 
     it('Missing arg on directive defined inside SDL', () => {
       expectSDLErrors(`
+        directive @test(arg: String!) on FIELD_DEFINITION
+        
         type Query {
           foo: String @test
         }
-
-        directive @test(arg: String!) on FIELD_DEFINITION
       `).toDeepEqual([
         {
           message:
             'Directive "@test" argument "arg" of type "String!" is required, but it was not provided.',
-          locations: [{ line: 3, column: 23 }],
+          locations: [{ line: 5, column: 23 }],
         },
       ]);
     });
@@ -305,50 +305,6 @@ describe('Validate: Provided required arguments', () => {
           message:
             'Directive "@deprecated" argument "reason" of type "String!" is required, but it was not provided.',
           locations: [{ line: 3, column: 23 }],
-        },
-      ]);
-    });
-
-    it('Missing arg on directive defined in schema extension', () => {
-      const schema = buildSchema(`
-        type Query {
-          foo: String
-        }
-      `);
-      expectSDLErrors(
-        `
-          directive @test(arg: String!) on OBJECT
-
-          extend type Query  @test
-        `,
-        schema,
-      ).toDeepEqual([
-        {
-          message:
-            'Directive "@test" argument "arg" of type "String!" is required, but it was not provided.',
-          locations: [{ line: 4, column: 30 }],
-        },
-      ]);
-    });
-
-    it('Missing arg on directive used in schema extension', () => {
-      const schema = buildSchema(`
-        directive @test(arg: String!) on OBJECT
-
-        type Query {
-          foo: String
-        }
-      `);
-      expectSDLErrors(
-        `
-          extend type Query @test
-        `,
-        schema,
-      ).toDeepEqual([
-        {
-          message:
-            'Directive "@test" argument "arg" of type "String!" is required, but it was not provided.',
-          locations: [{ line: 2, column: 29 }],
         },
       ]);
     });

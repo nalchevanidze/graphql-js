@@ -372,7 +372,6 @@ export {
   UniqueFieldDefinitionNamesRule,
   UniqueArgumentDefinitionNamesRule,
   UniqueDirectiveNamesRule,
-  PossibleTypeExtensionsRule,
   // Custom validation rules
   NoDeprecatedCustomRule,
   NoSchemaIntrospectionCustomRule,

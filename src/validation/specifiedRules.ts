@@ -31,7 +31,6 @@ import { NoUnusedVariablesRule } from './rules/NoUnusedVariablesRule';
 import { OverlappingFieldsCanBeMergedRule } from './rules/OverlappingFieldsCanBeMergedRule';
 // Spec Section: "Fragment spread is possible"
 import { PossibleFragmentSpreadsRule } from './rules/PossibleFragmentSpreadsRule';
-import { PossibleTypeExtensionsRule } from './rules/PossibleTypeExtensionsRule';
 // Spec Section: "Argument Optionality"
 import {
   ProvidedRequiredArgumentsOnDirectivesRule,
@@ -117,7 +116,6 @@ export const specifiedSDLRules: ReadonlyArray<SDLValidationRule> =
     KnownTypeNamesRule,
     KnownDirectivesRule,
     UniqueDirectivesPerLocationRule,
-    PossibleTypeExtensionsRule,
     KnownArgumentNamesOnDirectivesRule,
     UniqueArgumentNamesRule,
     UniqueInputFieldNamesRule,

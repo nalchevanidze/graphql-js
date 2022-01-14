@@ -155,7 +155,7 @@ const liz = new Person('Liz');
 const john = new Person('John', [garfield, odie], [liz, odie]);
 
 describe('Execute: Union and intersection types', () => {
-  it('can introspect on union and intersection types', () => {
+  it('can introspect on unions and intersection types', () => {
     const document = parse(`
       {
         Named: __type(name: "Named") {
@@ -221,7 +221,7 @@ describe('Execute: Union and intersection types', () => {
     });
   });
 
-  it('executes using union types', () => {
+  it('executes using unions', () => {
     // NOTE: This is an *invalid* query, but it should be an *executable* query.
     const document = parse(`
       {
@@ -256,7 +256,7 @@ describe('Execute: Union and intersection types', () => {
     });
   });
 
-  it('executes union types with inline fragments', () => {
+  it('executes unions with inline fragments', () => {
     // This is the valid version of the query in the above test.
     const document = parse(`
       {

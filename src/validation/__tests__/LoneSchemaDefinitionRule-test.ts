@@ -134,25 +134,4 @@ describe('Validate: Schema definition should be alone', () => {
       },
     ]);
   });
-
-  it('extend schema in schema extension', () => {
-    const schema = buildSchema(`
-      type Query {
-        fooField: Foo
-      }
-
-      type Foo {
-        foo: String
-      }
-    `);
-
-    expectValidSDL(
-      `
-        extend schema {
-          mutation: Foo
-        }
-      `,
-      schema,
-    );
-  });
 });

@@ -115,7 +115,7 @@ describe('lexicographicSortSchema', () => {
         dummy: String
       }
 
-      union FooUnion = FooB | FooA | FooC
+      resolver FooUnion = FooB | FooA | FooC
 
       type Query {
         dummy: FooUnion
@@ -135,7 +135,7 @@ describe('lexicographicSortSchema', () => {
         dummy: String
       }
 
-      union FooUnion = FooA | FooB | FooC
+      resolver FooUnion = FooA | FooB | FooC
 
       type Query {
         dummy: FooUnion
@@ -203,7 +203,7 @@ describe('lexicographicSortSchema', () => {
         dummy: String
       }
 
-      union FooD = FooC | FooB
+      resolver FooD = FooC | FooB
 
       interface FooE {
         dummy: String
@@ -225,7 +225,7 @@ describe('lexicographicSortSchema', () => {
         dummy: String
       }
 
-      union FooD = FooB | FooC
+      resolver FooD = FooB | FooC
 
       interface FooE {
         dummy: String

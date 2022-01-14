@@ -41,7 +41,7 @@ const testSchema = buildSchema(`
     meowVolume: Int
   }
 
-  union CatOrDog = Cat | Dog
+  resolver CatOrDog = Cat | Dog
 
   type Human {
     name: String
@@ -241,7 +241,7 @@ describe('Validate: Fields on correct type', () => {
     ]);
   });
 
-  it('Meta field selection on union', () => {
+  it('Meta field selection on unions', () => {
     expectValid(`
       fragment directFieldSelectionOnUnion on CatOrDog {
         __typename
@@ -313,7 +313,7 @@ describe('Validate: Fields on correct type', () => {
 
     it('Works with no small numbers of type suggestions', () => {
       const schema = buildSchema(`
-        union T = A | B
+        resolver T = A | B
         type Query { t: T }
 
         type A { f: String }
@@ -399,7 +399,7 @@ describe('Validate: Fields on correct type', () => {
         interface Feline implements Animal & Mammal { name: String }
         type Cat implements Animal & Mammal & Feline { name: String }
 
-        union CatOrDog = Cat | Dog
+        resolver CatOrDog = Cat | Dog
         type Query { catOrDog: CatOrDog }
       `);
 
@@ -410,7 +410,7 @@ describe('Validate: Fields on correct type', () => {
 
     it('Limits lots of type suggestions', () => {
       const schema = buildSchema(`
-        union T = A | B | C | D | E | F
+        resolver T = A | B | C | D | E | F
         type Query { t: T }
 
         type A { f: String }

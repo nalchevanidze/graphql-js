@@ -117,7 +117,7 @@ describe('Validate: Known type names', () => {
 
     it('reference types defined inside the same document', () => {
       expectValidSDL(`
-        union SomeUnion = SomeObject | AnotherObject
+        resolver SomeUnion= SomeObject | AnotherObject
 
         type SomeObject implements SomeInterface {
           someScalar(arg: SomeInputObject): SomeScalar
@@ -159,7 +159,7 @@ describe('Validate: Known type names', () => {
           e(d: D): E
         }
 
-        union SomeUnion = F | G
+        resolver SomeUnion= F | G
 
         interface SomeInterface {
           i(h: H): I
@@ -191,11 +191,11 @@ describe('Validate: Known type names', () => {
         },
         {
           message: 'Unknown type "F". Did you mean "A" or "B"?',
-          locations: [{ line: 9, column: 27 }],
+          locations: [{ line: 9, column: 29 }],
         },
         {
           message: 'Unknown type "G". Did you mean "A" or "B"?',
-          locations: [{ line: 9, column: 31 }],
+          locations: [{ line: 9, column: 33 }],
         },
         {
           message: 'Unknown type "H". Did you mean "A" or "B"?',
@@ -277,86 +277,6 @@ describe('Validate: Known type names', () => {
       `;
 
       expectValidSDL(sdl, schema);
-    });
-
-    it('unknown type references inside extension document', () => {
-      const schema = buildSchema('type A');
-      const sdl = `
-        type B
-
-        type SomeObject implements C {
-          e(d: D): E
-        }
-
-        union SomeUnion = F | G
-
-        interface SomeInterface {
-          i(h: H): I
-        }
-
-        input SomeInput {
-          j: J
-        }
-
-        directive @SomeDirective(k: K) on QUERY
-
-        schema {
-          query: L
-          mutation: M
-          subscription: N
-        }
-      `;
-
-      expectSDLErrors(sdl, schema).toDeepEqual([
-        {
-          message: 'Unknown type "C". Did you mean "A" or "B"?',
-          locations: [{ line: 4, column: 36 }],
-        },
-        {
-          message: 'Unknown type "D". Did you mean "A", "B", or "ID"?',
-          locations: [{ line: 5, column: 16 }],
-        },
-        {
-          message: 'Unknown type "E". Did you mean "A" or "B"?',
-          locations: [{ line: 5, column: 20 }],
-        },
-        {
-          message: 'Unknown type "F". Did you mean "A" or "B"?',
-          locations: [{ line: 8, column: 27 }],
-        },
-        {
-          message: 'Unknown type "G". Did you mean "A" or "B"?',
-          locations: [{ line: 8, column: 31 }],
-        },
-        {
-          message: 'Unknown type "H". Did you mean "A" or "B"?',
-          locations: [{ line: 11, column: 16 }],
-        },
-        {
-          message: 'Unknown type "I". Did you mean "A", "B", or "ID"?',
-          locations: [{ line: 11, column: 20 }],
-        },
-        {
-          message: 'Unknown type "J". Did you mean "A" or "B"?',
-          locations: [{ line: 15, column: 14 }],
-        },
-        {
-          message: 'Unknown type "K". Did you mean "A" or "B"?',
-          locations: [{ line: 18, column: 37 }],
-        },
-        {
-          message: 'Unknown type "L". Did you mean "A" or "B"?',
-          locations: [{ line: 21, column: 18 }],
-        },
-        {
-          message: 'Unknown type "M". Did you mean "A" or "B"?',
-          locations: [{ line: 22, column: 21 }],
-        },
-        {
-          message: 'Unknown type "N". Did you mean "A" or "B"?',
-          locations: [{ line: 23, column: 25 }],
-        },
-      ]);
     });
   });
 });
