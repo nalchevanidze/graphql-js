@@ -8,7 +8,7 @@ import { print } from '../language/printer';
 
 import type {
   GraphQLArgument,
-  GraphQLEnumType,
+  IrisDataType,
   GraphQLInputField,
   GraphQLInterfaceType,
   GraphQLNamedType,
@@ -187,7 +187,7 @@ function printUnion(type: GraphQLUnionType): string {
   return printDescription(type) + 'resolver ' + type.name + possibleTypes;
 }
 
-function printDATA(type: GraphQLEnumType): string {
+function printDATA(type: IrisDataType): string {
   const start = printDescription(type) + `data ${type.name}`;
 
   if (type.getValues().length === 0) {

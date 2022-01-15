@@ -27,13 +27,12 @@ import { isTypeDefinitionNode } from '../language/predicates';
 
 import type {
   GraphQLArgumentConfig,
-  GraphQLEnumType,
   GraphQLEnumValueConfigMap,
   GraphQLFieldConfig,
   GraphQLFieldConfigArgumentMap,
   GraphQLFieldConfigMap,
   GraphQLInputFieldConfigMap,
-  GraphQLInputObjectType,  GraphQLNamedType,
+GraphQLNamedType,
   GraphQLType} from '../type/definition';
 import {
   GraphQLInterfaceType,
@@ -42,7 +41,7 @@ import {
   GraphQLObjectType,
   GraphQLScalarType,
   GraphQLUnionType,
-  IrisDataType,
+  IrisDataType, 
   isEnumType,
   isInputObjectType,
   isInterfaceType,
@@ -50,8 +49,7 @@ import {
   isNonNullType,
   isObjectType,
   isScalarType,
-  isUnionType,
-} from '../type/definition';
+  isUnionType} from '../type/definition';
 import {
   GraphQLDeprecatedDirective,
   GraphQLDirective,
@@ -249,8 +247,8 @@ export function extendSchemaImpl(
   }
 
   function extendInputObjectType(
-    type: GraphQLInputObjectType,
-  ): GraphQLInputObjectType {
+    type: IrisDataType,
+  ): IrisDataType {
     const config = type.toConfig();
     const extensions = typeExtensionsMap[config.name] ?? [];
 
@@ -266,7 +264,7 @@ export function extendSchemaImpl(
     });
   }
 
-  function extendEnumType(type: GraphQLEnumType): GraphQLEnumType {
+  function extendEnumType(type: IrisDataType): IrisDataType {
     const config = type.toConfig();
     const extensions = typeExtensionsMap[type.name] ?? [];
 

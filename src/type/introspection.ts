@@ -7,7 +7,7 @@ import { print } from '../language/printer';
 import { astFromValue } from '../utilities/astFromValue';
 
 import type {
-  GraphQLEnumType,  GraphQLEnumValue,
+GraphQLEnumValue,
   GraphQLField,
   GraphQLFieldConfigMap,
   GraphQLInputField,
@@ -26,8 +26,7 @@ import {
   isNonNullType,
   isObjectType,
   isScalarType,
-  isUnionType,
-} from './definition';
+  isUnionType} from './definition';
 import type { GraphQLDirective } from './directives';
 import { GraphQLBoolean, GraphQLString } from './scalars';
 import type { GraphQLSchema } from './schema';
@@ -119,7 +118,7 @@ export const __Directive: GraphQLObjectType = new GraphQLObjectType({
     } as GraphQLFieldConfigMap<GraphQLDirective, unknown>),
 });
 
-export const __DirectiveLocation: GraphQLEnumType = new IrisDataType({
+export const __DirectiveLocation: IrisDataType = new IrisDataType({
   name: '__DirectiveLocation',
   description:
     'A Directive can be adjacent to many parts of the GraphQL language, a __DirectiveLocation describes one such possible adjacencies.',
@@ -445,7 +444,7 @@ export enum TypeKind {
   NON_NULL = 'NON_NULL',
 }
 
-export const __TypeKind: GraphQLEnumType = new IrisDataType({
+export const __TypeKind: IrisDataType = new IrisDataType({
   name: '__TypeKind',
   description: 'An enum describing what kind of type a given `__Type` is.',
   values: {

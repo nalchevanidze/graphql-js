@@ -7,15 +7,14 @@ import { print } from '../language/printer';
 import { visit } from '../language/visitor';
 
 import type {
-  GraphQLEnumType,
   GraphQLField,
-  GraphQLInputObjectType,
   GraphQLInputType,
   GraphQLInterfaceType,
   GraphQLNamedType,
   GraphQLObjectType,
   GraphQLType,
   GraphQLUnionType,
+  IrisDataType,
 } from '../type/definition';
 import {
   isEnumType,
@@ -219,8 +218,8 @@ function findTypeChanges(
 }
 
 function findInputObjectTypeChanges(
-  oldType: GraphQLInputObjectType,
-  newType: GraphQLInputObjectType,
+  oldType: IrisDataType,
+  newType: IrisDataType,
 ): Array<BreakingChange | DangerousChange> {
   const schemaChanges = [];
   const fieldsDiff = diff(
@@ -292,8 +291,8 @@ function findUnionTypeChanges(
 }
 
 function findEnumTypeChanges(
-  oldType: GraphQLEnumType,
-  newType: GraphQLEnumType,
+  oldType: IrisDataType,
+  newType: IrisDataType,
 ): Array<BreakingChange | DangerousChange> {
   const schemaChanges = [];
   const valuesDiff = diff(oldType.getValues(), newType.getValues());

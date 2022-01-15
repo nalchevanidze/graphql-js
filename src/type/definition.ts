@@ -49,14 +49,14 @@ export type GraphQLType =
   | GraphQLObjectType
   | GraphQLInterfaceType
   | GraphQLUnionType
-  | GraphQLEnumType
+  | IrisDataType
   | GraphQLList<GraphQLType>
   | GraphQLNonNull<
       | GraphQLScalarType
       | GraphQLObjectType
       | GraphQLInterfaceType
       | GraphQLUnionType
-      | GraphQLEnumType
+      | IrisDataType
       | GraphQLList<GraphQLType>
     >;
 
@@ -129,7 +129,7 @@ export function assertUnionType(type: unknown): GraphQLUnionType {
   return type;
 }
 
-export function isEnumType(type: unknown): type is GraphQLEnumType {
+export function isEnumType(type: unknown): type is IrisDataType {
   return isDataType(type) && Boolean(type.getValues().length > 0);
 }
 
@@ -137,18 +137,18 @@ export function isDataType(type: unknown): type is IrisDataType {
   return instanceOf(type, IrisDataType);
 }
 
-export function assertEnumType(type: unknown): GraphQLEnumType {
+export function assertEnumType(type: unknown): IrisDataType {
   if (!isEnumType(type)) {
     throw new Error(`Expected ${inspect(type)} to be a GraphQL Enum type.`);
   }
   return type;
 }
 
-export function isInputObjectType(type: unknown): type is GraphQLEnumType {
+export function isInputObjectType(type: unknown): type is IrisDataType {
   return isDataType(type) && Boolean(type.getValues().length === 0);
 }
 
-export function assertInputObjectType(type: unknown): GraphQLEnumType {
+export function assertInputObjectType(type: unknown): IrisDataType {
   if (!isInputObjectType(type)) {
     throw new Error(
       `Expected ${inspect(type)} to be a GraphQL Input Object type.`,
@@ -202,10 +202,10 @@ export function assertNonNullType(type: unknown): GraphQLNonNull<GraphQLType> {
  */
 export type GraphQLInputType =
   | GraphQLScalarType
-  | GraphQLEnumType
+  | IrisDataType
   | GraphQLList<GraphQLInputType>
   | GraphQLNonNull<
-      GraphQLScalarType | GraphQLEnumType | GraphQLList<GraphQLInputType>
+      GraphQLScalarType | IrisDataType | GraphQLList<GraphQLInputType>
     >;
 
 export function isInputType(type: unknown): type is GraphQLInputType {
@@ -232,14 +232,14 @@ export type GraphQLOutputType =
   | GraphQLObjectType
   | GraphQLInterfaceType
   | GraphQLUnionType
-  | GraphQLEnumType
+  | IrisDataType
   | GraphQLList<GraphQLOutputType>
   | GraphQLNonNull<
       | GraphQLScalarType
       | GraphQLObjectType
       | GraphQLInterfaceType
       | GraphQLUnionType
-      | GraphQLEnumType
+      | IrisDataType
       | GraphQLList<GraphQLOutputType>
     >;
 
@@ -264,7 +264,7 @@ export function assertOutputType(type: unknown): GraphQLOutputType {
 /**
  * These types may describe types which may be leaf values.
  */
-export type GraphQLLeafType = GraphQLScalarType | GraphQLEnumType;
+export type GraphQLLeafType = GraphQLScalarType | IrisDataType;
 
 export function isLeafType(type: unknown): type is GraphQLLeafType {
   return isScalarType(type) || isEnumType(type);
@@ -431,7 +431,7 @@ export type GraphQLNullableType =
   | GraphQLObjectType
   | GraphQLInterfaceType
   | GraphQLUnionType
-  | GraphQLEnumType
+  | IrisDataType
   | GraphQLList<GraphQLType>;
 
 export function isNullableType(type: unknown): type is GraphQLNullableType {
@@ -465,14 +465,14 @@ export function getNullableType(
  */
 export type GraphQLNamedType = GraphQLNamedInputType | GraphQLNamedOutputType;
 
-export type GraphQLNamedInputType = GraphQLScalarType | GraphQLEnumType;
+export type GraphQLNamedInputType = GraphQLScalarType | IrisDataType;
 
 export type GraphQLNamedOutputType =
   | GraphQLScalarType
   | GraphQLObjectType
   | GraphQLInterfaceType
   | GraphQLUnionType
-  | GraphQLEnumType;
+  | IrisDataType;
 
 export function isNamedType(type: unknown): type is GraphQLNamedType {
   return (
@@ -1326,16 +1326,6 @@ export interface GraphQLEnumTypeExtensions {
  * will be used as its internal value.
  */
 
-export type GraphQLEnumTypeNormalizedConfig = IrisDataTypeNormalizedConfig;
-
-export type GraphQLInputObjectTypeNormalizedConfig =
-  IrisDataTypeNormalizedConfig;
-
-export type GraphQLEnumTypeConfig = IrisDataTypeConfig;
-
-export type GraphQLInputObjectType = GraphQLEnumType
-
-export type GraphQLEnumType = IrisDataType
 
 export interface IrisDataTypeConfig {
   name: string;
@@ -1396,7 +1386,7 @@ export class IrisDataType {
     return this._fields;
   }
 
-  toConfig(): GraphQLInputObjectTypeNormalizedConfig {
+  toConfig(): IrisDataTypeNormalizedConfig {
     const values = keyValMap(
       this.getValues(),
       (value) => value.name,
@@ -1500,7 +1490,7 @@ export class IrisDataType {
 }
 
 function didYouMeanEnumValue(
-  enumType: GraphQLEnumType,
+  enumType: IrisDataType,
   unknownValueStr: string,
 ): string {
   const allNames = enumType.getValues().map((value) => value.name);

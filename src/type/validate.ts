@@ -16,12 +16,11 @@ import { OperationTypeNode } from '../language/ast';
 import { isEqualType, isTypeSubTypeOf } from '../utilities/typeComparators';
 
 import type {
-  GraphQLEnumType,
   GraphQLInputField,
-  GraphQLInputObjectType,
   GraphQLInterfaceType,
   GraphQLObjectType,
   GraphQLUnionType,
+  IrisDataType,
 } from './definition';
 import {
   isEnumType,
@@ -477,7 +476,7 @@ function validateUnionMembers(
 
 function validateEnumValues(
   context: SchemaValidationContext,
-  enumType: GraphQLEnumType,
+  enumType: IrisDataType,
 ): void {
   const enumValues = enumType.getValues();
 
@@ -496,7 +495,7 @@ function validateEnumValues(
 
 function validateInputFields(
   context: SchemaValidationContext,
-  inputObj: GraphQLInputObjectType,
+  inputObj: IrisDataType,
 ): void {
   const fields = Object.values(inputObj.getFields());
 
@@ -525,7 +524,7 @@ function validateInputFields(
 
 function createInputObjectCircularRefsValidator(
   context: SchemaValidationContext,
-): (inputObj: GraphQLInputObjectType) => void {
+): (inputObj: IrisDataType) => void {
   // Modified copy of algorithm from 'src/validation/rules/NoFragmentCycles.js'.
   // Tracks already visited types to maintain O(N) and to ensure that cycles
   // are not redundantly reported.
@@ -542,7 +541,7 @@ function createInputObjectCircularRefsValidator(
   // This does a straight-forward DFS to find cycles.
   // It does not terminate when a cycle was found but continues to explore
   // the graph to find all possible cycles.
-  function detectCycleRecursive(inputObj: GraphQLInputObjectType): void {
+  function detectCycleRecursive(inputObj: IrisDataType): void {
     if (visitedTypes[inputObj.name]) {
       return;
     }

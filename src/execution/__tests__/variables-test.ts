@@ -13,7 +13,6 @@ import type {
   GraphQLArgumentConfig,
   GraphQLFieldConfig} from '../../type/definition';
 import {
-  GraphQLInputObjectType,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,

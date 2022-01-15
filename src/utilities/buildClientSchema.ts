@@ -6,11 +6,11 @@ import { keyValMap } from '../jsutils/keyValMap';
 import { parseValue } from '../language/parser';
 
 import type {
-  GraphQLEnumType,
   GraphQLFieldConfig,
   GraphQLFieldConfigMap,
-  GraphQLInputObjectType,  GraphQLNamedType,
-  GraphQLType} from '../type/definition';
+  GraphQLNamedType,
+  GraphQLType,
+} from '../type/definition';
 import {
   assertInterfaceType,
   assertNullableType,
@@ -269,7 +269,7 @@ export function buildClientSchema(
 
   function buildEnumDef(
     enumIntrospection: IntrospectionEnumType,
-  ): GraphQLEnumType {
+  ): IrisDataType {
     if (!enumIntrospection.enumValues) {
       const enumIntrospectionStr = inspect(enumIntrospection);
       throw new Error(
@@ -292,7 +292,7 @@ export function buildClientSchema(
 
   function buildInputObjectDef(
     inputObjectIntrospection: IntrospectionInputObjectType,
-  ): GraphQLInputObjectType {
+  ): IrisDataType {
     if (!inputObjectIntrospection.inputFields) {
       const inputObjectIntrospectionStr = inspect(inputObjectIntrospection);
       throw new Error(
