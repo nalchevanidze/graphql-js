@@ -246,7 +246,6 @@ export class TypeInfo {
         }else if(isInputObjectType(enumType)){
           enumValue = enumType.getVariants() as any as  GraphQLEnumValue
         }
-        console.log(enumValue);
         this._enumValue = enumValue;
         break;
       }

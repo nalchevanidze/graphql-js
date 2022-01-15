@@ -976,55 +976,7 @@ export class Parser {
       : [];
   }
 
-  parseEnumTypeDefinition(): DataTypeDefinitionNode {
-    const start = this._lexer.token;
-    const description = this.parseDescription();
-    this.expectKeyword('enum');
-    const name = this.parseName();
-    const directives = this.parseConstDirectives();
-    const variants = this.parseEnumValuesDefinition().map((x):VariantDefinitionNode => ({
-      ...x,
-      kind: Kind.VARIANT_DEFINITION,
-      fields: [],
-    }));
 
-    return this.node<DataTypeDefinitionNode>(start, {
-      kind: Kind.DATA_TYPE_DEFINITION,
-      description,
-      name,
-      directives,
-      variants,
-    });
-  }
-
-  /**
-   * ```
-   * EnumValuesDefinition : { EnumValueDefinition+ }
-   * ```
-   */
-  parseEnumValuesDefinition(): Array<EnumValueDefinitionNode> {
-    return this.optionalMany(
-      TokenKind.BRACE_L,
-      this.parseEnumValueDefinition,
-      TokenKind.BRACE_R,
-    );
-  }
-
-  /**
-   * EnumValueDefinition : Description? EnumValue Directives[Const]?
-   */
-  parseEnumValueDefinition(): EnumValueDefinitionNode {
-    const start = this._lexer.token;
-    const description = this.parseDescription();
-    const name = this.parseEnumValueName();
-    const directives = this.parseConstDirectives();
-    return this.node<EnumValueDefinitionNode>(start, {
-      kind: Kind.ENUM_VALUE_DEFINITION,
-      description,
-      name,
-      directives,
-    });
-  }
 
   /**
    * EnumValue : Name but not `true`, `false` or `null`
@@ -1069,7 +1021,8 @@ export class Parser {
 
   parseVariantDefinition(typeName?: NameNode): VariantDefinitionNode {
     const start = this._lexer.token;
-    const name = typeName ?? this.parseName();
+    const description = this.parseDescription();
+    const name = typeName ?? this.parseEnumValueName()
     const directives = this.parseConstDirectives();
     const fields = this.optionalMany(
       TokenKind.BRACE_L,
@@ -1078,6 +1031,7 @@ export class Parser {
     );
     return this.node<VariantDefinitionNode>(start, {
       kind: Kind.VARIANT_DEFINITION,
+      description,
       name,
       directives,
       fields,

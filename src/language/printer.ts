@@ -115,10 +115,7 @@ const printDocASTReducer: ASTReducer<string> = {
   BooleanValue: { leave: ({ value }) => (value ? 'true' : 'false') },
   NullValue: { leave: () => 'null' },
   EnumValue: {
-    leave: ({ value }) => {
-      console.log(value);
-      return value;
-    },
+    leave: ({ value }) => value,
   },
   ListValue: { leave: ({ values }) => '[' + join(values, ', ') + ']' },
   ObjectValue: { leave: ({ fields }) => '{' + join(fields, ', ') + '}' },

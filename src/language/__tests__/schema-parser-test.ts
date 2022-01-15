@@ -50,6 +50,7 @@ function fieldNodeWithArgs(
 
 function enumValueNode(name: unknown, loc: unknown) {
   return {
+    description: undefined,
     kind: 'VariantDefinition',
     name: nameNode(name, loc),
     directives: [],
@@ -729,6 +730,7 @@ describe('Schema Parser', () => {
           directives: [],
           variants: [
             {
+              description: undefined,
               kind: 'VariantDefinition',
               loc: {
                 end: 43,

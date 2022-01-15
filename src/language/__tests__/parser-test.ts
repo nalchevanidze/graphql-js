@@ -123,19 +123,19 @@ describe('Parser', () => {
     expectSyntaxError('data Test = VALID | true ').to.deep.equal({
       message:
         'Syntax Error: Name "true" is reserved and cannot be used for an enum value.',
-      locations: [{ line: 1, column: 20 }],
+      locations: [{ line: 1, column: 21 }],
     });
 
     expectSyntaxError('data Test = VALID | false').to.deep.equal({
       message:
         'Syntax Error: Name "false" is reserved and cannot be used for an enum value.',
-      locations: [{ line: 1, column: 20 }],
+      locations: [{ line: 1, column: 21 }],
     });
 
     expectSyntaxError('data Test = VALID | null').to.deep.equal({
       message:
         'Syntax Error: Name "null" is reserved and cannot be used for an enum value.',
-      locations: [{ line: 1, column: 20 }],
+      locations: [{ line: 1, column: 21 }],
     });
   });
 
