@@ -52,6 +52,7 @@ import type {
   ValueNode,
   VariableDefinitionNode,
   VariableNode,
+  VariantDefinitionNode,
 } from './ast';
 import { Location, OperationTypeNode } from './ast';
 import { DirectiveLocation } from './directiveLocation';
@@ -952,7 +953,6 @@ export class Parser {
     });
   }
 
-
   parseResolverTypeDefinition(): UnionTypeDefinitionNode {
     const start = this._lexer.token;
     const description = this.parseDescription();
@@ -1049,36 +1049,45 @@ export class Parser {
     return this.parseName();
   }
 
-  parseAlgebraicDataType (role: Role): DataTypeDefinitionNode {
+  parseAlgebraicDataType(role: Role): DataTypeDefinitionNode {
     const start = this._lexer.token;
     const description = this.parseDescription();
     this.expectKeyword(role);
     const name = this.parseName();
     const directives = this.parseConstDirectives();
-    this.expectOptionalToken(TokenKind.EQUALS)
-    const fields = this.parseVariantDefinition();
+    const isEquals = this.expectOptionalToken(TokenKind.EQUALS);
+    const isUnion = this._lexer.token.kind !== TokenKind.BRACE_L;
+    const variants: ReadonlyArray<VariantDefinitionNode> =
+      isEquals && isUnion
+        ? this.delimitedMany(TokenKind.PIPE, this.parseVariantDefinition)
+        : [{ kind: Kind.VARIANT_DEFINITION, name, fields: this.parseFields() }];
     return this.node<DataTypeDefinitionNode>(start, {
       kind: Kind.INPUT_OBJECT_TYPE_DEFINITION,
       description,
       name,
       directives,
+      variants,
+    });
+  }
+
+  parseVariantDefinition(): VariantDefinitionNode {
+    const start = this._lexer.token;
+    const name = this.parseName();
+    const fields = this.parseFields();
+    return this.node<VariantDefinitionNode>(start, {
+      kind: Kind.VARIANT_DEFINITION,
+      name,
       fields,
     });
   }
 
-  /**
-   * ```
-   * InputFieldsDefinition : { InputValueDefinition+ }
-   * ```
-   */
-  parseVariantDefinition(): Array<InputValueDefinitionNode> {
+  parseFields(): Array<InputValueDefinitionNode> {
     return this.optionalMany(
       TokenKind.BRACE_L,
       this.parseInputValueDef,
       TokenKind.BRACE_R,
     );
   }
-
 
   /**
    * ```

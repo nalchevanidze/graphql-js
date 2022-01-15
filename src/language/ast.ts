@@ -179,7 +179,8 @@ export type ASTNode =
   | InterfaceTypeExtensionNode
   | UnionTypeExtensionNode
   | EnumTypeExtensionNode
-  | InputObjectTypeExtensionNode;
+  | InputObjectTypeExtensionNode
+  | VariantDefinitionNode;
 
 /**
  * Utility type listing all nodes indexed by their kind.
@@ -265,8 +266,8 @@ export const QueryDocumentKeys: {
   UnionTypeDefinition: ['description', 'name', 'directives', 'types'],
   EnumTypeDefinition: ['description', 'name', 'directives', 'values'],
   EnumValueDefinition: ['description', 'name', 'directives'],
-  InputObjectTypeDefinition: ['description', 'name', 'directives', 'fields'],
-
+  InputObjectTypeDefinition: ['description', 'name', 'directives', 'variants'],
+  VariantDefinition: ['name', 'fields'],
   DirectiveDefinition: ['description', 'name', 'arguments', 'locations'],
 
   SchemaExtension: ['directives', 'operationTypes'],
@@ -653,7 +654,14 @@ export interface DataTypeDefinitionNode {
   readonly description?: StringValueNode;
   readonly name: NameNode;
   readonly directives?: ReadonlyArray<ConstDirectiveNode>;
-  readonly fields?: ReadonlyArray<InputValueDefinitionNode>;
+  readonly variants: ReadonlyArray<VariantDefinitionNode>;
+}
+
+export interface VariantDefinitionNode {
+  readonly kind: Kind.VARIANT_DEFINITION;
+  readonly loc?: Location;
+  name: NameNode;
+  fields: ReadonlyArray<InputValueDefinitionNode>;
 }
 
 /** Directive Definitions */

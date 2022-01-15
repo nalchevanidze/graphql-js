@@ -24,7 +24,6 @@ import type {
   FieldDefinitionNode,
   FieldNode,
   FragmentDefinitionNode,
-  InputObjectTypeExtensionNode,
   InputValueDefinitionNode,
   InterfaceTypeDefinitionNode,
   InterfaceTypeExtensionNode,
@@ -1680,9 +1679,7 @@ export interface GraphQLInputObjectTypeConfig {
   name: string;
   description?: Maybe<string>;
   fields: ThunkObjMap<GraphQLInputFieldConfig>;
-  extensions?: Maybe<Readonly<GraphQLInputObjectTypeExtensions>>;
   astNode?: Maybe<DataTypeDefinitionNode>;
-  extensionASTNodes?: Maybe<ReadonlyArray<InputObjectTypeExtensionNode>>;
 }
 
 interface GraphQLInputObjectTypeNormalizedConfig

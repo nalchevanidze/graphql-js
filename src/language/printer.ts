@@ -222,9 +222,9 @@ const printDocASTReducer: ASTReducer<string> = {
   },
 
   InputObjectTypeDefinition: {
-    leave: ({ description, name, directives, fields }) =>
+    leave: ({ description, name, directives, variants }) =>
       wrap('', description, '\n') +
-      join(['input', name, join(directives, ' '), block(fields)], ' '),
+      join(['data', name, join(directives, ' '), block(variants)], ' '),
   },
 
   DirectiveDefinition: {

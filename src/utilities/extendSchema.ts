@@ -498,14 +498,12 @@ export function extendSchemaImpl(
   }
 
   function buildInputFieldMap(
-    nodes: ReadonlyArray<
-      DataTypeDefinitionNode 
-    >,
+    nodes: ReadonlyArray<DataTypeDefinitionNode>,
   ): GraphQLInputFieldConfigMap {
     const inputFieldMap = Object.create(null);
     for (const node of nodes) {
       // FIXME: https://github.com/graphql/graphql-js/issues/2203
-      const fieldsNodes = /* c8 ignore next */ node.fields ?? [];
+      const fieldsNodes = /* c8 ignore next */ node.variants[0].fields ?? [];
 
       for (const field of fieldsNodes) {
         // Note: While this could make assertions to get the correctly typed
@@ -642,8 +640,7 @@ export function extendSchemaImpl(
           name,
           description: astNode.description?.value,
           fields: () => buildInputFieldMap(allNodes),
-          astNode,
-          extensionASTNodes,
+          astNode
         });
       }
     }
