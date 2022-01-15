@@ -1060,7 +1060,7 @@ export class Parser {
     const variants: ReadonlyArray<VariantDefinitionNode> =
       isEquals && isUnion
         ? this.delimitedMany(TokenKind.PIPE, this.parseVariantDefinition)
-        : [{ kind: Kind.VARIANT_DEFINITION, name, fields: this.parseFields() }];
+        : [this.parseVariantDefinition(name)];
     return this.node<DataTypeDefinitionNode>(start, {
       kind: Kind.DATA_TYPE_DEFINITION,
       description,
@@ -1070,23 +1070,19 @@ export class Parser {
     });
   }
 
-  parseVariantDefinition(): VariantDefinitionNode {
+  parseVariantDefinition(typeName?: NameNode): VariantDefinitionNode {
     const start = this._lexer.token;
-    const name = this.parseName();
-    const fields = this.parseFields();
+    const name = typeName ?? this.parseName();
+    const fields = this.optionalMany(
+      TokenKind.BRACE_L,
+      this.parseInputValueDef,
+      TokenKind.BRACE_R,
+    );
     return this.node<VariantDefinitionNode>(start, {
       kind: Kind.VARIANT_DEFINITION,
       name,
       fields,
     });
-  }
-
-  parseFields(): Array<InputValueDefinitionNode> {
-    return this.optionalMany(
-      TokenKind.BRACE_L,
-      this.parseInputValueDef,
-      TokenKind.BRACE_R,
-    );
   }
 
   /**

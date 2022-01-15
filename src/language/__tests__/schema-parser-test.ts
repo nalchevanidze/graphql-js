@@ -164,8 +164,6 @@ describe('Schema Parser', () => {
     });
   });
 
-
-
   it('Simple non-null type', () => {
     const doc = parse(dedent`
       type Hello {
@@ -719,21 +717,33 @@ describe('Schema Parser', () => {
       world: String
     }`);
 
+    const name = nameNode('Hello', { start: 10, end: 15 });
+
     expectJSON(doc).toDeepEqual({
       kind: 'Document',
       definitions: [
         {
           kind: 'DataTypeDefinition',
-          name: nameNode('Hello', { start: 10, end: 15 }),
+          name,
           description: undefined,
           directives: [],
-          fields: [
-            inputValueNode(
-              nameNode('world', { start: 24, end: 29 }),
-              typeNode('String', { start: 31, end: 37 }),
-              undefined,
-              { start: 24, end: 37 },
-            ),
+          variants: [
+            {
+              kind: 'VariantDefinition',
+              loc: {
+                end: 43,
+                start: 16,
+              },
+              name,
+              fields: [
+                inputValueNode(
+                  nameNode('world', { start: 24, end: 29 }),
+                  typeNode('String', { start: 31, end: 37 }),
+                  undefined,
+                  { start: 24, end: 37 },
+                ),
+              ],
+            },
           ],
           loc: { start: 5, end: 43 },
         },
