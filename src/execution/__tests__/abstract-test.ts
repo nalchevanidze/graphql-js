@@ -10,7 +10,7 @@ import {
   GraphQLInterfaceType,
   GraphQLList,
   GraphQLObjectType,
-  GraphQLUnionType,
+  IrisResolverType,
 } from '../../type/definition';
 import { GraphQLBoolean, GraphQLString } from '../../type/scalars';
 import { GraphQLSchema } from '../../type/schema';
@@ -304,7 +304,7 @@ describe('Execute: Handles execution of abstract types', () => {
       },
     });
 
-    const PetType = new GraphQLUnionType({
+    const PetType = new IrisResolverType({
       name: 'Pet',
       types: [DogType, CatType],
     });

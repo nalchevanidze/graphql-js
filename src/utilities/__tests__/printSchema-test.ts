@@ -5,7 +5,7 @@ import { dedent, dedentString } from '../../__testUtils__/dedent';
 
 import { DirectiveLocation } from '../../language/directiveLocation';
 
-import type { GraphQLFieldConfig } from '../../type/definition';
+import { GraphQLFieldConfig, IrisResolverType } from '../../type/definition';
 import {
   GraphQLInterfaceType,
   GraphQLList,
@@ -444,12 +444,12 @@ describe('Type System Printer', () => {
       },
     });
 
-    const SingleUnion = new GraphQLUnionType({
+    const SingleUnion = new IrisResolverType({
       name: 'SingleUnion',
       types: [FooType],
     });
 
-    const MultipleUnion = new GraphQLUnionType({
+    const MultipleUnion = new IrisResolverType({
       name: 'MultipleUnion',
       types: [FooType, BarType],
     });
@@ -531,7 +531,7 @@ describe('Type System Printer', () => {
         new IrisDataType({ name: 'SomeInputObject', fields: {} }),
         new GraphQLInterfaceType({ name: 'SomeInterface', fields: {} }),
         new GraphQLObjectType({ name: 'SomeObject', fields: {} }),
-        new GraphQLUnionType({ name: 'SomeUnion', types: [] }),
+        new IrisResolverType({ name: 'SomeUnion', types: [] }),
       ],
     });
 

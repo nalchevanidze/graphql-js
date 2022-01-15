@@ -13,8 +13,8 @@ import {
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLScalarType,
-  GraphQLUnionType,
   IrisDataType,
+  IrisResolverType,
 } from '../definition';
 
 const ScalarType = new GraphQLScalarType({ name: 'Scalar' });
@@ -23,7 +23,7 @@ const InterfaceType = new GraphQLInterfaceType({
   name: 'Interface',
   fields: {},
 });
-const UnionType = new GraphQLUnionType({ name: 'Union', types: [ObjectType] });
+const UnionType = new IrisResolverType({ name: 'Union', types: [ObjectType] });
 const EnumType = new IrisDataType({ name: 'Enum', values: { foo: {} } });
 const InputObjectType = new IrisDataType({
   name: 'InputObject',
@@ -556,7 +556,7 @@ describe('Type System: Unions', () => {
   it('accepts a Union type defining resolveType', () => {
     expect(
       () =>
-        new GraphQLUnionType({
+        new IrisResolverType({
           name: 'SomeUnion',
           types: [ObjectType],
         }),
@@ -564,7 +564,7 @@ describe('Type System: Unions', () => {
   });
 
   it('accepts a Union type with array types', () => {
-    const unionType = new GraphQLUnionType({
+    const unionType = new IrisResolverType({
       name: 'SomeUnion',
       types: [ObjectType],
     });
@@ -572,7 +572,7 @@ describe('Type System: Unions', () => {
   });
 
   it('accepts a Union type with function returning an array of types', () => {
-    const unionType = new GraphQLUnionType({
+    const unionType = new IrisResolverType({
       name: 'SomeUnion',
       types: () => [ObjectType],
     });
@@ -580,7 +580,7 @@ describe('Type System: Unions', () => {
   });
 
   it('accepts a Union type without types', () => {
-    const unionType = new GraphQLUnionType({
+    const unionType = new IrisResolverType({
       name: 'SomeUnion',
       types: [],
     });
@@ -589,14 +589,14 @@ describe('Type System: Unions', () => {
 
   it('rejects an Union type with invalid name', () => {
     expect(
-      () => new GraphQLUnionType({ name: 'bad-name', types: [] }),
+      () => new IrisResolverType({ name: 'bad-name', types: [] }),
     ).to.throw('Names must only contain [_a-zA-Z0-9] but "bad-name" does not.');
   });
 
   it('rejects an Union type with an incorrect type for resolveType', () => {
     expect(
       () =>
-        new GraphQLUnionType({
+        new IrisResolverType({
           name: 'SomeUnion',
           types: [],
           // @ts-expect-error
@@ -608,7 +608,7 @@ describe('Type System: Unions', () => {
   });
 
   it('rejects a Union type with incorrectly typed types', () => {
-    const unionType = new GraphQLUnionType({
+    const unionType = new IrisResolverType({
       name: 'SomeUnion',
       // @ts-expect-error
       types: { ObjectType },

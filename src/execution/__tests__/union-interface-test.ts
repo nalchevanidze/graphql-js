@@ -7,7 +7,7 @@ import {
   GraphQLInterfaceType,
   GraphQLList,
   GraphQLObjectType,
-  GraphQLUnionType,
+  IrisResolverType,
 } from '../../type/definition';
 import { GraphQLBoolean, GraphQLString } from '../../type/scalars';
 import { GraphQLSchema } from '../../type/schema';
@@ -108,7 +108,7 @@ const CatType: GraphQLObjectType = new GraphQLObjectType({
   isTypeOf: (value) => value instanceof Cat,
 });
 
-const PetType = new GraphQLUnionType({
+const PetType = new IrisResolverType({
   name: 'Pet',
   types: [DogType, CatType],
   resolveType(value) {

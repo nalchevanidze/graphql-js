@@ -30,8 +30,8 @@ import {
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
-  GraphQLUnionType,
   IrisDataType,
+  IrisResolverType,
 } from '../definition';
 import { assertDirective, GraphQLDirective } from '../directives';
 import { GraphQLString } from '../scalars';
@@ -619,7 +619,7 @@ describe('Type System: Union types must be valid', () => {
       SomeInputObjectType,
     ];
     for (const memberType of badUnionMemberTypes) {
-      const badUnion = new GraphQLUnionType({
+      const badUnion = new IrisResolverType({
         name: 'BadUnion',
         // @ts-expect-error
         types: [memberType],

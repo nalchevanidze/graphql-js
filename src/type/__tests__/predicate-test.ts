@@ -32,8 +32,8 @@ import {
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLScalarType,
-  GraphQLUnionType,
   IrisDataType,
+  IrisResolverType,
   isAbstractType,
   isCompositeType,
   isEnumType,
@@ -77,7 +77,7 @@ const InterfaceType = new GraphQLInterfaceType({
   name: 'Interface',
   fields: {},
 });
-const UnionType = new GraphQLUnionType({ name: 'Union', types: [ObjectType] });
+const UnionType = new IrisResolverType({ name: 'Union', types: [ObjectType] });
 const EnumType = new IrisDataType({ name: 'Enum', values: { foo: {} } });
 const InputObjectType = new IrisDataType({
   name: 'InputObject',

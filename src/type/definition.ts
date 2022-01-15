@@ -119,7 +119,7 @@ export function assertInterfaceType(type: unknown): GraphQLInterfaceType {
 }
 
 export function isUnionType(type: unknown): type is GraphQLUnionType {
-  return instanceOf(type, GraphQLUnionType);
+  return instanceOf(type, IrisResolverType);
 }
 
 export function assertUnionType(type: unknown): GraphQLUnionType {
@@ -1166,18 +1166,7 @@ export interface GraphQLInterfaceTypeNormalizedConfig
   extensions: Readonly<GraphQLInterfaceTypeExtensions>;
 }
 
-/**
- * Custom extensions
- *
- * @remarks
- * Use a unique identifier name for your extension, for example the name of
- * your library or project. Do not use a shortened identifier as this increases
- * the risk of conflicts. We recommend you add at most one extension field,
- * an object which can contain all the values you need.
- */
-export interface GraphQLUnionTypeExtensions {
-  [attributeName: string]: unknown;
-}
+
 
 /**
  * Union Type Definition
@@ -1189,9 +1178,9 @@ export interface GraphQLUnionTypeExtensions {
  * Example:
  *
  * ```ts
- * const PetType = new GraphQLUnionType({
+ * const PetType = new IrisResolverType({
  *   name: 'Pet',
- *   types: [ DogType, CatType ],
+ *   variants: [ DogType, CatType ],
  *   resolveType(value) {
  *     if (value instanceof Dog) {
  *       return DogType;
@@ -1203,11 +1192,13 @@ export interface GraphQLUnionTypeExtensions {
  * });
  * ```
  */
-export class GraphQLUnionType {
+
+export type GraphQLUnionType = IrisResolverType
+
+export class IrisResolverType {
   name: string;
   description: Maybe<string>;
   resolveType: Maybe<GraphQLTypeResolver<any, any>>;
-  extensions: Readonly<GraphQLUnionTypeExtensions>;
   astNode: Maybe<UnionTypeDefinitionNode>;
 
   private _types: ThunkReadonlyArray<GraphQLObjectType>;
@@ -1216,7 +1207,6 @@ export class GraphQLUnionType {
     this.name = assertName(config.name);
     this.description = config.description;
     this.resolveType = config.resolveType;
-    this.extensions = toObjMap(config.extensions);
     this.astNode = config.astNode;
 
     this._types = defineTypes.bind(undefined, config);
@@ -1244,7 +1234,6 @@ export class GraphQLUnionType {
       description: this.description,
       types: this.getTypes(),
       resolveType: this.resolveType,
-      extensions: this.extensions,
       astNode: this.astNode,
     };
   }
@@ -1257,6 +1246,7 @@ export class GraphQLUnionType {
     return this.toString();
   }
 }
+
 
 function defineTypes(
   config: Readonly<GraphQLUnionTypeConfig<unknown, unknown>>,
@@ -1273,20 +1263,13 @@ export interface GraphQLUnionTypeConfig<TSource, TContext> {
   name: string;
   description?: Maybe<string>;
   types: ThunkReadonlyArray<GraphQLObjectType>;
-  /**
-   * Optionally provide a custom type resolver function. If one is not provided,
-   * the default implementation will call `isTypeOf` on each implementing
-   * Object type.
-   */
   resolveType?: Maybe<GraphQLTypeResolver<TSource, TContext>>;
-  extensions?: Maybe<Readonly<GraphQLUnionTypeExtensions>>;
   astNode?: Maybe<UnionTypeDefinitionNode>;
 }
 
 interface GraphQLUnionTypeNormalizedConfig
   extends GraphQLUnionTypeConfig<any, any> {
   types: ReadonlyArray<GraphQLObjectType>;
-  extensions: Readonly<GraphQLUnionTypeExtensions>;
 }
 
 

@@ -20,8 +20,8 @@ import {
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLScalarType,
-  GraphQLUnionType,
   IrisDataType,
+  IrisResolverType,
   isInputType,
   isOutputType,
 } from '../type/definition';
@@ -253,14 +253,14 @@ export function buildClientSchema(
 
   function buildUnionDef(
     unionIntrospection: IntrospectionUnionType,
-  ): GraphQLUnionType {
+  ): IrisResolverType {
     if (!unionIntrospection.possibleTypes) {
       const unionIntrospectionStr = inspect(unionIntrospection);
       throw new Error(
         `Introspection result missing possibleTypes: ${unionIntrospectionStr}.`,
       );
     }
-    return new GraphQLUnionType({
+    return new IrisResolverType({
       name: unionIntrospection.name,
       description: unionIntrospection.description,
       types: () => unionIntrospection.possibleTypes.map(getObjectType),

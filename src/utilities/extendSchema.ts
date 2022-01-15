@@ -33,15 +33,15 @@ import type {
   GraphQLFieldConfigMap,
   GraphQLInputFieldConfigMap,
 GraphQLNamedType,
-  GraphQLType} from '../type/definition';
+  GraphQLType,
+  GraphQLUnionType} from '../type/definition';
 import {
   GraphQLInterfaceType,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
-  GraphQLScalarType,
-  GraphQLUnionType,
-  IrisDataType, 
+  GraphQLScalarType,  IrisDataType, 
+IrisResolverType,
   isEnumType,
   isInputObjectType,
   isInterfaceType,
@@ -332,7 +332,7 @@ export function extendSchemaImpl(
     const config = type.toConfig();
     const extensions = typeExtensionsMap[config.name] ?? [];
 
-    return new GraphQLUnionType({
+    return new IrisResolverType({
       ...config,
       types: () => [
         ...type.getTypes().map(replaceNamedType),
@@ -566,7 +566,7 @@ export function extendSchemaImpl(
       case Kind.UNION_TYPE_DEFINITION: {
         const allNodes = [astNode, ...extensionASTNodes];
 
-        return new GraphQLUnionType({
+        return new IrisResolverType({
           name,
           description: astNode.description?.value,
           types: () => buildUnionTypes(allNodes),

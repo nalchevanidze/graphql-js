@@ -11,6 +11,7 @@ import {
   GraphQLInputFieldConfigMap,
   GraphQLNamedType,
   GraphQLType,
+  IrisResolverType,
   isDataType,
 } from '../type/definition';
 import {
@@ -135,7 +136,7 @@ export function lexicographicSortSchema(schema: GraphQLSchema): GraphQLSchema {
     }
     if (isUnionType(type)) {
       const config = type.toConfig();
-      return new GraphQLUnionType({
+      return new IrisResolverType({
         ...config,
         types: () => sortTypes(config.types),
       });

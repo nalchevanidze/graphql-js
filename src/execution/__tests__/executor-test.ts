@@ -15,7 +15,7 @@ import {
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLScalarType,
-  GraphQLUnionType,
+  IrisResolverType,
 } from '../../type/definition';
 import { GraphQLBoolean, GraphQLInt, GraphQLString } from '../../type/scalars';
 import { GraphQLSchema } from '../../type/schema';
@@ -297,7 +297,7 @@ describe('Execute: Handles basic execution tasks', () => {
         },
       },
     });
-    const someUnion = new GraphQLUnionType({
+    const someUnion = new IrisResolverType({
       name: 'SomeUnion',
       types: [someObject],
       resolveType() {

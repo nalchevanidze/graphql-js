@@ -7,7 +7,7 @@ import {
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
-  GraphQLUnionType,
+  IrisResolverType,
 } from '../../type/definition';
 import { GraphQLFloat, GraphQLInt, GraphQLString } from '../../type/scalars';
 import { GraphQLSchema } from '../../type/schema';
@@ -109,7 +109,7 @@ describe('typeComparators', () => {
           field: { type: GraphQLString },
         },
       });
-      const union = new GraphQLUnionType({ name: 'Union', types: [member] });
+      const union = new IrisResolverType({ name: 'Union', types: [member] });
       const schema = testSchema({ field: { type: union } });
       expect(isTypeSubTypeOf(schema, member, union)).to.equal(true);
     });
