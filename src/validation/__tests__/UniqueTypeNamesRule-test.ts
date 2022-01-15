@@ -55,7 +55,6 @@ describe('Validate: Unique type names', () => {
       type Foo
       interface Foo
       resolver Foo
-      enum Foo
       data Foo
     `).toDeepEqual([
       {
@@ -92,21 +91,12 @@ describe('Validate: Unique type names', () => {
           { line: 2, column: 12 },
           { line: 8, column: 12 },
         ],
-      },
-      {
-        message: 'There can be only one type named "Foo".',
-        locations: [
-          { line: 2, column: 12 },
-          { line: 9, column: 12 },
-        ],
-      },
+      }
     ]);
   });
 
   it('adding new type to existing schema', () => {
-    const schema = buildSchema('type Foo');
-
-    expectValidSDL('type Bar', schema);
+    expectValidSDL('type Bar', buildSchema('type Foo'));
   });
 
   it('adding new type to existing schema with same-named directive', () => {
@@ -122,8 +112,7 @@ describe('Validate: Unique type names', () => {
       type Foo
       interface Foo
       resolver Foo
-      enum Foo
-      data  Foo
+      data Foo
     `;
 
     expectSDLErrors(sdl, schema).toDeepEqual([
@@ -151,12 +140,7 @@ describe('Validate: Unique type names', () => {
         message:
           'Type "Foo" already exists in the schema. It cannot also be defined in this type definition.',
         locations: [{ line: 6, column: 12 }],
-      },
-      {
-        message:
-          'Type "Foo" already exists in the schema. It cannot also be defined in this type definition.',
-        locations: [{ line: 7, column: 13 }],
-      },
+      }
     ]);
   });
 });

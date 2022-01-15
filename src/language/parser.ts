@@ -1073,6 +1073,7 @@ export class Parser {
   parseVariantDefinition(typeName?: NameNode): VariantDefinitionNode {
     const start = this._lexer.token;
     const name = typeName ?? this.parseName();
+    const directives = this.parseConstDirectives();
     const fields = this.optionalMany(
       TokenKind.BRACE_L,
       this.parseInputValueDef,
@@ -1081,6 +1082,7 @@ export class Parser {
     return this.node<VariantDefinitionNode>(start, {
       kind: Kind.VARIANT_DEFINITION,
       name,
+      directives,
       fields,
     });
   }

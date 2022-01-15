@@ -367,8 +367,7 @@ export {
   LoneSchemaDefinitionRule,
   UniqueOperationTypesRule,
   UniqueTypeNamesRule,
-  UniqueEnumValueNamesRule,
-  UniqueFieldDefinitionNamesRule,
+  UniqueVariantAndFieldDefinitionNamesRule,
   UniqueArgumentDefinitionNamesRule,
   UniqueDirectiveNamesRule,
   // Custom validation rules

@@ -35,6 +35,7 @@ import type {
   UnionTypeDefinitionNode,
   UnionTypeExtensionNode,
   ValueNode,
+  VariantDefinitionNode,
 } from '../language/ast';
 import { Kind } from '../language/kinds';
 import { print } from '../language/printer';
@@ -1614,6 +1615,10 @@ export class GraphQLInputObjectType {
 
   get [Symbol.toStringTag]() {
     return 'GraphQLInputObjectType';
+  }
+
+  getVariants(): ReadonlyArray<VariantDefinitionNode> {
+    return this.astNode?.variants ?? [];
   }
 
   getFields(): GraphQLInputFieldMap {

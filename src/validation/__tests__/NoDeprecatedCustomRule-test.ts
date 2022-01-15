@@ -216,13 +216,12 @@ describe('Validate: no deprecated', () => {
     });
   });
 
-  describe('no deprecated enum values', () => {
+  describe('no deprecated variants', () => {
     const { expectValid, expectErrors } = buildAssertion(`
-      enum EnumType {
-        NORMAL_VALUE
-        DEPRECATED_VALUE @deprecated(reason: "Some enum reason.")
-      }
-
+      data EnumType 
+        = NORMAL_VALUE
+        | DEPRECATED_VALUE @deprecated(reason: "Some enum reason.")
+      
       type Query {
         someField(enumArg: EnumType): String
       }
@@ -255,7 +254,7 @@ describe('Validate: no deprecated', () => {
 
     it('reports error when a deprecated enum value is used', () => {
       const message =
-        'The enum value "EnumType.DEPRECATED_VALUE" is deprecated. Some enum reason.';
+        'The Variant "EnumType.DEPRECATED_VALUE" is deprecated. Some enum reason.';
 
       expectErrors(`
         query (

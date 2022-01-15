@@ -22,7 +22,7 @@ import type { SDLValidationContext } from '../ValidationContext';
  *
  * A GraphQL complex type is only valid if all its fields are uniquely named.
  */
-export function UniqueFieldDefinitionNamesRule(
+export function UniqueVariantAndFieldDefinitionNamesRule(
   context: SDLValidationContext,
 ): ASTVisitor {
   const schema = context.getSchema();
@@ -38,8 +38,26 @@ export function UniqueFieldDefinitionNamesRule(
     ObjectTypeExtension: checkFieldUniqueness,
   };
 
-  function checkVariantUniqueness({ variants }: DataTypeDefinitionNode) {
-    variants.map(checkFieldUniqueness);
+  function checkVariantUniqueness({ variants, name }: DataTypeDefinitionNode) {
+    const knownVariantNames:{ [key: string]: NameNode } = {};
+    const typeName = name.value;
+
+    for (const variant of variants) {
+      const variantName = variant.name.value;
+      
+      if (knownVariantNames[variantName]) {
+        context.reportError(
+          new GraphQLError(
+            `Variant "${typeName}.${variantName}" can only be defined once.`,
+            [knownVariantNames[variantName], variant.name],
+            ),
+        );
+      } else {
+        checkFieldUniqueness(variant)
+        knownVariantNames[variantName] = variant.name;
+      }
+    }
+
     return false;
   }
 

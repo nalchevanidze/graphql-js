@@ -46,8 +46,6 @@ import { UniqueArgumentNamesRule } from './rules/UniqueArgumentNamesRule';
 import { UniqueDirectiveNamesRule } from './rules/UniqueDirectiveNamesRule';
 // Spec Section: "Directives Are Unique Per Location"
 import { UniqueDirectivesPerLocationRule } from './rules/UniqueDirectivesPerLocationRule';
-import { UniqueEnumValueNamesRule } from './rules/UniqueEnumValueNamesRule';
-import { UniqueFieldDefinitionNamesRule } from './rules/UniqueFieldDefinitionNamesRule';
 // Spec Section: "Fragment Name Uniqueness"
 import { UniqueFragmentNamesRule } from './rules/UniqueFragmentNamesRule';
 // Spec Section: "Input Object Field Uniqueness"
@@ -58,6 +56,7 @@ import { UniqueOperationTypesRule } from './rules/UniqueOperationTypesRule';
 import { UniqueTypeNamesRule } from './rules/UniqueTypeNamesRule';
 // Spec Section: "Variable Uniqueness"
 import { UniqueVariableNamesRule } from './rules/UniqueVariableNamesRule';
+import { UniqueVariantAndFieldDefinitionNamesRule } from './rules/UniqueVariantAndFieldDefinitionNamesRule';
 // Spec Section: "Value Type Correctness"
 import { ValuesOfCorrectTypeRule } from './rules/ValuesOfCorrectTypeRule';
 // Spec Section: "Variables are Input Types"
@@ -109,8 +108,7 @@ export const specifiedSDLRules: ReadonlyArray<SDLValidationRule> =
     LoneSchemaDefinitionRule,
     UniqueOperationTypesRule,
     UniqueTypeNamesRule,
-    UniqueEnumValueNamesRule,
-    UniqueFieldDefinitionNamesRule,
+    UniqueVariantAndFieldDefinitionNamesRule,
     UniqueArgumentDefinitionNamesRule,
     UniqueDirectiveNamesRule,
     KnownTypeNamesRule,

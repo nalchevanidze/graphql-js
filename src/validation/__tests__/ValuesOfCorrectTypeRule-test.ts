@@ -131,7 +131,7 @@ describe('Validate: Values of correct type', () => {
       `);
     });
 
-    it('Good enum value', () => {
+    it('Good Enum value', () => {
       expectValid(`
         {
           dog {

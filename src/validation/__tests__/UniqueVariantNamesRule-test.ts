@@ -2,55 +2,51 @@ import { describe, it } from 'mocha';
 
 import type { GraphQLSchema } from '../../type/schema';
 
-import { UniqueEnumValueNamesRule } from '../rules/UniqueEnumValueNamesRule';
+import { UniqueVariantAndFieldDefinitionNamesRule } from '../rules/UniqueVariantAndFieldDefinitionNamesRule';
 
 import { expectSDLValidationErrors } from './harness';
 
 function expectSDLErrors(sdlStr: string, schema?: GraphQLSchema) {
-  return expectSDLValidationErrors(schema, UniqueEnumValueNamesRule, sdlStr);
+  return expectSDLValidationErrors(schema, UniqueVariantAndFieldDefinitionNamesRule, sdlStr);
 }
 
 function expectValidSDL(sdlStr: string, schema?: GraphQLSchema) {
   expectSDLErrors(sdlStr, schema).toDeepEqual([]);
 }
 
-describe('Validate: Unique enum value names', () => {
+describe('Validate: Unique variant value names', () => {
   it('no values', () => {
     expectValidSDL(`
-      enum SomeEnum
+      data SomeEnum
     `);
   });
 
   it('one value', () => {
     expectValidSDL(`
-      enum SomeEnum {
-        FOO
-      }
+      data SomeEnum = FOO
     `);
   });
 
   it('multiple values', () => {
     expectValidSDL(`
-      enum SomeEnum {
-        FOO
-        BAR
-      }
+      data SomeEnum 
+        = FOO 
+        | BAR
     `);
   });
 
-  it('duplicate values inside the same enum definition', () => {
+  it('duplicate values inside the same datatype Definition', () => {
     expectSDLErrors(`
-      enum SomeEnum {
-        FOO
-        BAR
-        FOO
-      }
+      data SomeEnum 
+        = FOO 
+        | BAR 
+        | FOO
     `).toDeepEqual([
       {
-        message: 'Enum value "SomeEnum.FOO" can only be defined once.',
+        message: 'Variant "SomeEnum.FOO" can only be defined once.',
         locations: [
-          { line: 3, column: 9 },
-          { line: 5, column: 9 },
+          { line: 3, column: 11 },
+          { line: 5, column: 11 },
         ],
       },
     ]);

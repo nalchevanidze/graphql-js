@@ -735,6 +735,7 @@ describe('Schema Parser', () => {
                 start: 16,
               },
               name,
+              directives:[],
               fields: [
                 inputValueNode(
                   nameNode('world', { start: 24, end: 29 }),

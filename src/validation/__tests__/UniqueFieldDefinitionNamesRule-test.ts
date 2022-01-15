@@ -2,14 +2,14 @@ import { describe, it } from 'mocha';
 
 import type { GraphQLSchema } from '../../type/schema';
 
-import { UniqueFieldDefinitionNamesRule } from '../rules/UniqueFieldDefinitionNamesRule';
+import { UniqueVariantAndFieldDefinitionNamesRule } from '../rules/UniqueVariantAndFieldDefinitionNamesRule';
 
 import { expectSDLValidationErrors } from './harness';
 
 function expectSDLErrors(sdlStr: string, schema?: GraphQLSchema) {
   return expectSDLValidationErrors(
     schema,
-    UniqueFieldDefinitionNamesRule,
+    UniqueVariantAndFieldDefinitionNamesRule,
     sdlStr,
   );
 }

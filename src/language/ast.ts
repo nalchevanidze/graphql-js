@@ -661,6 +661,7 @@ export interface VariantDefinitionNode {
   readonly kind: Kind.VARIANT_DEFINITION;
   readonly loc?: Location;
   name: NameNode;
+  readonly directives?: ReadonlyArray<ConstDirectiveNode>;
   fields: ReadonlyArray<InputValueDefinitionNode>;
 }
 

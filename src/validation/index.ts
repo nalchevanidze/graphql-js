@@ -88,8 +88,7 @@ export { VariablesInAllowedPositionRule } from './rules/VariablesInAllowedPositi
 export { LoneSchemaDefinitionRule } from './rules/LoneSchemaDefinitionRule';
 export { UniqueOperationTypesRule } from './rules/UniqueOperationTypesRule';
 export { UniqueTypeNamesRule } from './rules/UniqueTypeNamesRule';
-export { UniqueEnumValueNamesRule } from './rules/UniqueEnumValueNamesRule';
-export { UniqueFieldDefinitionNamesRule } from './rules/UniqueFieldDefinitionNamesRule';
+export { UniqueVariantAndFieldDefinitionNamesRule } from './rules/UniqueVariantAndFieldDefinitionNamesRule';
 export { UniqueArgumentDefinitionNamesRule } from './rules/UniqueArgumentDefinitionNamesRule';
 export { UniqueDirectiveNamesRule } from './rules/UniqueDirectiveNamesRule';
 

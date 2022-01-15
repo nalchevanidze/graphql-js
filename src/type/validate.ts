@@ -504,13 +504,6 @@ function validateInputFields(
 ): void {
   const fields = Object.values(inputObj.getFields());
 
-  if (fields.length === 0) {
-    context.reportError(
-      `Input Object type ${inputObj.name} must define one or more fields.`,
-      [inputObj.astNode],
-    );
-  }
-
   // Ensure the arguments are valid
   for (const field of fields) {
     // Ensure they are named correctly.

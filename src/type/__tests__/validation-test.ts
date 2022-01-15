@@ -652,7 +652,7 @@ describe('Type System: Input Objects must have fields', () => {
     expectJSON(validateSchema(schema)).toDeepEqual([]);
   });
 
-  it('rejects an Input Object type with missing fields', () => {
+  it('accept an Input Object type with missing fields', () => {
     const schema = buildSchema(`
       type Query {
         field(arg: SomeInputObject): String
@@ -661,13 +661,7 @@ describe('Type System: Input Objects must have fields', () => {
       data SomeInputObject
     `);
 
-    expectJSON(validateSchema(schema)).toDeepEqual([
-      {
-        message:
-          'Input Object type SomeInputObject must define one or more fields.',
-        locations: [{ line: 6, column: 7 }],
-      },
-    ]);
+    expectJSON(validateSchema(schema)).toDeepEqual([]);
   });
 
   it('accepts an Input Object with breakable circular reference', () => {
