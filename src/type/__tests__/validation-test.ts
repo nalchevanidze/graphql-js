@@ -652,7 +652,7 @@ describe('Type System: Input Objects must have fields', () => {
     expectJSON(validateSchema(schema)).toDeepEqual([]);
   });
 
-  it('accept an Input Object type with missing fields', () => {
+  it('accept empty data type', () => {
     const schema = buildSchema(`
       type Query {
         field(arg: SomeInputObject): String
@@ -842,23 +842,6 @@ describe('Type System: Input Objects must have fields', () => {
 });
 
 describe('Type System: Enum types must be well defined', () => {
-  it('rejects an Enum type without values', () => {
-    const schema = buildSchema(`
-      type Query {
-        field: SomeEnum
-      }
-
-      enum SomeEnum
-    `);
-
-    expectJSON(validateSchema(schema)).toDeepEqual([
-      {
-        message: 'Enum type SomeEnum must define one or more values.',
-        locations: [{ line: 6, column: 7 }],
-      },
-    ]);
-  });
-
   it('rejects an Enum type with incorrectly named values', () => {
     const schema = schemaWithFieldType(
       new GraphQLEnumType({

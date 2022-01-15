@@ -9,7 +9,6 @@ import type {
   DataTypeDefinitionNode,
   DirectiveDefinitionNode,
   DocumentNode,
-  EnumTypeExtensionNode,
   EnumValueDefinitionNode,
   FieldDefinitionNode,
   InputValueDefinitionNode,
@@ -633,7 +632,7 @@ export function extendSchemaImpl(
             astNode,
           });
         }
-
+        
         return new GraphQLEnumType({
           name,
           description: astNode.description?.value,

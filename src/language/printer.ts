@@ -114,7 +114,12 @@ const printDocASTReducer: ASTReducer<string> = {
   },
   BooleanValue: { leave: ({ value }) => (value ? 'true' : 'false') },
   NullValue: { leave: () => 'null' },
-  EnumValue: { leave: ({ value }) => value },
+  EnumValue: {
+    leave: ({ value }) => {
+      console.log(value);
+      return value;
+    },
+  },
   ListValue: { leave: ({ values }) => '[' + join(values, ', ') + ']' },
   ObjectValue: { leave: ({ fields }) => '{' + join(fields, ', ') + '}' },
   ObjectField: { leave: ({ name, value }) => name + ': ' + value },
@@ -210,11 +215,13 @@ const printDocASTReducer: ASTReducer<string> = {
       ),
   },
 
-
   EnumValueDefinition: {
     leave: ({ description, name, directives }) =>
       wrap('', description, '\n') + join([name, join(directives, ' ')], ' '),
   },
+
+  // TODO: consider variants with fields
+  VariantDefinition: { leave: ({ name }) => name },
 
   DataTypeDefinition: {
     leave: ({ description, name, directives, variants }) =>
