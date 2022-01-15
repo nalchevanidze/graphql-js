@@ -26,7 +26,7 @@ import { getDroid, getFriends, getHero, getHuman } from './starWarsData';
  * Star Wars example is:
  *
  * ```graphql
- * enum Episode { NEW_HOPE, EMPIRE, JEDI }
+ * data Episode = NEW_HOPE | EMPIRE | JEDI
  *
  * interface Character {
  *   id: String!
@@ -66,7 +66,7 @@ import { getDroid, getFriends, getHero, getHuman } from './starWarsData';
  *
  * This implements the following type system shorthand:
  * ```graphql
- * enum Episode { NEW_HOPE, EMPIRE, JEDI }
+ * data Episode = NEW_HOPE | EMPIRE | JEDI
  * ```
  */
 const episodeEnum = new GraphQLEnumType({

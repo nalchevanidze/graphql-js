@@ -169,7 +169,6 @@ export type ASTNode =
   | InputValueDefinitionNode
   | InterfaceTypeDefinitionNode
   | UnionTypeDefinitionNode
-  | EnumTypeDefinitionNode
   | EnumValueDefinitionNode
   | DataTypeDefinitionNode
   | DirectiveDefinitionNode
@@ -264,9 +263,8 @@ export const QueryDocumentKeys: {
     'fields',
   ],
   UnionTypeDefinition: ['description', 'name', 'directives', 'types'],
-  EnumTypeDefinition: ['description', 'name', 'directives', 'values'],
-  EnumValueDefinition: ['description', 'name', 'directives'],
   DataTypeDefinition: ['description', 'name', 'directives', 'variants'],
+  EnumValueDefinition: ['description', 'name', 'directives'],
   VariantDefinition: ['name', 'fields'],
   DirectiveDefinition: ['description', 'name', 'arguments', 'locations'],
 
@@ -569,7 +567,6 @@ export type TypeDefinitionNode =
   | ObjectTypeDefinitionNode
   | InterfaceTypeDefinitionNode
   | UnionTypeDefinitionNode
-  | EnumTypeDefinitionNode
   | DataTypeDefinitionNode;
 
 export interface ScalarTypeDefinitionNode {
@@ -629,15 +626,6 @@ export interface UnionTypeDefinitionNode {
   readonly types?: ReadonlyArray<NamedTypeNode>;
 }
 
-export interface EnumTypeDefinitionNode {
-  readonly kind: Kind.ENUM_TYPE_DEFINITION;
-  readonly loc?: Location;
-  readonly description?: StringValueNode;
-  readonly name: NameNode;
-  readonly directives?: ReadonlyArray<ConstDirectiveNode>;
-  readonly values?: ReadonlyArray<EnumValueDefinitionNode>;
-}
-
 export interface EnumValueDefinitionNode {
   readonly kind: Kind.ENUM_VALUE_DEFINITION;
   readonly loc?: Location;
@@ -660,6 +648,7 @@ export interface DataTypeDefinitionNode {
 export interface VariantDefinitionNode {
   readonly kind: Kind.VARIANT_DEFINITION;
   readonly loc?: Location;
+  readonly description?: StringValueNode;
   name: NameNode;
   readonly directives?: ReadonlyArray<ConstDirectiveNode>;
   fields: ReadonlyArray<InputValueDefinitionNode>;

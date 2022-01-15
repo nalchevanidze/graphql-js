@@ -95,7 +95,7 @@ describe('valueFromAST', () => {
     expectValueFrom('value', returnUndefinedScalar).to.equal(undefined);
   });
 
-  it('converts enum values according to input coercion rules', () => {
+  it('converts Enum values according to input coercion rules', () => {
     const testEnum = new GraphQLEnumType({
       name: 'TestColor',
       values: {

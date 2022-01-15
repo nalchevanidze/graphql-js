@@ -195,14 +195,8 @@ describe('Schema Builder', () => {
       """There is nothing inside!"""
       resolver BlackHole
 
-      """With an enum"""
-      enum Color {
-        RED
-
-        """Not a creative color"""
-        GREEN
-        BLUE
-      }
+      """With an Enum"""
+      data Color = RED | GREEN | BLUE
 
       """What a great type"""
       type Query {
@@ -367,18 +361,16 @@ describe('Schema Builder', () => {
     expect(cycleSDL(sdl)).to.equal(sdl);
   });
 
-  it('Empty enum', () => {
+  it('Empty Enum', () => {
     const sdl = dedent`
-      enum EmptyEnum
+      data EmptyEnum
     `;
     expect(cycleSDL(sdl)).to.equal(sdl);
   });
 
-  it('Simple output enum', () => {
+  it('Simple output Enum', () => {
     const sdl = dedent`
-      enum Hello {
-        WORLD
-      }
+      data Hello = WORLD
 
       type Query {
         hello: Hello
@@ -387,11 +379,9 @@ describe('Schema Builder', () => {
     expect(cycleSDL(sdl)).to.equal(sdl);
   });
 
-  it('Simple enum argument', () => {
+  it('Simple Enum argument', () => {
     const sdl = dedent`
-      enum Hello {
-        WORLD
-      }
+      data Hello = WORLD
 
       type Query {
         str(hello: Hello): String
@@ -400,12 +390,9 @@ describe('Schema Builder', () => {
     expect(cycleSDL(sdl)).to.equal(sdl);
   });
 
-  it('Multiple value enum', () => {
+  it('Multiple value Enum', () => {
     const sdl = dedent`
-      enum Hello {
-        WO
-        RLD
-      }
+      data Hello = WO | RLD
 
       type Query {
         hello: Hello
@@ -609,11 +596,7 @@ describe('Schema Builder', () => {
 
   it('Supports @deprecated', () => {
     const sdl = dedent`
-      enum MyEnum {
-        VALUE
-        OLD_VALUE @deprecated
-        OTHER_VALUE @deprecated(reason: "Terrible reasons")
-      }
+      data MyEnum = VALUE | OLD_VALUE @deprecated | OTHER_VALUE @deprecated(reason: "Terrible reasons")
 
       data MyInput {
         oldInput: String @deprecated
@@ -718,9 +701,7 @@ describe('Schema Builder', () => {
         testInputField: TestEnum
       }
 
-      enum TestEnum {
-        TEST_VALUE
-      }
+      data TestEnum = TEST_VALUE
 
       resolver TestUnion = TestType
 

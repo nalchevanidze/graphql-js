@@ -123,7 +123,7 @@ function executeQuery(
 }
 
 describe('Type System: Enum Values', () => {
-  it('accepts enum literals as input', () => {
+  it('accepts Enum literals as input', () => {
     const result = executeQuery('{ colorInt(fromEnum: GREEN) }');
 
     expect(result).to.deep.equal({
@@ -131,7 +131,7 @@ describe('Type System: Enum Values', () => {
     });
   });
 
-  it('enum may be output type', () => {
+  it('Enum may be output type', () => {
     const result = executeQuery('{ colorEnum(fromInt: 1) }');
 
     expect(result).to.deep.equal({
@@ -139,7 +139,7 @@ describe('Type System: Enum Values', () => {
     });
   });
 
-  it('enum may be both input and output type', () => {
+  it('Enum may be both input and output type', () => {
     const result = executeQuery('{ colorEnum(fromEnum: GREEN) }');
 
     expect(result).to.deep.equal({

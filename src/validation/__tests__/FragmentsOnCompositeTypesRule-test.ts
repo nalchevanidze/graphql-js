@@ -81,7 +81,7 @@ describe('Validate: Fragments on composite types', () => {
     ]);
   });
 
-  it('enum is invalid fragment type', () => {
+  it('Enum is invalid fragment type', () => {
     expectErrors(`
       fragment scalarFragment on FurColor {
         bad

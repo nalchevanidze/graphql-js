@@ -17,7 +17,6 @@ import type {
   DirectiveDefinitionNode,
   DirectiveNode,
   DocumentNode,
-  EnumTypeDefinitionNode,
   EnumValueDefinitionNode,
   EnumValueNode,
   FieldDefinitionNode,
@@ -228,7 +227,6 @@ export class Parser {
    *   - ObjectTypeDefinition
    *   - InterfaceTypeDefinition
    *   - UnionTypeDefinition
-   *   - EnumTypeDefinition
    *   - DataTypeDefinition
    */
   parseDefinition(): DefinitionNode {
@@ -980,23 +978,24 @@ export class Parser {
       : [];
   }
 
-  /**
-   * EnumTypeDefinition :
-   *   - Description? enum Name Directives[Const]? EnumValuesDefinition?
-   */
-  parseEnumTypeDefinition(): EnumTypeDefinitionNode {
+  parseEnumTypeDefinition(): DataTypeDefinitionNode {
     const start = this._lexer.token;
     const description = this.parseDescription();
     this.expectKeyword('enum');
     const name = this.parseName();
     const directives = this.parseConstDirectives();
-    const values = this.parseEnumValuesDefinition();
-    return this.node<EnumTypeDefinitionNode>(start, {
-      kind: Kind.ENUM_TYPE_DEFINITION,
+    const variants = this.parseEnumValuesDefinition().map((x):VariantDefinitionNode => ({
+      ...x,
+      kind: Kind.VARIANT_DEFINITION,
+      fields: [],
+    }));
+
+    return this.node<DataTypeDefinitionNode>(start, {
+      kind: Kind.DATA_TYPE_DEFINITION,
       description,
       name,
       directives,
-      values,
+      variants,
     });
   }
 

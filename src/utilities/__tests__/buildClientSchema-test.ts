@@ -495,19 +495,7 @@ describe('Type System: build schema from introspection', () => {
         oldArg: String @deprecated(reason: "Use shinyArg")
       ) on QUERY
 
-      enum Color {
-        """So rosy"""
-        RED
-
-        """So grassy"""
-        GREEN
-
-        """So calming"""
-        BLUE
-
-        """So sickening"""
-        MAUVE @deprecated(reason: "No longer in fashion")
-      }
+      data Color = RED | GREEN | BLUE | MAUVE @deprecated(reason: "No longer in fashion")
 
       data SomeInputObject {
         """Nothing special about it, just deprecated for some unknown reason"""
@@ -553,9 +541,7 @@ describe('Type System: build schema from introspection', () => {
         someInputField: String @deprecated(reason: "")
       }
 
-      enum SomeEnum {
-        SOME_VALUE @deprecated(reason: "")
-      }
+      data SomeEnum = SOME_VALUE @deprecated(reason: "")
     `;
 
     expect(cycleIntrospection(sdl)).to.equal(sdl);
@@ -619,7 +605,7 @@ describe('Type System: build schema from introspection', () => {
 
       resolver SomeUnion = Query
 
-      enum SomeEnum { FOO }
+      data SomeEnum = FOO
 
       data SomeInputObject {
         foo: String

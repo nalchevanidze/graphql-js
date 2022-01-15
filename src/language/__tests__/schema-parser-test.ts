@@ -50,11 +50,11 @@ function fieldNodeWithArgs(
 
 function enumValueNode(name: unknown, loc: unknown) {
   return {
-    kind: 'EnumValueDefinition',
+    kind: 'VariantDefinition',
     name: nameNode(name, loc),
-    description: undefined,
     directives: [],
     loc,
+    fields: [],
   };
 }
 
@@ -365,44 +365,44 @@ describe('Schema Parser', () => {
     });
   });
 
-  it('Single value enum', () => {
-    const doc = parse('enum Hello { WORLD }');
+  it('Single value Enum', () => {
+    const doc = parse('data Hello = WORLD');
 
     expectJSON(doc).toDeepEqual({
       kind: 'Document',
       definitions: [
         {
-          kind: 'EnumTypeDefinition',
+          kind: 'DataTypeDefinition',
           name: nameNode('Hello', { start: 5, end: 10 }),
           description: undefined,
           directives: [],
-          values: [enumValueNode('WORLD', { start: 13, end: 18 })],
-          loc: { start: 0, end: 20 },
+          variants: [enumValueNode('WORLD', { start: 13, end: 18 })],
+          loc: { start: 0, end: 18 },
         },
       ],
-      loc: { start: 0, end: 20 },
+      loc: { start: 0, end: 18 },
     });
   });
 
-  it('Double value enum', () => {
-    const doc = parse('enum Hello { WO, RLD }');
+  it('Double value Enum', () => {
+    const doc = parse('data Hello = WO | RLD');
 
     expectJSON(doc).toDeepEqual({
       kind: 'Document',
       definitions: [
         {
-          kind: 'EnumTypeDefinition',
+          kind: 'DataTypeDefinition',
           name: nameNode('Hello', { start: 5, end: 10 }),
           description: undefined,
           directives: [],
-          values: [
+          variants: [
             enumValueNode('WO', { start: 13, end: 15 }),
-            enumValueNode('RLD', { start: 17, end: 20 }),
+            enumValueNode('RLD', { start: 18, end: 21 }),
           ],
-          loc: { start: 0, end: 22 },
+          loc: { start: 0, end: 21 },
         },
       ],
-      loc: { start: 0, end: 22 },
+      loc: { start: 0, end: 21 },
     });
   });
 
@@ -735,7 +735,7 @@ describe('Schema Parser', () => {
                 start: 16,
               },
               name,
-              directives:[],
+              directives: [],
               fields: [
                 inputValueNode(
                   nameNode('world', { start: 24, end: 29 }),

@@ -453,8 +453,8 @@ describe('Execute: Handles inputs', () => {
     });
   });
 
-  describe('Handles custom enum values', () => {
-    it('allows custom enum values as inputs', () => {
+  describe('Handles custom Enum values', () => {
+    it('allows custom Enum values as inputs', () => {
       const result = executeQuery(`
         {
           null: fieldWithEnumInput(input: NULL)
@@ -476,7 +476,7 @@ describe('Execute: Handles inputs', () => {
       });
     });
 
-    it('allows non-nullable inputs to have null as enum custom value', () => {
+    it('allows non-nullable inputs to have null as Enum custom value', () => {
       const result = executeQuery(`
         {
           fieldWithNonNullableEnumInput(input: NULL)

@@ -210,11 +210,6 @@ const printDocASTReducer: ASTReducer<string> = {
       ),
   },
 
-  EnumTypeDefinition: {
-    leave: ({ description, name, directives, values }) =>
-      wrap('', description, '\n') +
-      join(['enum', name, join(directives, ' '), block(values)], ' '),
-  },
 
   EnumValueDefinition: {
     leave: ({ description, name, directives }) =>
@@ -292,16 +287,6 @@ const printDocASTReducer: ASTReducer<string> = {
         ],
         ' ',
       ),
-  },
-
-  EnumTypeExtension: {
-    leave: ({ name, directives, values }) =>
-      join(['extend enum', name, join(directives, ' '), block(values)], ' '),
-  },
-
-  InputObjectTypeExtension: {
-    leave: ({ name, directives, fields }) =>
-      join(['extend input', name, join(directives, ' '), block(fields)], ' '),
   },
 };
 

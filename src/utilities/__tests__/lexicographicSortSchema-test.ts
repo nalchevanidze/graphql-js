@@ -143,13 +143,9 @@ describe('lexicographicSortSchema', () => {
     `);
   });
 
-  it('sort enum values', () => {
+  it('sort Enum values', () => {
     const sorted = sortSDL(`
-      enum Foo {
-        B
-        C
-        A
-      }
+      data Foo = B | C | A
 
       type Query {
         dummy: Foo
@@ -157,11 +153,7 @@ describe('lexicographicSortSchema', () => {
     `);
 
     expect(sorted).to.equal(dedent`
-      enum Foo {
-        A
-        B
-        C
-      }
+      data Foo = A | B | C
 
       type Query {
         dummy: Foo
@@ -193,9 +185,7 @@ describe('lexicographicSortSchema', () => {
         dummy: String
       }
 
-      enum FooG {
-        enumValue
-      }
+      data FooG = enumValue
 
       scalar FooA
 
@@ -235,9 +225,7 @@ describe('lexicographicSortSchema', () => {
         dummy: String
       }
 
-      enum FooG {
-        enumValue
-      }
+      data FooG = enumValue
 
       type Query {
         dummy(arg1: FooF, arg2: FooA, arg3: FooG): FooD

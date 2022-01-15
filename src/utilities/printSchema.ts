@@ -141,11 +141,8 @@ export function printType(type: GraphQLNamedType): string {
   if (isUnionType(type)) {
     return printUnion(type);
   }
-  if (isEnumType(type)) {
-    return printEnum(type);
-  }
-  if (isInputObjectType(type)) {
-    return printInputObject(type);
+  if (isEnumType(type) || isInputObjectType(type)) {
+    return printDATA(type);
   }
   /* c8 ignore next 3 */
   // Not reachable, all possible types have been considered.
@@ -191,25 +188,34 @@ function printUnion(type: GraphQLUnionType): string {
   return printDescription(type) + 'resolver ' + type.name + possibleTypes;
 }
 
-function printEnum(type: GraphQLEnumType): string {
-  const values = type
+function printDATA(type: GraphQLEnumType | GraphQLInputObjectType): string {
+  const start = printDescription(type) + `data ${type.name}`;
+
+  if (isInputObjectType(type)) {
+    return (
+      start +
+      printBlock(
+        Object.values(type.getFields()).map(
+          (f, i) => printDescription(f, '  ', !i) + '  ' + printInputValue(f),
+        ),
+      )
+    );
+  }
+
+  const possibleTypes = type
     .getValues()
     .map(
-      (value, i) =>
-        printDescription(value, '  ', !i) +
-        '  ' +
+      (value) =>
+        printDescription(value) +
         value.name +
         printDeprecated(value.deprecationReason),
     );
 
-  return printDescription(type) + `enum ${type.name}` + printBlock(values);
-}
+  if(possibleTypes.length === 1 && possibleTypes[0] === type.name){
+    return start;
+  }
 
-function printInputObject(type: GraphQLInputObjectType): string {
-  const fields = Object.values(type.getFields()).map(
-    (f, i) => printDescription(f, '  ', !i) + '  ' + printInputValue(f),
-  );
-  return printDescription(type) + `data ${type.name}` + printBlock(fields);
+  return start + (possibleTypes.length ? ' = ' + possibleTypes.join(' | ') : '');
 }
 
 function printFields(type: GraphQLObjectType | GraphQLInterfaceType): string {

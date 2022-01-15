@@ -522,18 +522,13 @@ describe('Type System Printer', () => {
 
     const schema = new GraphQLSchema({ types: [RGBType] });
     expectPrintedSchema(schema).to.equal(dedent`
-      enum RGB {
-        RED
-        GREEN
-        BLUE
-      }
+      data RGB = RED | GREEN | BLUE
     `);
   });
 
   it('Prints empty types', () => {
     const schema = new GraphQLSchema({
       types: [
-        new GraphQLEnumType({ name: 'SomeEnum', values: {} }),
         new GraphQLInputObjectType({ name: 'SomeInputObject', fields: {} }),
         new GraphQLInterfaceType({ name: 'SomeInterface', fields: {} }),
         new GraphQLObjectType({ name: 'SomeObject', fields: {} }),
@@ -542,8 +537,6 @@ describe('Type System Printer', () => {
     });
 
     expectPrintedSchema(schema).to.equal(dedent`
-      enum SomeEnum
-
       data SomeInputObject
 
       interface SomeInterface
@@ -835,10 +828,10 @@ describe('Type System Printer', () => {
   //       """Location adjacent to a resolver definition."""
   //       UNION
 
-  //       """Location adjacent to an enum definition."""
+  //       """Location adjacent to an Enum definition."""
   //       ENUM
 
-  //       """Location adjacent to an enum value definition."""
+  //       """Location adjacent to an Enum value definition."""
   //       ENUM_VALUE
 
   //       """Location adjacent to an input object type definition."""

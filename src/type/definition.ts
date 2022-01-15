@@ -18,7 +18,6 @@ import { GraphQLError } from '../error/GraphQLError';
 
 import type {
   DataTypeDefinitionNode,
-  EnumTypeDefinitionNode,
   EnumTypeExtensionNode,
   EnumValueDefinitionNode,
   FieldDefinitionNode,
@@ -1363,7 +1362,7 @@ export class GraphQLEnumType /* <T> */ {
   name: string;
   description: Maybe<string>;
   extensions: Readonly<GraphQLEnumTypeExtensions>;
-  astNode: Maybe<EnumTypeDefinitionNode>;
+  astNode: Maybe<DataTypeDefinitionNode>;
   extensionASTNodes: ReadonlyArray<EnumTypeExtensionNode>;
 
   private _values: ReadonlyArray<GraphQLEnumValue /* <T> */>;
@@ -1523,7 +1522,7 @@ export interface GraphQLEnumTypeConfig {
   description?: Maybe<string>;
   values: GraphQLEnumValueConfigMap /* <T> */;
   extensions?: Maybe<Readonly<GraphQLEnumTypeExtensions>>;
-  astNode?: Maybe<EnumTypeDefinitionNode>;
+  astNode?: Maybe<DataTypeDefinitionNode>;
   extensionASTNodes?: Maybe<ReadonlyArray<EnumTypeExtensionNode>>;
 }
 

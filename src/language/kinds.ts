@@ -49,7 +49,6 @@ export enum Kind {
   INPUT_VALUE_DEFINITION = 'InputValueDefinition',
   INTERFACE_TYPE_DEFINITION = 'InterfaceTypeDefinition',
   UNION_TYPE_DEFINITION = 'UnionTypeDefinition',
-  ENUM_TYPE_DEFINITION = 'EnumTypeDefinition',
   ENUM_VALUE_DEFINITION = 'EnumValueDefinition',
   DATA_TYPE_DEFINITION = 'DataTypeDefinition',
 
@@ -70,7 +69,7 @@ export enum Kind {
 }
 
 /**
- * The enum type representing the possible kind values of AST nodes.
+ * The Enum type representing the possible kind values of AST nodes.
  *
  * @deprecated Please use `Kind`. Will be remove in v17.
  */

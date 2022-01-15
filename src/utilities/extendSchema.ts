@@ -9,7 +9,6 @@ import type {
   DataTypeDefinitionNode,
   DirectiveDefinitionNode,
   DocumentNode,
-  EnumTypeDefinitionNode,
   EnumTypeExtensionNode,
   EnumValueDefinitionNode,
   FieldDefinitionNode,
@@ -27,6 +26,7 @@ import type {
   TypeNode,
   UnionTypeDefinitionNode,
   UnionTypeExtensionNode,
+  VariantDefinitionNode,
 } from '../language/ast';
 import { Kind } from '../language/kinds';
 import {
@@ -284,7 +284,7 @@ export function extendSchemaImpl(
           type: replaceType(field.type),
         })),
         ...buildInputFieldMap(extensions),
-      })
+      }),
     });
   }
 
@@ -524,12 +524,12 @@ export function extendSchemaImpl(
   }
 
   function buildEnumValueMap(
-    nodes: ReadonlyArray<EnumTypeDefinitionNode | EnumTypeExtensionNode>,
+    nodes: ReadonlyArray<DataTypeDefinitionNode>,
   ): GraphQLEnumValueConfigMap {
     const enumValueMap = Object.create(null);
     for (const node of nodes) {
       // FIXME: https://github.com/graphql/graphql-js/issues/2203
-      const valuesNodes = /* c8 ignore next */ node.values ?? [];
+      const valuesNodes = /* c8 ignore next */ node.variants ?? [];
 
       for (const value of valuesNodes) {
         enumValueMap[value.name.value] = {
@@ -602,17 +602,6 @@ export function extendSchemaImpl(
           extensionASTNodes,
         });
       }
-      case Kind.ENUM_TYPE_DEFINITION: {
-        const allNodes = [astNode, ...extensionASTNodes];
-
-        return new GraphQLEnumType({
-          name,
-          description: astNode.description?.value,
-          values: buildEnumValueMap(allNodes),
-          astNode,
-          extensionASTNodes,
-        });
-      }
       case Kind.UNION_TYPE_DEFINITION: {
         const allNodes = [astNode, ...extensionASTNodes];
 
@@ -634,13 +623,23 @@ export function extendSchemaImpl(
         });
       }
       case Kind.DATA_TYPE_DEFINITION: {
-        const allNodes = [astNode, ...extensionASTNodes];
+        const [variant, ...ext] = astNode.variants;
 
-        return new GraphQLInputObjectType({
+        if (ext.length === 0 && variant.fields.length > 0) {
+          return new GraphQLInputObjectType({
+            name,
+            description: astNode.description?.value,
+            fields: () => buildInputFieldMap([astNode]),
+            astNode,
+          });
+        }
+
+        return new GraphQLEnumType({
           name,
           description: astNode.description?.value,
-          fields: () => buildInputFieldMap(allNodes),
-          astNode
+          values: buildEnumValueMap([astNode]),
+          astNode,
+          extensionASTNodes,
         });
       }
     }
@@ -660,7 +659,8 @@ function getDeprecationReason(
   node:
     | EnumValueDefinitionNode
     | FieldDefinitionNode
-    | InputValueDefinitionNode,
+    | InputValueDefinitionNode
+    | VariantDefinitionNode,
 ): Maybe<string> {
   const deprecated = getDirectiveValues(GraphQLDeprecatedDirective, node);
   // @ts-expect-error validated by `getDirectiveValues`

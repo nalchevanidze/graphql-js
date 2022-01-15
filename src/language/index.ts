@@ -77,7 +77,6 @@ export type {
   InputValueDefinitionNode,
   InterfaceTypeDefinitionNode,
   UnionTypeDefinitionNode,
-  EnumTypeDefinitionNode,
   EnumValueDefinitionNode,
   DataTypeDefinitionNode,
   DirectiveDefinitionNode,

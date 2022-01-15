@@ -296,7 +296,6 @@ export type {
   InputValueDefinitionNode,
   InterfaceTypeDefinitionNode,
   UnionTypeDefinitionNode,
-  EnumTypeDefinitionNode,
   EnumValueDefinitionNode,
   DirectiveDefinitionNode,
   TypeSystemExtensionNode,

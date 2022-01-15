@@ -44,7 +44,7 @@ describe('valueFromASTUntyped', () => {
     });
   });
 
-  it('parses enum values as plain strings', () => {
+  it('parses Enum values as plain strings', () => {
     expectValueFrom('TEST_ENUM_VALUE').to.equal('TEST_ENUM_VALUE');
     expectValueFrom('[TEST_ENUM_VALUE]').to.deep.equal(['TEST_ENUM_VALUE']);
   });
