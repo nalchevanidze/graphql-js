@@ -1289,21 +1289,10 @@ interface GraphQLUnionTypeNormalizedConfig
   extensions: Readonly<GraphQLUnionTypeExtensions>;
 }
 
-/**
- * Custom extensions
- *
- * @remarks
- * Use a unique identifier name for your extension, for example the name of
- * your library or project. Do not use a shortened identifier as this increases
- * the risk of conflicts. We recommend you add at most one extension field,
- * an object which can contain all the values you need.
- */
-export interface GraphQLEnumTypeExtensions {
-  [attributeName: string]: unknown;
-}
+
 
 /**
- * Enum Type Definition
+ * Data Type Definition
  *
  * Some leaf values of requests and input values are Enums. GraphQL serializes
  * Enum values as strings, however internally Enums can be represented by any
@@ -1314,7 +1303,7 @@ export interface GraphQLEnumTypeExtensions {
  * ```ts
  * const RGBType = new IrisDataType({
  *   name: 'RGB',
- *   values: {
+ *   variants: {
  *     RED: { value: 0 },
  *     GREEN: { value: 1 },
  *     BLUE: { value: 2 }
@@ -1326,14 +1315,12 @@ export interface GraphQLEnumTypeExtensions {
  * will be used as its internal value.
  */
 
-
 export interface IrisDataTypeConfig {
   name: string;
   description?: Maybe<string>;
   values?: GraphQLEnumValueConfigMap;
   fields?: ThunkObjMap<GraphQLInputFieldConfig>;
   astNode?: Maybe<DataTypeDefinitionNode>;
-  extensions?: Maybe<Readonly<GraphQLEnumTypeExtensions>>;
 }
 
 interface IrisDataTypeNormalizedConfig extends IrisDataTypeConfig {
@@ -1344,7 +1331,6 @@ interface IrisDataTypeNormalizedConfig extends IrisDataTypeConfig {
 export class IrisDataType {
   name: string;
   description: Maybe<string>;
-  extensions: Readonly<GraphQLEnumTypeExtensions>;
   astNode: Maybe<DataTypeDefinitionNode>;
 
   private _values: ReadonlyArray<GraphQLEnumValue /* <T> */>;
@@ -1356,7 +1342,6 @@ export class IrisDataType {
     this.astNode = config.astNode;
     this.name = assertName(config.name);
     this.description = config.description;
-    this.extensions = toObjMap(config.extensions);
     // input
     this._fields = config.fields
       ? defineInputFieldMap.bind(undefined, config)
@@ -1394,7 +1379,6 @@ export class IrisDataType {
         description: value.description,
         value: value.value,
         deprecationReason: value.deprecationReason,
-        extensions: value.extensions,
         astNode: value.astNode,
       }),
     );
@@ -1412,7 +1396,6 @@ export class IrisDataType {
       description: this.description,
       values,
       fields,
-      extensions: this.extensions,
       astNode: this.astNode,
     };
   }
@@ -1518,33 +1501,17 @@ function defineEnumValues(
       description: valueConfig.description,
       value: valueConfig.value !== undefined ? valueConfig.value : valueName,
       deprecationReason: valueConfig.deprecationReason,
-      extensions: toObjMap(valueConfig.extensions),
       astNode: valueConfig.astNode,
     };
   });
 }
 
-export type GraphQLEnumValueConfigMap /* <T> */ =
-  ObjMap<GraphQLEnumValueConfig /* <T> */>;
-
-/**
- * Custom extensions
- *
- * @remarks
- * Use a unique identifier name for your extension, for example the name of
- * your library or project. Do not use a shortened identifier as this increases
- * the risk of conflicts. We recommend you add at most one extension field,
- * an object which can contain all the values you need.
- */
-export interface GraphQLEnumValueExtensions {
-  [attributeName: string]: unknown;
-}
+export type GraphQLEnumValueConfigMap = ObjMap<GraphQLEnumValueConfig >;
 
 export interface GraphQLEnumValueConfig {
   description?: Maybe<string>;
   value?: any /* T */;
   deprecationReason?: Maybe<string>;
-  extensions?: Maybe<Readonly<GraphQLEnumValueExtensions>>;
   astNode?: Maybe<EnumValueDefinitionNode>;
 }
 
@@ -1553,22 +1520,9 @@ export interface GraphQLEnumValue {
   description: Maybe<string>;
   value: any /* T */;
   deprecationReason: Maybe<string>;
-  extensions: Readonly<GraphQLEnumValueExtensions>;
   astNode: Maybe<EnumValueDefinitionNode>;
 }
 
-/**
- * Custom extensions
- *
- * @remarks
- * Use a unique identifier name for your extension, for example the name of
- * your library or project. Do not use a shortened identifier as this increases
- * the risk of conflicts. We recommend you add at most one extension field,
- * an object which can contain all the values you need.
- */
-export interface GraphQLInputObjectTypeExtensions {
-  [attributeName: string]: unknown;
-}
 
 /**
  * Input Object Type Definition
@@ -1612,31 +1566,17 @@ function defineInputFieldMap(
       type: fieldConfig.type,
       defaultValue: fieldConfig.defaultValue,
       deprecationReason: fieldConfig.deprecationReason,
-      extensions: toObjMap(fieldConfig.extensions),
       astNode: fieldConfig.astNode,
     };
   });
 }
 
-/**
- * Custom extensions
- *
- * @remarks
- * Use a unique identifier name for your extension, for example the name of
- * your library or project. Do not use a shortened identifier as this increases
- * the risk of conflicts. We recommend you add at most one extension field,
- * an object which can contain all the values you need.
- */
-export interface GraphQLInputFieldExtensions {
-  [attributeName: string]: unknown;
-}
 
 export interface GraphQLInputFieldConfig {
   description?: Maybe<string>;
   type: GraphQLInputType;
   defaultValue?: unknown;
   deprecationReason?: Maybe<string>;
-  extensions?: Maybe<Readonly<GraphQLInputFieldExtensions>>;
   astNode?: Maybe<InputValueDefinitionNode>;
 }
 
@@ -1648,7 +1588,6 @@ export interface GraphQLInputField {
   type: GraphQLInputType;
   defaultValue: unknown;
   deprecationReason: Maybe<string>;
-  extensions: Readonly<GraphQLInputFieldExtensions>;
   astNode: Maybe<InputValueDefinitionNode>;
 }
 

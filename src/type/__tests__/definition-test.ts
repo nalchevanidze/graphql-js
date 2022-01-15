@@ -657,7 +657,6 @@ describe('Type System: Enums', () => {
         description: undefined,
         value: null,
         deprecationReason: undefined,
-        extensions: {},
         astNode: undefined,
       },
       {
@@ -665,7 +664,6 @@ describe('Type System: Enums', () => {
         description: undefined,
         value: NaN,
         deprecationReason: undefined,
-        extensions: {},
         astNode: undefined,
       },
       {
@@ -673,7 +671,6 @@ describe('Type System: Enums', () => {
         description: undefined,
         value: 'NO_CUSTOM_VALUE',
         deprecationReason: undefined,
-        extensions: {},
         astNode: undefined,
       },
     ]);
@@ -775,7 +772,6 @@ describe('Type System: Input Objects', () => {
           type: ScalarType,
           defaultValue: undefined,
           deprecationReason: undefined,
-          extensions: {},
           astNode: undefined,
         },
       });
@@ -794,7 +790,6 @@ describe('Type System: Input Objects', () => {
           description: undefined,
           type: ScalarType,
           defaultValue: undefined,
-          extensions: {},
           deprecationReason: undefined,
           astNode: undefined,
         },

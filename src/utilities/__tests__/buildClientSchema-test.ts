@@ -385,7 +385,6 @@ describe('Type System: build schema from introspection', () => {
         description: 'Foods that are vegetables.',
         value: 'VEGETABLES',
         deprecationReason: null,
-        extensions: {},
         astNode: undefined,
       },
       {
@@ -393,7 +392,6 @@ describe('Type System: build schema from introspection', () => {
         description: null,
         value: 'FRUITS',
         deprecationReason: null,
-        extensions: {},
         astNode: undefined,
       },
       {
@@ -401,7 +399,6 @@ describe('Type System: build schema from introspection', () => {
         description: null,
         value: 'OILS',
         deprecationReason: 'Too fatty',
-        extensions: {},
         astNode: undefined,
       },
     ]);

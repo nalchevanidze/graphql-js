@@ -349,7 +349,6 @@ describe('Type System: Enum Values', () => {
         description: undefined,
         value: Complex1,
         deprecationReason: undefined,
-        extensions: {},
         astNode: undefined,
       },
       {
@@ -357,7 +356,6 @@ describe('Type System: Enum Values', () => {
         description: undefined,
         value: Complex2,
         deprecationReason: undefined,
-        extensions: {},
         astNode: undefined,
       },
     ]);
