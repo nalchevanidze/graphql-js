@@ -233,8 +233,6 @@ export {
   isTypeNode,
   isTypeSystemDefinitionNode,
   isTypeDefinitionNode,
-  isTypeSystemExtensionNode,
-  isTypeExtensionNode,
 } from './language/index';
 
 export type {
@@ -298,15 +296,6 @@ export type {
   UnionTypeDefinitionNode,
   EnumValueDefinitionNode,
   DirectiveDefinitionNode,
-  TypeSystemExtensionNode,
-  SchemaExtensionNode,
-  TypeExtensionNode,
-  ScalarTypeExtensionNode,
-  ObjectTypeExtensionNode,
-  InterfaceTypeExtensionNode,
-  UnionTypeExtensionNode,
-  EnumTypeExtensionNode,
-  InputObjectTypeExtensionNode,
 } from './language/index';
 
 // Execute GraphQL queries.

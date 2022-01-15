@@ -5,10 +5,8 @@ import type {
   ExecutableDefinitionNode,
   SelectionNode,
   TypeDefinitionNode,
-  TypeExtensionNode,
   TypeNode,
   TypeSystemDefinitionNode,
-  TypeSystemExtensionNode,
   ValueNode,
 } from './ast';
 import { Kind } from './kinds';
@@ -16,8 +14,7 @@ import { Kind } from './kinds';
 export function isDefinitionNode(node: ASTNode): node is DefinitionNode {
   return (
     isExecutableDefinitionNode(node) ||
-    isTypeSystemDefinitionNode(node) ||
-    isTypeSystemExtensionNode(node)
+    isTypeSystemDefinitionNode(node) 
   );
 }
 
@@ -90,22 +87,5 @@ export function isTypeDefinitionNode(
     node.kind === Kind.INTERFACE_TYPE_DEFINITION ||
     node.kind === Kind.UNION_TYPE_DEFINITION ||
     node.kind === Kind.DATA_TYPE_DEFINITION
-  );
-}
-
-export function isTypeSystemExtensionNode(
-  node: ASTNode,
-): node is TypeSystemExtensionNode {
-  return node.kind === Kind.SCHEMA_EXTENSION || isTypeExtensionNode(node);
-}
-
-export function isTypeExtensionNode(node: ASTNode): node is TypeExtensionNode {
-  return (
-    node.kind === Kind.SCALAR_TYPE_EXTENSION ||
-    node.kind === Kind.OBJECT_TYPE_EXTENSION ||
-    node.kind === Kind.INTERFACE_TYPE_EXTENSION ||
-    node.kind === Kind.UNION_TYPE_EXTENSION ||
-    node.kind === Kind.ENUM_TYPE_EXTENSION ||
-    node.kind === Kind.INPUT_OBJECT_TYPE_EXTENSION
   );
 }

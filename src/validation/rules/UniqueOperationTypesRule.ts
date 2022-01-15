@@ -2,7 +2,6 @@ import { GraphQLError } from '../../error/GraphQLError';
 
 import type {
   SchemaDefinitionNode,
-  SchemaExtensionNode,
 } from '../../language/ast';
 import type { ASTVisitor } from '../../language/visitor';
 
@@ -27,12 +26,11 @@ export function UniqueOperationTypesRule(
     : {};
 
   return {
-    SchemaDefinition: checkOperationTypes,
-    SchemaExtension: checkOperationTypes,
+    SchemaDefinition: checkOperationTypes
   };
 
   function checkOperationTypes(
-    node: SchemaDefinitionNode | SchemaExtensionNode,
+    node: SchemaDefinitionNode ,
   ) {
     // See: https://github.com/graphql/graphql-js/issues/2203
     /* c8 ignore next */

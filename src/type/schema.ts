@@ -10,7 +10,6 @@ import type { GraphQLError } from '../error/GraphQLError';
 
 import type {
   SchemaDefinitionNode,
-  SchemaExtensionNode,
 } from '../language/ast';
 import { OperationTypeNode } from '../language/ast';
 
@@ -131,7 +130,6 @@ export class GraphQLSchema {
   description: Maybe<string>;
   extensions: Readonly<GraphQLSchemaExtensions>;
   astNode: Maybe<SchemaDefinitionNode>;
-  extensionASTNodes: ReadonlyArray<SchemaExtensionNode>;
 
   // Used as a cache for validateSchema().
   __validationErrors: Maybe<ReadonlyArray<GraphQLError>>;
@@ -167,7 +165,6 @@ export class GraphQLSchema {
     this.description = config.description;
     this.extensions = toObjMap(config.extensions);
     this.astNode = config.astNode;
-    this.extensionASTNodes = config.extensionASTNodes ?? [];
 
     this._queryType = config.query;
     this._mutationType = config.mutation;
@@ -360,7 +357,6 @@ export class GraphQLSchema {
       directives: this.getDirectives(),
       extensions: this.extensions,
       astNode: this.astNode,
-      extensionASTNodes: this.extensionASTNodes,
       assumeValid: this.__validationErrors !== undefined,
     };
   }
@@ -388,7 +384,6 @@ export interface GraphQLSchemaConfig extends GraphQLSchemaValidationOptions {
   directives?: Maybe<ReadonlyArray<GraphQLDirective>>;
   extensions?: Maybe<Readonly<GraphQLSchemaExtensions>>;
   astNode?: Maybe<SchemaDefinitionNode>;
-  extensionASTNodes?: Maybe<ReadonlyArray<SchemaExtensionNode>>;
 }
 
 /**
@@ -399,7 +394,6 @@ export interface GraphQLSchemaNormalizedConfig extends GraphQLSchemaConfig {
   types: ReadonlyArray<GraphQLNamedType>;
   directives: ReadonlyArray<GraphQLDirective>;
   extensions: Readonly<GraphQLSchemaExtensions>;
-  extensionASTNodes: ReadonlyArray<SchemaExtensionNode>;
   assumeValid: boolean;
 }
 

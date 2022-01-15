@@ -7,12 +7,9 @@ import type {
   ASTNode,
   DirectiveNode,
   InterfaceTypeDefinitionNode,
-  InterfaceTypeExtensionNode,
   NamedTypeNode,
   ObjectTypeDefinitionNode,
-  ObjectTypeExtensionNode,
-  UnionTypeDefinitionNode,
-  UnionTypeExtensionNode,
+  UnionTypeDefinitionNode
 } from '../language/ast';
 import { OperationTypeNode } from '../language/ast';
 
@@ -150,7 +147,7 @@ function getOperationTypeNode(
   schema: GraphQLSchema,
   operation: OperationTypeNode,
 ): Maybe<ASTNode> {
-  return [schema.astNode, ...schema.extensionASTNodes]
+  return [schema.astNode]
     .flatMap(
       // FIXME: https://github.com/graphql/graphql-js/issues/2203
       (schemaNode) => /* c8 ignore next */ schemaNode?.operationTypes ?? [],
@@ -267,8 +264,7 @@ function validateFields(
   // Objects and Interfaces both must define one or more fields.
   if (fields.length === 0) {
     context.reportError(`Type ${type.name} must define one or more fields.`, [
-      type.astNode,
-      ...type.extensionASTNodes,
+      type.astNode
     ]);
   }
 
@@ -365,7 +361,7 @@ function validateTypeImplementsInterface(
     if (!typeField) {
       context.reportError(
         `Interface field ${iface.name}.${fieldName} expected but ${type.name} does not provide it.`,
-        [ifaceField.astNode, type.astNode, ...type.extensionASTNodes],
+        [ifaceField.astNode, type.astNode ],
       );
       continue;
     }
@@ -455,7 +451,7 @@ function validateUnionMembers(
   if (memberTypes.length === 0) {
     context.reportError(
       `Union type ${adt.name} must define one or more member types.`,
-      [adt.astNode, ...adt.extensionASTNodes],
+      [adt.astNode ],
     );
   }
 
@@ -488,7 +484,7 @@ function validateEnumValues(
   if (enumValues.length === 0) {
     context.reportError(
       `Enum type ${enumType.name} must define one or more values.`,
-      [enumType.astNode, ...enumType.extensionASTNodes],
+      [enumType.astNode ],
     );
   }
 
@@ -583,13 +579,11 @@ function getAllImplementsInterfaceNodes(
   type: GraphQLObjectType | GraphQLInterfaceType,
   iface: GraphQLInterfaceType,
 ): ReadonlyArray<NamedTypeNode> {
-  const { astNode, extensionASTNodes } = type;
+  const { astNode } = type;
   const nodes: ReadonlyArray<
     | ObjectTypeDefinitionNode
-    | ObjectTypeExtensionNode
     | InterfaceTypeDefinitionNode
-    | InterfaceTypeExtensionNode
-  > = astNode != null ? [astNode, ...extensionASTNodes] : extensionASTNodes;
+  > = astNode != null ? [astNode] : [];
 
   // FIXME: https://github.com/graphql/graphql-js/issues/2203
   return nodes
@@ -601,9 +595,9 @@ function getUnionMemberTypeNodes(
   union: GraphQLUnionType,
   typeName: string,
 ): Maybe<ReadonlyArray<NamedTypeNode>> {
-  const { astNode, extensionASTNodes } = union;
-  const nodes: ReadonlyArray<UnionTypeDefinitionNode | UnionTypeExtensionNode> =
-    astNode != null ? [astNode, ...extensionASTNodes] : extensionASTNodes;
+  const { astNode } = union;
+  const nodes: ReadonlyArray<UnionTypeDefinitionNode > =
+    astNode != null ? [astNode] : [];
 
   // FIXME: https://github.com/graphql/graphql-js/issues/2203
   return nodes

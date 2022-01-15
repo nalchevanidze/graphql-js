@@ -7,7 +7,6 @@ import type { ASTNode } from '../../language/ast';
 import {
   isTypeDefinitionNode,
   isTypeSystemDefinitionNode,
-  isTypeSystemExtensionNode,
 } from '../../language/predicates';
 import type { ASTVisitor } from '../../language/visitor';
 
@@ -75,8 +74,5 @@ const standardTypeNames = [...specifiedScalarTypes, ...introspectionTypes].map(
 );
 
 function isSDLNode(value: ASTNode | ReadonlyArray<ASTNode>): boolean {
-  return (
-    'kind' in value &&
-    (isTypeSystemDefinitionNode(value) || isTypeSystemExtensionNode(value))
-  );
+  return 'kind' in value && isTypeSystemDefinitionNode(value);
 }

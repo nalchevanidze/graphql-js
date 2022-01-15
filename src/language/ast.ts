@@ -172,13 +172,6 @@ export type ASTNode =
   | EnumValueDefinitionNode
   | DataTypeDefinitionNode
   | DirectiveDefinitionNode
-  | SchemaExtensionNode
-  | ScalarTypeExtensionNode
-  | ObjectTypeExtensionNode
-  | InterfaceTypeExtensionNode
-  | UnionTypeExtensionNode
-  | EnumTypeExtensionNode
-  | InputObjectTypeExtensionNode
   | VariantDefinitionNode;
 
 /**
@@ -267,15 +260,6 @@ export const QueryDocumentKeys: {
   EnumValueDefinition: ['description', 'name', 'directives'],
   VariantDefinition: ['name', 'fields'],
   DirectiveDefinition: ['description', 'name', 'arguments', 'locations'],
-
-  SchemaExtension: ['directives', 'operationTypes'],
-
-  ScalarTypeExtension: ['name', 'directives'],
-  ObjectTypeExtension: ['name', 'interfaces', 'directives', 'fields'],
-  InterfaceTypeExtension: ['name', 'interfaces', 'directives', 'fields'],
-  UnionTypeExtension: ['name', 'directives', 'types'],
-  EnumTypeExtension: ['name', 'directives', 'values'],
-  InputObjectTypeExtension: ['name', 'directives', 'fields'],
 };
 
 const kindValues = new Set<string>(Object.keys(QueryDocumentKeys));
@@ -306,7 +290,6 @@ export interface DocumentNode {
 export type DefinitionNode =
   | ExecutableDefinitionNode
   | TypeSystemDefinitionNode
-  | TypeSystemExtensionNode;
 
 export type ExecutableDefinitionNode =
   | OperationDefinitionNode
@@ -664,74 +647,4 @@ export interface DirectiveDefinitionNode {
   readonly arguments?: ReadonlyArray<InputValueDefinitionNode>;
   readonly repeatable: boolean;
   readonly locations: ReadonlyArray<NameNode>;
-}
-
-/** Type System Extensions */
-
-export type TypeSystemExtensionNode = SchemaExtensionNode | TypeExtensionNode;
-
-export interface SchemaExtensionNode {
-  readonly kind: Kind.SCHEMA_EXTENSION;
-  readonly loc?: Location;
-  readonly directives?: ReadonlyArray<ConstDirectiveNode>;
-  readonly operationTypes?: ReadonlyArray<OperationTypeDefinitionNode>;
-}
-
-/** Type Extensions */
-
-export type TypeExtensionNode =
-  | ScalarTypeExtensionNode
-  | ObjectTypeExtensionNode
-  | InterfaceTypeExtensionNode
-  | UnionTypeExtensionNode
-  | EnumTypeExtensionNode
-  | InputObjectTypeExtensionNode;
-
-export interface ScalarTypeExtensionNode {
-  readonly kind: Kind.SCALAR_TYPE_EXTENSION;
-  readonly loc?: Location;
-  readonly name: NameNode;
-  readonly directives?: ReadonlyArray<ConstDirectiveNode>;
-}
-
-export interface ObjectTypeExtensionNode {
-  readonly kind: Kind.OBJECT_TYPE_EXTENSION;
-  readonly loc?: Location;
-  readonly name: NameNode;
-  readonly interfaces?: ReadonlyArray<NamedTypeNode>;
-  readonly directives?: ReadonlyArray<ConstDirectiveNode>;
-  readonly fields?: ReadonlyArray<FieldDefinitionNode>;
-}
-
-export interface InterfaceTypeExtensionNode {
-  readonly kind: Kind.INTERFACE_TYPE_EXTENSION;
-  readonly loc?: Location;
-  readonly name: NameNode;
-  readonly interfaces?: ReadonlyArray<NamedTypeNode>;
-  readonly directives?: ReadonlyArray<ConstDirectiveNode>;
-  readonly fields?: ReadonlyArray<FieldDefinitionNode>;
-}
-
-export interface UnionTypeExtensionNode {
-  readonly kind: Kind.UNION_TYPE_EXTENSION;
-  readonly loc?: Location;
-  readonly name: NameNode;
-  readonly directives?: ReadonlyArray<ConstDirectiveNode>;
-  readonly types?: ReadonlyArray<NamedTypeNode>;
-}
-
-export interface EnumTypeExtensionNode {
-  readonly kind: Kind.ENUM_TYPE_EXTENSION;
-  readonly loc?: Location;
-  readonly name: NameNode;
-  readonly directives?: ReadonlyArray<ConstDirectiveNode>;
-  readonly values?: ReadonlyArray<EnumValueDefinitionNode>;
-}
-
-export interface InputObjectTypeExtensionNode {
-  readonly kind: Kind.INPUT_OBJECT_TYPE_EXTENSION;
-  readonly loc?: Location;
-  readonly name: NameNode;
-  readonly directives?: ReadonlyArray<ConstDirectiveNode>;
-  readonly fields?: ReadonlyArray<InputValueDefinitionNode>;
 }

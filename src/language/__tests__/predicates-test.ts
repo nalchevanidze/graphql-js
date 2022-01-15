@@ -10,10 +10,8 @@ import {
   isExecutableDefinitionNode,
   isSelectionNode,
   isTypeDefinitionNode,
-  isTypeExtensionNode,
   isTypeNode,
   isTypeSystemDefinitionNode,
-  isTypeSystemExtensionNode,
   isValueNode,
 } from '../predicates';
 
@@ -35,14 +33,7 @@ describe('AST node predicates', () => {
       'InterfaceTypeDefinition',
       'UnionTypeDefinition',
       'DataTypeDefinition',
-      'DirectiveDefinition',
-      'SchemaExtension',
-      'ScalarTypeExtension',
-      'ObjectTypeExtension',
-      'InterfaceTypeExtension',
-      'UnionTypeExtension',
-      'EnumTypeExtension',
-      'InputObjectTypeExtension',
+      'DirectiveDefinition'
     ]);
   });
 
@@ -116,26 +107,4 @@ describe('AST node predicates', () => {
     ]);
   });
 
-  it('isTypeSystemExtensionNode', () => {
-    expect(filterNodes(isTypeSystemExtensionNode)).to.deep.equal([
-      'SchemaExtension',
-      'ScalarTypeExtension',
-      'ObjectTypeExtension',
-      'InterfaceTypeExtension',
-      'UnionTypeExtension',
-      'EnumTypeExtension',
-      'InputObjectTypeExtension',
-    ]);
-  });
-
-  it('isTypeExtensionNode', () => {
-    expect(filterNodes(isTypeExtensionNode)).to.deep.equal([
-      'ScalarTypeExtension',
-      'ObjectTypeExtension',
-      'InterfaceTypeExtension',
-      'UnionTypeExtension',
-      'EnumTypeExtension',
-      'InputObjectTypeExtension',
-    ]);
-  });
 });

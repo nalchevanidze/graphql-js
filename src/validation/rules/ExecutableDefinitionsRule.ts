@@ -22,8 +22,7 @@ export function ExecutableDefinitionsRule(
       for (const definition of node.definitions) {
         if (!isExecutableDefinitionNode(definition)) {
           const defName =
-            definition.kind === Kind.SCHEMA_DEFINITION ||
-            definition.kind === Kind.SCHEMA_EXTENSION
+            definition.kind === Kind.SCHEMA_DEFINITION
               ? 'schema'
               : '"' + definition.name.value + '"';
           context.reportError(

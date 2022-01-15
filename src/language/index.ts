@@ -80,15 +80,6 @@ export type {
   EnumValueDefinitionNode,
   DataTypeDefinitionNode,
   DirectiveDefinitionNode,
-  TypeSystemExtensionNode,
-  SchemaExtensionNode,
-  TypeExtensionNode,
-  ScalarTypeExtensionNode,
-  ObjectTypeExtensionNode,
-  InterfaceTypeExtensionNode,
-  UnionTypeExtensionNode,
-  EnumTypeExtensionNode,
-  InputObjectTypeExtensionNode,
 } from './ast';
 
 export {
@@ -100,8 +91,6 @@ export {
   isTypeNode,
   isTypeSystemDefinitionNode,
   isTypeDefinitionNode,
-  isTypeSystemExtensionNode,
-  isTypeExtensionNode,
 } from './predicates';
 
 export { DirectiveLocation } from './directiveLocation';

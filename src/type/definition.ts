@@ -18,21 +18,16 @@ import { GraphQLError } from '../error/GraphQLError';
 
 import type {
   DataTypeDefinitionNode,
-  EnumTypeExtensionNode,
   EnumValueDefinitionNode,
   FieldDefinitionNode,
   FieldNode,
   FragmentDefinitionNode,
   InputValueDefinitionNode,
   InterfaceTypeDefinitionNode,
-  InterfaceTypeExtensionNode,
   ObjectTypeDefinitionNode,
-  ObjectTypeExtensionNode,
   OperationDefinitionNode,
   ScalarTypeDefinitionNode,
-  ScalarTypeExtensionNode,
   UnionTypeDefinitionNode,
-  UnionTypeExtensionNode,
   ValueNode,
   VariantDefinitionNode,
 } from '../language/ast';
@@ -588,7 +583,6 @@ export class GraphQLScalarType<TInternal = unknown, TExternal = TInternal> {
   parseLiteral: GraphQLScalarLiteralParser<TInternal>;
   extensions: Readonly<GraphQLScalarTypeExtensions>;
   astNode: Maybe<ScalarTypeDefinitionNode>;
-  extensionASTNodes: ReadonlyArray<ScalarTypeExtensionNode>;
 
   constructor(config: Readonly<GraphQLScalarTypeConfig<TInternal, TExternal>>) {
     const parseValue =
@@ -606,7 +600,6 @@ export class GraphQLScalarType<TInternal = unknown, TExternal = TInternal> {
       ((node, variables) => parseValue(valueFromASTUntyped(node, variables)));
     this.extensions = toObjMap(config.extensions);
     this.astNode = config.astNode;
-    this.extensionASTNodes = config.extensionASTNodes ?? [];
 
     devAssert(
       config.specifiedByURL == null ||
@@ -643,7 +636,6 @@ export class GraphQLScalarType<TInternal = unknown, TExternal = TInternal> {
       parseLiteral: this.parseLiteral,
       extensions: this.extensions,
       astNode: this.astNode,
-      extensionASTNodes: this.extensionASTNodes,
     };
   }
 
@@ -681,7 +673,6 @@ export interface GraphQLScalarTypeConfig<TInternal, TExternal> {
   parseLiteral?: GraphQLScalarLiteralParser<TInternal>;
   extensions?: Maybe<Readonly<GraphQLScalarTypeExtensions>>;
   astNode?: Maybe<ScalarTypeDefinitionNode>;
-  extensionASTNodes?: Maybe<ReadonlyArray<ScalarTypeExtensionNode>>;
 }
 
 interface GraphQLScalarTypeNormalizedConfig<TInternal, TExternal>
@@ -690,7 +681,6 @@ interface GraphQLScalarTypeNormalizedConfig<TInternal, TExternal>
   parseValue: GraphQLScalarValueParser<TInternal>;
   parseLiteral: GraphQLScalarLiteralParser<TInternal>;
   extensions: Readonly<GraphQLScalarTypeExtensions>;
-  extensionASTNodes: ReadonlyArray<ScalarTypeExtensionNode>;
 }
 
 /**
@@ -755,7 +745,6 @@ export class GraphQLObjectType<TSource = any, TContext = any> {
   isTypeOf: Maybe<GraphQLIsTypeOfFn<TSource, TContext>>;
   extensions: Readonly<GraphQLObjectTypeExtensions<TSource, TContext>>;
   astNode: Maybe<ObjectTypeDefinitionNode>;
-  extensionASTNodes: ReadonlyArray<ObjectTypeExtensionNode>;
 
   private _fields: ThunkObjMap<GraphQLField<TSource, TContext>>;
   private _interfaces: ThunkReadonlyArray<GraphQLInterfaceType>;
@@ -766,7 +755,6 @@ export class GraphQLObjectType<TSource = any, TContext = any> {
     this.isTypeOf = config.isTypeOf;
     this.extensions = toObjMap(config.extensions);
     this.astNode = config.astNode;
-    this.extensionASTNodes = config.extensionASTNodes ?? [];
 
     this._fields = () => defineFieldMap(config);
     this._interfaces = () => defineInterfaces(config);
@@ -804,7 +792,6 @@ export class GraphQLObjectType<TSource = any, TContext = any> {
       isTypeOf: this.isTypeOf,
       extensions: this.extensions,
       astNode: this.astNode,
-      extensionASTNodes: this.extensionASTNodes,
     };
   }
 
@@ -934,7 +921,6 @@ export interface GraphQLObjectTypeConfig<TSource, TContext> {
   isTypeOf?: Maybe<GraphQLIsTypeOfFn<TSource, TContext>>;
   extensions?: Maybe<Readonly<GraphQLObjectTypeExtensions<TSource, TContext>>>;
   astNode?: Maybe<ObjectTypeDefinitionNode>;
-  extensionASTNodes?: Maybe<ReadonlyArray<ObjectTypeExtensionNode>>;
 }
 
 interface GraphQLObjectTypeNormalizedConfig<TSource, TContext>
@@ -942,7 +928,6 @@ interface GraphQLObjectTypeNormalizedConfig<TSource, TContext>
   interfaces: ReadonlyArray<GraphQLInterfaceType>;
   fields: GraphQLFieldConfigMap<any, any>;
   extensions: Readonly<GraphQLObjectTypeExtensions<TSource, TContext>>;
-  extensionASTNodes: ReadonlyArray<ObjectTypeExtensionNode>;
 }
 
 export type GraphQLTypeResolver<TSource, TContext> = (
@@ -1108,7 +1093,6 @@ export class GraphQLInterfaceType {
   resolveType: Maybe<GraphQLTypeResolver<any, any>>;
   extensions: Readonly<GraphQLInterfaceTypeExtensions>;
   astNode: Maybe<InterfaceTypeDefinitionNode>;
-  extensionASTNodes: ReadonlyArray<InterfaceTypeExtensionNode>;
 
   private _fields: ThunkObjMap<GraphQLField<any, any>>;
   private _interfaces: ThunkReadonlyArray<GraphQLInterfaceType>;
@@ -1119,7 +1103,6 @@ export class GraphQLInterfaceType {
     this.resolveType = config.resolveType;
     this.extensions = toObjMap(config.extensions);
     this.astNode = config.astNode;
-    this.extensionASTNodes = config.extensionASTNodes ?? [];
 
     this._fields = defineFieldMap.bind(undefined, config);
     this._interfaces = defineInterfaces.bind(undefined, config);
@@ -1157,7 +1140,6 @@ export class GraphQLInterfaceType {
       resolveType: this.resolveType,
       extensions: this.extensions,
       astNode: this.astNode,
-      extensionASTNodes: this.extensionASTNodes,
     };
   }
 
@@ -1183,7 +1165,6 @@ export interface GraphQLInterfaceTypeConfig<TSource, TContext> {
   resolveType?: Maybe<GraphQLTypeResolver<TSource, TContext>>;
   extensions?: Maybe<Readonly<GraphQLInterfaceTypeExtensions>>;
   astNode?: Maybe<InterfaceTypeDefinitionNode>;
-  extensionASTNodes?: Maybe<ReadonlyArray<InterfaceTypeExtensionNode>>;
 }
 
 export interface GraphQLInterfaceTypeNormalizedConfig
@@ -1191,7 +1172,6 @@ export interface GraphQLInterfaceTypeNormalizedConfig
   interfaces: ReadonlyArray<GraphQLInterfaceType>;
   fields: GraphQLFieldConfigMap<any, any>;
   extensions: Readonly<GraphQLInterfaceTypeExtensions>;
-  extensionASTNodes: ReadonlyArray<InterfaceTypeExtensionNode>;
 }
 
 /**
@@ -1237,7 +1217,6 @@ export class GraphQLUnionType {
   resolveType: Maybe<GraphQLTypeResolver<any, any>>;
   extensions: Readonly<GraphQLUnionTypeExtensions>;
   astNode: Maybe<UnionTypeDefinitionNode>;
-  extensionASTNodes: ReadonlyArray<UnionTypeExtensionNode>;
 
   private _types: ThunkReadonlyArray<GraphQLObjectType>;
 
@@ -1247,7 +1226,6 @@ export class GraphQLUnionType {
     this.resolveType = config.resolveType;
     this.extensions = toObjMap(config.extensions);
     this.astNode = config.astNode;
-    this.extensionASTNodes = config.extensionASTNodes ?? [];
 
     this._types = defineTypes.bind(undefined, config);
     devAssert(
@@ -1276,7 +1254,6 @@ export class GraphQLUnionType {
       resolveType: this.resolveType,
       extensions: this.extensions,
       astNode: this.astNode,
-      extensionASTNodes: this.extensionASTNodes,
     };
   }
 
@@ -1312,14 +1289,12 @@ export interface GraphQLUnionTypeConfig<TSource, TContext> {
   resolveType?: Maybe<GraphQLTypeResolver<TSource, TContext>>;
   extensions?: Maybe<Readonly<GraphQLUnionTypeExtensions>>;
   astNode?: Maybe<UnionTypeDefinitionNode>;
-  extensionASTNodes?: Maybe<ReadonlyArray<UnionTypeExtensionNode>>;
 }
 
 interface GraphQLUnionTypeNormalizedConfig
   extends GraphQLUnionTypeConfig<any, any> {
   types: ReadonlyArray<GraphQLObjectType>;
   extensions: Readonly<GraphQLUnionTypeExtensions>;
-  extensionASTNodes: ReadonlyArray<UnionTypeExtensionNode>;
 }
 
 /**
@@ -1363,7 +1338,6 @@ export class GraphQLEnumType /* <T> */ {
   description: Maybe<string>;
   extensions: Readonly<GraphQLEnumTypeExtensions>;
   astNode: Maybe<DataTypeDefinitionNode>;
-  extensionASTNodes: ReadonlyArray<EnumTypeExtensionNode>;
 
   private _values: ReadonlyArray<GraphQLEnumValue /* <T> */>;
   private _valueLookup: ReadonlyMap<any /* T */, GraphQLEnumValue>;
@@ -1374,7 +1348,6 @@ export class GraphQLEnumType /* <T> */ {
     this.description = config.description;
     this.extensions = toObjMap(config.extensions);
     this.astNode = config.astNode;
-    this.extensionASTNodes = config.extensionASTNodes ?? [];
 
     this._values = defineEnumValues(this.name, config.values);
     this._valueLookup = new Map(
@@ -1469,7 +1442,6 @@ export class GraphQLEnumType /* <T> */ {
       values,
       extensions: this.extensions,
       astNode: this.astNode,
-      extensionASTNodes: this.extensionASTNodes,
     };
   }
 
@@ -1523,12 +1495,10 @@ export interface GraphQLEnumTypeConfig {
   values: GraphQLEnumValueConfigMap /* <T> */;
   extensions?: Maybe<Readonly<GraphQLEnumTypeExtensions>>;
   astNode?: Maybe<DataTypeDefinitionNode>;
-  extensionASTNodes?: Maybe<ReadonlyArray<EnumTypeExtensionNode>>;
 }
 
 interface GraphQLEnumTypeNormalizedConfig extends GraphQLEnumTypeConfig {
   extensions: Readonly<GraphQLEnumTypeExtensions>;
-  extensionASTNodes: ReadonlyArray<EnumTypeExtensionNode>;
 }
 
 export type GraphQLEnumValueConfigMap /* <T> */ =
