@@ -197,9 +197,6 @@ export function assertNonNullType(type: unknown): GraphQLNonNull<GraphQLType> {
   return type;
 }
 
-/**
- * These types may be used as in-types for arguments and directives.
- */
 export type GraphQLInputType =
   | GraphQLScalarType
   | IrisDataType
@@ -224,9 +221,6 @@ export function assertInputType(type: unknown): GraphQLInputType {
   return type;
 }
 
-/**
- * These types may be used as output types as the result of fields.
- */
 export type GraphQLOutputType =
   | GraphQLScalarType
   | GraphQLObjectType
@@ -261,9 +255,6 @@ export function assertOutputType(type: unknown): GraphQLOutputType {
   return type;
 }
 
-/**
- * These types may describe types which may be leaf values.
- */
 export type GraphQLLeafType = GraphQLScalarType | IrisDataType;
 
 export function isLeafType(type: unknown): type is GraphQLLeafType {
@@ -314,25 +305,6 @@ export function assertAbstractType(type: unknown): GraphQLAbstractType {
   return type;
 }
 
-/**
- * List Type Wrapper
- *
- * A list is a wrapping type which points to another type.
- * Lists are often created within the context of defining the fields of
- * an object type.
- *
- * Example:
- *
- * ```ts
- * const PersonType = new GraphQLObjectType({
- *   name: 'Person',
- *   fields: () => ({
- *     parents: { type: new GraphQLList(PersonType) },
- *     children: { type: new GraphQLList(PersonType) },
- *   })
- * })
- * ```
- */
 export class GraphQLList<T extends GraphQLType> {
   readonly ofType: T;
 
@@ -358,27 +330,6 @@ export class GraphQLList<T extends GraphQLType> {
   }
 }
 
-/**
- * Non-Null Type Wrapper
- *
- * A non-null is a wrapping type which points to another type.
- * Non-null types enforce that their values are never null and can ensure
- * an error is raised if this ever occurs during a request. It is useful for
- * fields which you can make a strong guarantee on non-nullability, for example
- * usually the id field of a database row will never be null.
- *
- * Example:
- *
- * ```ts
- * const RowType = new GraphQLObjectType({
- *   name: 'Row',
- *   fields: () => ({
- *     id: { type: new GraphQLNonNull(GraphQLString) },
- *   })
- * })
- * ```
- * Note: the enforcement of non-nullability occurs within the executor.
- */
 export class GraphQLNonNull<T extends GraphQLNullableType> {
   readonly ofType: T;
 
@@ -797,9 +748,7 @@ export class GraphQLObjectType<TSource = any, TContext = any> {
 }
 
 function defineInterfaces(
-  config: Readonly<
-    GraphQLObjectTypeConfig<any, any> | GraphQLInterfaceTypeConfig<any, any>
-  >,
+  config: Readonly<GraphQLObjectTypeConfig<any, any>>,
 ): ReadonlyArray<GraphQLInterfaceType> {
   const interfaces = resolveReadonlyArrayThunk(config.interfaces ?? []);
   devAssert(
@@ -861,7 +810,6 @@ export function defineArguments(
     type: argConfig.type,
     defaultValue: argConfig.defaultValue,
     deprecationReason: argConfig.deprecationReason,
-    extensions: toObjMap(argConfig.extensions),
     astNode: argConfig.astNode,
   }));
 }
@@ -899,7 +847,6 @@ export function argsToArgsConfig(
       type: arg.type,
       defaultValue: arg.defaultValue,
       deprecationReason: arg.deprecationReason,
-      extensions: arg.extensions,
       astNode: arg.astNode,
     }),
   );
@@ -991,25 +938,11 @@ export interface GraphQLFieldConfig<TSource, TContext, TArgs = any> {
 
 export type GraphQLFieldConfigArgumentMap = ObjMap<GraphQLArgumentConfig>;
 
-/**
- * Custom extensions
- *
- * @remarks
- * Use a unique identifier name for your extension, for example the name of
- * your library or project. Do not use a shortened identifier as this increases
- * the risk of conflicts. We recommend you add at most one extension field,
- * an object which can contain all the values you need.
- */
-export interface GraphQLArgumentExtensions {
-  [attributeName: string]: unknown;
-}
-
 export interface GraphQLArgumentConfig {
   description?: Maybe<string>;
   type: GraphQLInputType;
   defaultValue?: unknown;
   deprecationReason?: Maybe<string>;
-  extensions?: Maybe<Readonly<GraphQLArgumentExtensions>>;
   astNode?: Maybe<InputValueDefinitionNode>;
 }
 
@@ -1035,7 +968,6 @@ export interface GraphQLArgument {
   type: GraphQLInputType;
   defaultValue: unknown;
   deprecationReason: Maybe<string>;
-  extensions: Readonly<GraphQLArgumentExtensions>;
   astNode: Maybe<InputValueDefinitionNode>;
 }
 
@@ -1047,57 +979,20 @@ export type GraphQLFieldMap<TSource, TContext> = ObjMap<
   GraphQLField<TSource, TContext>
 >;
 
-/**
- * Custom extensions
- *
- * @remarks
- * Use a unique identifier name for your extension, for example the name of
- * your library or project. Do not use a shortened identifier as this increases
- * the risk of conflicts. We recommend you add at most one extension field,
- * an object which can contain all the values you need.
- */
-export interface GraphQLInterfaceTypeExtensions {
-  [attributeName: string]: unknown;
-}
-
-/**
- * Interface Type Definition
- *
- * When a field can return one of a heterogeneous set of types, a Interface type
- * is used to describe what types are possible, what fields are in common across
- * all types, as well as a function to determine which type is actually used
- * when the field is resolved.
- *
- * Example:
- *
- * ```ts
- * const EntityType = new GraphQLInterfaceType({
- *   name: 'Entity',
- *   fields: {
- *     name: { type: GraphQLString }
- *   }
- * });
- * ```
- */
 export class GraphQLInterfaceType {
   name: string;
   description: Maybe<string>;
   resolveType: Maybe<GraphQLTypeResolver<any, any>>;
-  extensions: Readonly<GraphQLInterfaceTypeExtensions>;
   astNode: Maybe<InterfaceTypeDefinitionNode>;
-
   private _fields: ThunkObjMap<GraphQLField<any, any>>;
-  private _interfaces: ThunkReadonlyArray<GraphQLInterfaceType>;
 
   constructor(config: Readonly<GraphQLInterfaceTypeConfig<any, any>>) {
     this.name = assertName(config.name);
     this.description = config.description;
     this.resolveType = config.resolveType;
-    this.extensions = toObjMap(config.extensions);
     this.astNode = config.astNode;
 
     this._fields = defineFieldMap.bind(undefined, config);
-    this._interfaces = defineInterfaces.bind(undefined, config);
     devAssert(
       config.resolveType == null || typeof config.resolveType === 'function',
       `${this.name} must provide "resolveType" as a function, ` +
@@ -1116,21 +1011,12 @@ export class GraphQLInterfaceType {
     return this._fields;
   }
 
-  getInterfaces(): ReadonlyArray<GraphQLInterfaceType> {
-    if (typeof this._interfaces === 'function') {
-      this._interfaces = this._interfaces();
-    }
-    return this._interfaces;
-  }
-
   toConfig(): GraphQLInterfaceTypeNormalizedConfig {
     return {
       name: this.name,
       description: this.description,
-      interfaces: this.getInterfaces(),
       fields: fieldsToFieldsConfig(this.getFields()),
       resolveType: this.resolveType,
-      extensions: this.extensions,
       astNode: this.astNode,
     };
   }
@@ -1147,53 +1033,17 @@ export class GraphQLInterfaceType {
 export interface GraphQLInterfaceTypeConfig<TSource, TContext> {
   name: string;
   description?: Maybe<string>;
-  interfaces?: ThunkReadonlyArray<GraphQLInterfaceType>;
   fields: ThunkObjMap<GraphQLFieldConfig<TSource, TContext>>;
-  /**
-   * Optionally provide a custom type resolver function. If one is not provided,
-   * the default implementation will call `isTypeOf` on each implementing
-   * Object type.
-   */
   resolveType?: Maybe<GraphQLTypeResolver<TSource, TContext>>;
-  extensions?: Maybe<Readonly<GraphQLInterfaceTypeExtensions>>;
   astNode?: Maybe<InterfaceTypeDefinitionNode>;
 }
 
 export interface GraphQLInterfaceTypeNormalizedConfig
   extends GraphQLInterfaceTypeConfig<any, any> {
-  interfaces: ReadonlyArray<GraphQLInterfaceType>;
   fields: GraphQLFieldConfigMap<any, any>;
-  extensions: Readonly<GraphQLInterfaceTypeExtensions>;
 }
 
-
-
-/**
- * Union Type Definition
- *
- * When a field can return one of a heterogeneous set of types, a Union type
- * is used to describe what types are possible as well as providing a function
- * to determine which type is actually used when the field is resolved.
- *
- * Example:
- *
- * ```ts
- * const PetType = new IrisResolverType({
- *   name: 'Pet',
- *   variants: [ DogType, CatType ],
- *   resolveType(value) {
- *     if (value instanceof Dog) {
- *       return DogType;
- *     }
- *     if (value instanceof Cat) {
- *       return CatType;
- *     }
- *   }
- * });
- * ```
- */
-
-export type GraphQLUnionType = IrisResolverType
+export type GraphQLUnionType = IrisResolverType;
 
 export class IrisResolverType {
   name: string;
@@ -1247,7 +1097,6 @@ export class IrisResolverType {
   }
 }
 
-
 function defineTypes(
   config: Readonly<GraphQLUnionTypeConfig<unknown, unknown>>,
 ): ReadonlyArray<GraphQLObjectType> {
@@ -1272,32 +1121,6 @@ interface GraphQLUnionTypeNormalizedConfig
   types: ReadonlyArray<GraphQLObjectType>;
 }
 
-
-
-/**
- * Data Type Definition
- *
- * Some leaf values of requests and input values are Enums. GraphQL serializes
- * Enum values as strings, however internally Enums can be represented by any
- * kind of type, often integers.
- *
- * Example:
- *
- * ```ts
- * const RGBType = new IrisDataType({
- *   name: 'RGB',
- *   variants: {
- *     RED: { value: 0 },
- *     GREEN: { value: 1 },
- *     BLUE: { value: 2 }
- *   }
- * });
- * ```
- *
- * Note: If a value is not provided in a definition, the name of the Enum value
- * will be used as its internal value.
- */
-
 export interface IrisDataTypeConfig {
   name: string;
   description?: Maybe<string>;
@@ -1318,7 +1141,6 @@ export class IrisDataType {
 
   private _values: ReadonlyArray<GraphQLEnumValue /* <T> */>;
   private _valueLookup: ReadonlyMap<any /* T */, GraphQLEnumValue>;
-  private _nameLookup: ObjMap<GraphQLEnumValue>;
   private _fields: ThunkObjMap<GraphQLInputField>;
 
   constructor(config: Readonly<IrisDataTypeConfig>) {
@@ -1336,7 +1158,6 @@ export class IrisDataType {
     this._valueLookup = new Map(
       this._values.map((enumValue) => [enumValue.value, enumValue]),
     );
-    this._nameLookup = keyMap(this._values, (value) => value.name);
   }
 
   get [Symbol.toStringTag]() {
@@ -1388,7 +1209,7 @@ export class IrisDataType {
   }
 
   getValue(name: string): Maybe<GraphQLEnumValue> {
-    return this._nameLookup[name];
+    return keyMap(this._values, (value) => value.name)[name];
   }
 
   serialize(outputValue: unknown /* T */): Maybe<string> {
@@ -1489,7 +1310,7 @@ function defineEnumValues(
   });
 }
 
-export type GraphQLEnumValueConfigMap = ObjMap<GraphQLEnumValueConfig >;
+export type GraphQLEnumValueConfigMap = ObjMap<GraphQLEnumValueConfig>;
 
 export interface GraphQLEnumValueConfig {
   description?: Maybe<string>;
@@ -1505,29 +1326,6 @@ export interface GraphQLEnumValue {
   deprecationReason: Maybe<string>;
   astNode: Maybe<EnumValueDefinitionNode>;
 }
-
-
-/**
- * Input Object Type Definition
- *
- * An input object defines a structured collection of fields which may be
- * supplied to a field argument.
- *
- * Using `NonNull` will ensure that a value must be provided by the query
- *
- * Example:
- *
- * ```ts
- * const GeoPoint = new IrisDataType({
- *   name: 'GeoPoint',
- *   fields: {
- *     lat: { type: new GraphQLNonNull(GraphQLFloat) },
- *     lon: { type: new GraphQLNonNull(GraphQLFloat) },
- *     alt: { type: GraphQLFloat, defaultValue: 0 },
- *   }
- * });
- * ```
- */
 
 function defineInputFieldMap(
   config: Readonly<IrisDataTypeConfig>,
@@ -1553,7 +1351,6 @@ function defineInputFieldMap(
     };
   });
 }
-
 
 export interface GraphQLInputFieldConfig {
   description?: Maybe<string>;

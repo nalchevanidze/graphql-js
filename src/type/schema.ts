@@ -8,9 +8,7 @@ import { toObjMap } from '../jsutils/toObjMap';
 
 import type { GraphQLError } from '../error/GraphQLError';
 
-import type {
-  SchemaDefinitionNode,
-} from '../language/ast';
+import type { SchemaDefinitionNode } from '../language/ast';
 import { OperationTypeNode } from '../language/ast';
 
 import type {
@@ -228,20 +226,14 @@ export class GraphQLSchema {
       this._typeMap[typeName] = namedType;
 
       if (isInterfaceType(namedType)) {
-        // Store implementations by interface.
-        for (const iface of namedType.getInterfaces()) {
-          if (isInterfaceType(iface)) {
-            let implementations = this._implementationsMap[iface.name];
-            if (implementations === undefined) {
-              implementations = this._implementationsMap[iface.name] = {
-                objects: [],
-                interfaces: [],
-              };
-            }
-
-            implementations.interfaces.push(namedType);
-          }
+        let implementations = this._implementationsMap[namedType.name];
+        if (implementations === undefined) {
+          implementations = this._implementationsMap[namedType.name] = {
+            objects: [],
+            interfaces: [],
+          };
         }
+        implementations.interfaces.push(namedType);
       } else if (isObjectType(namedType)) {
         // Store implementations by objects.
         for (const iface of namedType.getInterfaces()) {
@@ -409,7 +401,7 @@ function collectReferencedTypes(
       for (const memberType of namedType.getTypes()) {
         collectReferencedTypes(memberType, typeSet);
       }
-    } else if (isObjectType(namedType) || isInterfaceType(namedType)) {
+    } else if (isObjectType(namedType)) {
       for (const interfaceType of namedType.getInterfaces()) {
         collectReferencedTypes(interfaceType, typeSet);
       }

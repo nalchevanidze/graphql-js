@@ -8,13 +8,13 @@ import { print } from '../language/printer';
 
 import type {
   GraphQLArgument,
-  IrisDataType,
   GraphQLInputField,
   GraphQLInterfaceType,
   GraphQLNamedType,
   GraphQLObjectType,
   GraphQLScalarType,
   GraphQLUnionType,
+  IrisDataType,
 } from '../type/definition';
 import {
   isEnumType,
@@ -155,7 +155,7 @@ function printScalar(type: GraphQLScalarType): string {
 }
 
 function printImplementedInterfaces(
-  type: GraphQLObjectType | GraphQLInterfaceType,
+  type: GraphQLObjectType ,
 ): string {
   const interfaces = type.getInterfaces();
   return interfaces.length
@@ -174,10 +174,7 @@ function printObject(type: GraphQLObjectType): string {
 
 function printInterface(type: GraphQLInterfaceType): string {
   return (
-    printDescription(type) +
-    `interface ${type.name}` +
-    printImplementedInterfaces(type) +
-    printFields(type)
+    printDescription(type) + `interface ${type.name}` + printFields(type)
   );
 }
 

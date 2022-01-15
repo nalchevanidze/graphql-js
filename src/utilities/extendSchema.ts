@@ -317,10 +317,6 @@ export function extendSchemaImpl(
 
     return new GraphQLInterfaceType({
       ...config,
-      interfaces: () => [
-        ...type.getInterfaces().map(replaceNamedType),
-        ...buildInterfaces(extensions),
-      ],
       fields: () => ({
         ...mapValue(config.fields, extendField),
         ...buildFieldMap(extensions),
@@ -558,7 +554,6 @@ export function extendSchemaImpl(
         return new GraphQLInterfaceType({
           name,
           description: astNode.description?.value,
-          interfaces: () => buildInterfaces(allNodes),
           fields: () => buildFieldMap(allNodes),
           astNode
         });

@@ -487,54 +487,10 @@ describe('Type System: Interfaces', () => {
     ).to.not.throw();
   });
 
-  it('accepts an Interface type with an array of interfaces', () => {
-    const implementing = new GraphQLInterfaceType({
-      name: 'AnotherInterface',
-      fields: {},
-      interfaces: [InterfaceType],
-    });
-    expect(implementing.getInterfaces()).to.deep.equal([InterfaceType]);
-  });
-
-  it('accepts an Interface type with interfaces as a function returning an array', () => {
-    const implementing = new GraphQLInterfaceType({
-      name: 'AnotherInterface',
-      fields: {},
-      interfaces: () => [InterfaceType],
-    });
-    expect(implementing.getInterfaces()).to.deep.equal([InterfaceType]);
-  });
-
   it('rejects an Interface type with invalid name', () => {
     expect(
       () => new GraphQLInterfaceType({ name: 'bad-name', fields: {} }),
     ).to.throw('Names must only contain [_a-zA-Z0-9] but "bad-name" does not.');
-  });
-
-  it('rejects an Interface type with incorrectly typed interfaces', () => {
-    const objType = new GraphQLInterfaceType({
-      name: 'AnotherInterface',
-      fields: {},
-      // @ts-expect-error
-      interfaces: {},
-    });
-    expect(() => objType.getInterfaces()).to.throw(
-      'AnotherInterface interfaces must be an Array or a function which returns an Array.',
-    );
-  });
-
-  it('rejects an Interface type with interfaces as a function returning an incorrect type', () => {
-    const objType = new GraphQLInterfaceType({
-      name: 'AnotherInterface',
-      fields: {},
-      // @ts-expect-error (Expected Array return)
-      interfaces() {
-        return {};
-      },
-    });
-    expect(() => objType.getInterfaces()).to.throw(
-      'AnotherInterface interfaces must be an Array or a function which returns an Array.',
-    );
   });
 
   it('rejects an Interface type with an incorrect type for resolveType', () => {

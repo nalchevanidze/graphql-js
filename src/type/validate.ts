@@ -9,7 +9,7 @@ import type {
   InterfaceTypeDefinitionNode,
   NamedTypeNode,
   ObjectTypeDefinitionNode,
-  UnionTypeDefinitionNode
+  UnionTypeDefinitionNode,
 } from '../language/ast';
 import { OperationTypeNode } from '../language/ast';
 
@@ -235,9 +235,6 @@ function validateTypes(context: SchemaValidationContext): void {
     } else if (isInterfaceType(type)) {
       // Ensure fields are valid.
       validateFields(context, type);
-
-      // Ensure interfaces implement the interfaces they claim to.
-      validateInterfaces(context, type);
     } else if (isUnionType(type)) {
       // Ensure Unions include valid member types.
       validateUnionMembers(context, type);
@@ -263,7 +260,7 @@ function validateFields(
   // Objects and Interfaces both must define one or more fields.
   if (fields.length === 0) {
     context.reportError(`Type ${type.name} must define one or more fields.`, [
-      type.astNode
+      type.astNode,
     ]);
   }
 
@@ -308,7 +305,7 @@ function validateFields(
 
 function validateInterfaces(
   context: SchemaValidationContext,
-  type: GraphQLObjectType | GraphQLInterfaceType,
+  type: GraphQLObjectType,
 ): void {
   const ifaceTypeNames = Object.create(null);
   for (const iface of type.getInterfaces()) {
@@ -321,7 +318,7 @@ function validateInterfaces(
       continue;
     }
 
-    if (type === iface) {
+    if (type.name === iface.name) {
       context.reportError(
         `Type ${type.name} cannot implement itself because it would create a circular reference.`,
         getAllImplementsInterfaceNodes(type, iface),
@@ -360,7 +357,7 @@ function validateTypeImplementsInterface(
     if (!typeField) {
       context.reportError(
         `Interface field ${iface.name}.${fieldName} expected but ${type.name} does not provide it.`,
-        [ifaceField.astNode, type.astNode ],
+        [ifaceField.astNode, type.astNode],
       );
       continue;
     }
@@ -422,22 +419,19 @@ function validateTypeImplementsInterface(
 
 function validateTypeImplementsAncestors(
   context: SchemaValidationContext,
-  type: GraphQLObjectType | GraphQLInterfaceType,
+  type: GraphQLObjectType,
   iface: GraphQLInterfaceType,
 ): void {
-  const ifaceInterfaces = type.getInterfaces();
-  for (const transitive of iface.getInterfaces()) {
-    if (!ifaceInterfaces.includes(transitive)) {
-      context.reportError(
-        transitive === type
-          ? `Type ${type.name} cannot implement ${iface.name} because it would create a circular reference.`
-          : `Type ${type.name} must implement ${transitive.name} because it is implemented by ${iface.name}.`,
-        [
-          ...getAllImplementsInterfaceNodes(iface, transitive),
-          ...getAllImplementsInterfaceNodes(type, iface),
-        ],
-      );
-    }
+  if (!type.getInterfaces().includes(iface)) {
+    context.reportError(
+      iface.name === type.name
+        ? `Type ${type.name} cannot implement ${iface.name} because it would create a circular reference.`
+        : `Type ${type.name} must implement ${iface.name} because it is implemented by ${iface.name}.`,
+      [
+        ...getAllImplementsInterfaceNodes(iface, iface),
+        ...getAllImplementsInterfaceNodes(type, iface),
+      ],
+    );
   }
 }
 
@@ -450,7 +444,7 @@ function validateUnionMembers(
   if (memberTypes.length === 0) {
     context.reportError(
       `Union type ${adt.name} must define one or more member types.`,
-      [adt.astNode ],
+      [adt.astNode],
     );
   }
 
@@ -483,7 +477,7 @@ function validateEnumValues(
   if (enumValues.length === 0) {
     context.reportError(
       `Enum type ${enumType.name} must define one or more values.`,
-      [enumType.astNode ],
+      [enumType.astNode],
     );
   }
 
@@ -580,8 +574,7 @@ function getAllImplementsInterfaceNodes(
 ): ReadonlyArray<NamedTypeNode> {
   const { astNode } = type;
   const nodes: ReadonlyArray<
-    | ObjectTypeDefinitionNode
-    | InterfaceTypeDefinitionNode
+    ObjectTypeDefinitionNode | InterfaceTypeDefinitionNode
   > = astNode != null ? [astNode] : [];
 
   // FIXME: https://github.com/graphql/graphql-js/issues/2203
@@ -595,7 +588,7 @@ function getUnionMemberTypeNodes(
   typeName: string,
 ): Maybe<ReadonlyArray<NamedTypeNode>> {
   const { astNode } = union;
-  const nodes: ReadonlyArray<UnionTypeDefinitionNode > =
+  const nodes: ReadonlyArray<UnionTypeDefinitionNode> =
     astNode != null ? [astNode] : [];
 
   // FIXME: https://github.com/graphql/graphql-js/issues/2203

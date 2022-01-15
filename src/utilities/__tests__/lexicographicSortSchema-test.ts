@@ -63,44 +63,6 @@ describe('lexicographicSortSchema', () => {
     `);
   });
 
-  it('sort implemented interfaces', () => {
-    const sorted = sortSDL(`
-      interface FooA {
-        dummy: String
-      }
-
-      interface FooB {
-        dummy: String
-      }
-
-      interface FooC implements FooB & FooA {
-        dummy: String
-      }
-
-      type Query implements FooB & FooA & FooC {
-        dummy: String
-      }
-    `);
-
-    expect(sorted).to.equal(dedent`
-      interface FooA {
-        dummy: String
-      }
-
-      interface FooB {
-        dummy: String
-      }
-
-      interface FooC implements FooA & FooB {
-        dummy: String
-      }
-
-      type Query implements FooA & FooB & FooC {
-        dummy: String
-      }
-    `);
-  });
-
   it('sort types in union', () => {
     const sorted = sortSDL(`
       type FooA {

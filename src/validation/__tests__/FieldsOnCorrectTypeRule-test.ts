@@ -364,50 +364,6 @@ describe('Validate: Fields on correct type', () => {
       );
     });
 
-    it('Sort type suggestions based on inheritance order', () => {
-      const interfaceSchema = buildSchema(`
-        interface T { bar: String }
-        type Query { t: T }
-
-        interface Z implements T {
-          foo: String
-          bar: String
-        }
-
-        interface Y implements Z & T {
-          foo: String
-          bar: String
-        }
-
-        type X implements Y & Z & T {
-          foo: String
-          bar: String
-        }
-      `);
-
-      expectErrorMessage(interfaceSchema, '{ t { foo } }').to.equal(
-        'Cannot query field "foo" on type "T". Did you mean to use an inline fragment on "Z", "Y", or "X"?',
-      );
-
-      const unionSchema = buildSchema(`
-        interface Animal { name: String }
-        interface Mammal implements Animal { name: String }
-
-        interface Canine implements Animal & Mammal { name: String }
-        type Dog implements Animal & Mammal & Canine { name: String }
-
-        interface Feline implements Animal & Mammal { name: String }
-        type Cat implements Animal & Mammal & Feline { name: String }
-
-        resolver CatOrDog = Cat | Dog
-        type Query { catOrDog: CatOrDog }
-      `);
-
-      expectErrorMessage(unionSchema, '{ catOrDog { name } }').to.equal(
-        'Cannot query field "name" on type "CatOrDog". Did you mean to use an inline fragment on "Animal", "Mammal", "Canine", "Dog", or "Feline"?',
-      );
-    });
-
     it('Limits lots of type suggestions', () => {
       const schema = buildSchema(`
         resolver T = A | B | C | D | E | F
