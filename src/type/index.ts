@@ -101,7 +101,7 @@ export type {
   GraphQLInputFieldConfigMap,
   GraphQLInputFieldExtensions,
   GraphQLInputFieldMap,
-  GraphQLInputObjectTypeConfig,
+  IrisDataTypeConfig,
   GraphQLInputObjectTypeExtensions,
   GraphQLInterfaceTypeConfig,
   GraphQLInterfaceTypeExtensions,

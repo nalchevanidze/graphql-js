@@ -1575,7 +1575,7 @@ export class GraphQLInputObjectType {
 
   private _fields: ThunkObjMap<GraphQLInputField>;
 
-  constructor(config: Readonly<GraphQLInputObjectTypeConfig>) {
+  constructor(config: Readonly<IrisDataTypeConfig>) {
     this.name = assertName(config.name);
     this.description = config.description;
     this.astNode = config.astNode;
@@ -1624,7 +1624,7 @@ export class GraphQLInputObjectType {
 }
 
 function defineInputFieldMap(
-  config: Readonly<GraphQLInputObjectTypeConfig>,
+  config: Readonly<IrisDataTypeConfig>,
 ): GraphQLInputFieldMap {
   const fieldMap = resolveObjMapThunk(config.fields);
   devAssert(
@@ -1649,7 +1649,7 @@ function defineInputFieldMap(
   });
 }
 
-export interface GraphQLInputObjectTypeConfig {
+export interface IrisDataTypeConfig {
   name: string;
   description?: Maybe<string>;
   fields: ThunkObjMap<GraphQLInputFieldConfig>;
@@ -1657,7 +1657,7 @@ export interface GraphQLInputObjectTypeConfig {
 }
 
 interface GraphQLInputObjectTypeNormalizedConfig
-  extends GraphQLInputObjectTypeConfig {
+  extends IrisDataTypeConfig {
   fields: GraphQLInputFieldConfigMap;
 }
 
