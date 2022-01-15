@@ -59,6 +59,7 @@
     "@types/chai": "4.3.0",
     "@types/mocha": "9.0.0",
     "@types/node": "17.0.5",
+    "@types/ramda": "^0.27.63",
     "@typescript-eslint/eslint-plugin": "5.8.0",
     "@typescript-eslint/parser": "5.8.0",
     "c8": "7.10.0",
@@ -76,5 +77,8 @@
   },
   "publishConfig": {
     "tag": "latest"
+  },
+  "dependencies": {
+    "ramda": "^0.27.2"
   }
 }
