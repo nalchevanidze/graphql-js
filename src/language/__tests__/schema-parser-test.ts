@@ -713,38 +713,38 @@ describe('Schema Parser', () => {
     });
   });
 
-  it('Simple input object', () => {
+  it('Simple data object', () => {
     const doc = parse(`
-input Hello {
-  world: String
-}`);
+    data Hello {
+      world: String
+    }`);
 
     expectJSON(doc).toDeepEqual({
       kind: 'Document',
       definitions: [
         {
           kind: 'InputObjectTypeDefinition',
-          name: nameNode('Hello', { start: 7, end: 12 }),
+          name: nameNode('Hello', { start: 10, end: 15 }),
           description: undefined,
           directives: [],
           fields: [
             inputValueNode(
-              nameNode('world', { start: 17, end: 22 }),
-              typeNode('String', { start: 24, end: 30 }),
+              nameNode('world', { start: 24, end: 29 }),
+              typeNode('String', { start: 31, end: 37 }),
               undefined,
-              { start: 17, end: 30 },
+              { start: 24, end: 37 },
             ),
           ],
-          loc: { start: 1, end: 32 },
+          loc: { start: 5, end: 43 },
         },
       ],
-      loc: { start: 0, end: 32 },
+      loc: { start: 0, end: 43 },
     });
   });
 
-  it('Simple input object with args should fail', () => {
+  it('Simple data object with args should fail', () => {
     expectSyntaxError(`
-      input Hello {
+      data  Hello {
         world(foo: Int): String
       }
     `).to.deep.equal({

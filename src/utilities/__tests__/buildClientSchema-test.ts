@@ -407,10 +407,10 @@ describe('Type System: build schema from introspection', () => {
     ]);
   });
 
-  it('builds a schema with an input object', () => {
+  it('builds a schema with an data object', () => {
     const sdl = dedent`
       """An input address"""
-      input Address {
+      data Address {
         """What street is this address?"""
         street: String!
 
@@ -435,7 +435,7 @@ describe('Type System: build schema from introspection', () => {
 
   it('builds a schema with field arguments with default values', () => {
     const sdl = dedent`
-      input Geo {
+      data Geo {
         lat: Float
         lon: Float
       }
@@ -509,7 +509,7 @@ describe('Type System: build schema from introspection', () => {
         MAUVE @deprecated(reason: "No longer in fashion")
       }
 
-      input SomeInputObject {
+      data SomeInputObject {
         """Nothing special about it, just deprecated for some unknown reason"""
         oldField: String @deprecated(reason: "Don't use it, use newField instead!")
 
@@ -549,7 +549,7 @@ describe('Type System: build schema from introspection', () => {
         someField(someArg: SomeInputObject @deprecated(reason: "")): SomeEnum @deprecated(reason: "")
       }
 
-      input SomeInputObject {
+      data SomeInputObject {
         someInputField: String @deprecated(reason: "")
       }
 
@@ -621,7 +621,7 @@ describe('Type System: build schema from introspection', () => {
 
       enum SomeEnum { FOO }
 
-      input SomeInputObject {
+      data SomeInputObject {
         foo: String
       }
 

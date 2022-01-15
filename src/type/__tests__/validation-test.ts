@@ -51,7 +51,7 @@ const SomeSchema = buildSchema(`
 
   enum SomeEnum { ONLY }
 
-  input SomeInputObject { val: String = "hello" }
+  data  SomeInputObject { val: String = "hello" }
 
   directive @SomeDirective on QUERY
 `);
@@ -225,7 +225,7 @@ describe('Type System: A Schema must have Object root types', () => {
 
   it('rejects a Schema whose query root type is not an Object type', () => {
     const schema = buildSchema(`
-      input Query {
+      data  Query {
         test: String
       }
     `);
@@ -241,7 +241,7 @@ describe('Type System: A Schema must have Object root types', () => {
         query: SomeInputObject
       }
 
-      input SomeInputObject {
+      data SomeInputObject {
         test: String
       }
     `);
@@ -254,13 +254,13 @@ describe('Type System: A Schema must have Object root types', () => {
     ]);
   });
 
-  it('rejects a Schema whose mutation type is an input type', () => {
+  it('rejects a Schema whose mutation type is an data type', () => {
     const schema = buildSchema(`
       type Query {
         field: String
       }
 
-      input Mutation {
+      data Mutation {
         test: String
       }
     `);
@@ -282,7 +282,7 @@ describe('Type System: A Schema must have Object root types', () => {
         field: String
       }
 
-      input SomeInputObject {
+      data SomeInputObject {
         test: String
       }
     `);
@@ -295,13 +295,13 @@ describe('Type System: A Schema must have Object root types', () => {
     ]);
   });
 
-  it('rejects a Schema whose subscription type is an input type', () => {
+  it('rejects a Schema whose subscription type is an data type', () => {
     const schema = buildSchema(`
       type Query {
         field: String
       }
 
-      input Subscription {
+      data Subscription {
         test: String
       }
     `);
@@ -323,7 +323,7 @@ describe('Type System: A Schema must have Object root types', () => {
         field: String
       }
 
-      input SomeInputObject {
+      data SomeInputObject {
         test: String
       }
     `);
@@ -645,7 +645,7 @@ describe('Type System: Input Objects must have fields', () => {
         field(arg: SomeInputObject): String
       }
 
-      input SomeInputObject {
+      data SomeInputObject {
         field: String
       }
     `);
@@ -658,7 +658,7 @@ describe('Type System: Input Objects must have fields', () => {
         field(arg: SomeInputObject): String
       }
 
-      input SomeInputObject
+      data  SomeInputObject
     `);
 
     expectJSON(validateSchema(schema)).toDeepEqual([
@@ -676,7 +676,7 @@ describe('Type System: Input Objects must have fields', () => {
         field(arg: SomeInputObject): String
       }
 
-      input SomeInputObject {
+      data  SomeInputObject {
         self: SomeInputObject
         arrayOfSelf: [SomeInputObject]
         nonNullArrayOfSelf: [SomeInputObject]!
@@ -684,7 +684,7 @@ describe('Type System: Input Objects must have fields', () => {
         intermediateSelf: AnotherInputObject
       }
 
-      input AnotherInputObject {
+      data  AnotherInputObject {
         parent: SomeInputObject
       }
     `);
@@ -698,7 +698,7 @@ describe('Type System: Input Objects must have fields', () => {
         field(arg: SomeInputObject): String
       }
 
-      input SomeInputObject {
+      data  SomeInputObject {
         nonNullSelf: SomeInputObject!
       }
     `);
@@ -718,15 +718,15 @@ describe('Type System: Input Objects must have fields', () => {
         field(arg: SomeInputObject): String
       }
 
-      input SomeInputObject {
+      data  SomeInputObject {
         startLoop: AnotherInputObject!
       }
 
-      input AnotherInputObject {
+      data  AnotherInputObject {
         nextInLoop: YetAnotherInputObject!
       }
 
-      input YetAnotherInputObject {
+      data  YetAnotherInputObject {
         closeLoop: SomeInputObject!
       }
     `);
@@ -750,16 +750,16 @@ describe('Type System: Input Objects must have fields', () => {
         field(arg: SomeInputObject): String
       }
 
-      input SomeInputObject {
+      data  SomeInputObject {
         startLoop: AnotherInputObject!
       }
 
-      input AnotherInputObject {
+      data  AnotherInputObject {
         closeLoop: SomeInputObject!
         startSecondLoop: YetAnotherInputObject!
       }
 
-      input YetAnotherInputObject {
+      data  YetAnotherInputObject {
         closeSecondLoop: AnotherInputObject!
         nonNullSelf: YetAnotherInputObject!
       }
@@ -802,7 +802,7 @@ describe('Type System: Input Objects must have fields', () => {
 
       resolver SomeUnion = SomeObject
 
-      input SomeInputObject {
+      data  SomeInputObject {
         badObject: SomeObject
         badUnion: SomeUnion
         goodInputObject: SomeInputObject
@@ -828,7 +828,7 @@ describe('Type System: Input Objects must have fields', () => {
         field(arg: SomeInputObject): String
       }
 
-      input SomeInputObject {
+      data SomeInputObject {
         badField: String! @deprecated
         optionalField: String @deprecated
         anotherOptionalField: String! = "" @deprecated
@@ -958,7 +958,7 @@ describe('Type System: Object fields must have output types', () => {
         field: [SomeInputObject]
       }
 
-      input SomeInputObject {
+      data  SomeInputObject {
         field: String
       }
     `);
@@ -997,7 +997,7 @@ describe('Type System: Objects can only implement unique interfaces', () => {
         test: BadObject
       }
 
-      input SomeInputObject {
+      data  SomeInputObject {
         field: String
       }
 
@@ -1167,7 +1167,7 @@ describe('Type System: Interface fields must have output types', () => {
         field: SomeInputObject
       }
 
-      input SomeInputObject {
+      data  SomeInputObject {
         foo: String
       }
 
@@ -1203,7 +1203,7 @@ describe('Type System: Interface fields must have output types', () => {
   });
 });
 
-describe('Type System: Arguments must have input types', () => {
+describe('Type System: Arguments must have data  types', () => {
   function schemaWithArg(argConfig: GraphQLArgumentConfig): GraphQLSchema {
     const BadObjectType = new GraphQLObjectType({
       name: 'BadObject',
@@ -1238,7 +1238,7 @@ describe('Type System: Arguments must have input types', () => {
 
   for (const type of inputTypes) {
     const typeName = inspect(type);
-    it(`accepts an input type as a field arg type: ${typeName}`, () => {
+    it(`accepts an data  type as a field arg type: ${typeName}`, () => {
       const schema = schemaWithArg({ type });
       expectJSON(validateSchema(schema)).toDeepEqual([]);
     });
@@ -1426,7 +1426,7 @@ describe('Type System: Input Object fields must have input types', () => {
         test(arg: SomeInputObject): String
       }
 
-      input SomeInputObject {
+      data  SomeInputObject {
         foo: SomeObject
       }
 
@@ -2058,7 +2058,7 @@ describe('Interfaces must adhere to Interface they implement', () => {
         field: String
       }
 
-      input SomeInputObject {
+      data  SomeInputObject {
         field: String
       }
 

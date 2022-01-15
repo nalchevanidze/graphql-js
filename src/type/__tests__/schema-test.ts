@@ -212,7 +212,7 @@ describe('Type System: Schema', () => {
       expect(schema.getType('SomeSubtype')).to.equal(SomeSubtype);
     });
 
-    it('includes nested input objects in the map', () => {
+    it('includes nested data  objects in the map', () => {
       const NestedInputObject = new GraphQLInputObjectType({
         name: 'NestedInputObject',
         fields: {},
@@ -239,7 +239,7 @@ describe('Type System: Schema', () => {
       expect(schema.getType('NestedInputObject')).to.equal(NestedInputObject);
     });
 
-    it('includes input types only used in directives', () => {
+    it('includes data types only used in directives', () => {
       const directive = new GraphQLDirective({
         name: 'dir',
         locations: [DirectiveLocation.OBJECT],

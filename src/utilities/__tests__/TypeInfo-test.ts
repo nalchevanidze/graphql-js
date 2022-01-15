@@ -350,7 +350,7 @@ describe('visitWithTypeInfo', () => {
 
   it('supports traversals of input values', () => {
     const schema = buildSchema(`
-      input ComplexInput {
+      data  ComplexInput {
         stringListField: [String]
       }
     `);

@@ -131,7 +131,7 @@ describe('Validate: Known type names', () => {
           someScalar(arg: SomeInputObject): SomeScalar
         }
 
-        input SomeInputObject {
+        data  SomeInputObject {
           someScalar: SomeScalar
         }
 
@@ -165,7 +165,7 @@ describe('Validate: Known type names', () => {
           i(h: H): I
         }
 
-        input SomeInput {
+        data  SomeInput {
           j: J
         }
 

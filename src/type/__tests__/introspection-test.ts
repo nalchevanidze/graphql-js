@@ -995,9 +995,9 @@ describe('Introspection', () => {
     });
   });
 
-  it('introspects on input object', () => {
+  it('introspects on data  object', () => {
     const schema = buildSchema(`
-      input SomeInputObject {
+      data SomeInputObject {
         a: String = "tes\\t de\\fault"
         b: [String]
         c: String = null
@@ -1084,12 +1084,12 @@ describe('Introspection', () => {
 
   it('introspects any default value', () => {
     const schema = buildSchema(`
-      input InputObjectWithDefaultValues {
+      data  InputObjectWithDefaultValues {
         a: String = "Emoji: \\u{1F600}"
         b: Complex = {x: ["abc"], y: 123}
       }
 
-      input Complex {
+      data  Complex {
         x: [String]
         y: Int
       }
@@ -1430,9 +1430,9 @@ describe('Introspection', () => {
     });
   });
 
-  it('identifies deprecated for input fields', () => {
+  it('identifies deprecated for data  fields', () => {
     const schema = buildSchema(`
-      input SomeInputObject {
+      data SomeInputObject {
         nonDeprecated: String
         deprecated: String @deprecated(reason: "Removed in 1.0")
         deprecatedWithEmptyReason: String @deprecated(reason: "")
@@ -1480,9 +1480,9 @@ describe('Introspection', () => {
     });
   });
 
-  it('respects the includeDeprecated parameter for input fields', () => {
+  it('respects the includeDeprecated parameter for data  fields', () => {
     const schema = buildSchema(`
-      input SomeInputObject {
+      data SomeInputObject {
         nonDeprecated: String
         deprecated: String @deprecated(reason: "Removed in 1.0")
       }

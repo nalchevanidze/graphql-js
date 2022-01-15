@@ -254,8 +254,8 @@ export class Parser {
           return this.parseResolverTypeDefinition();
         case 'enum':
           return this.parseEnumTypeDefinition();
-        case 'input':
-          return this.parseInputObjectTypeDefinition();
+        case 'data':
+          return this.parseDataTypeDefinition();
         case 'directive':
           return this.parseDirectiveDefinition();
       }
@@ -1048,14 +1048,11 @@ export class Parser {
     return this.parseName();
   }
 
-  /**
-   * InputObjectTypeDefinition :
-   *   - Description? input Name Directives[Const]? InputFieldsDefinition?
-   */
-  parseInputObjectTypeDefinition(): InputObjectTypeDefinitionNode {
+
+  parseDataTypeDefinition(): InputObjectTypeDefinitionNode {
     const start = this._lexer.token;
     const description = this.parseDescription();
-    this.expectKeyword('input');
+    this.expectKeyword('data');
     const name = this.parseName();
     const directives = this.parseConstDirectives();
     const fields = this.parseInputFieldsDefinition();

@@ -237,12 +237,12 @@ describe('Type predicates', () => {
   });
 
   describe('isInputObjectType', () => {
-    it('returns true for input object type', () => {
+    it('returns true for data  object type', () => {
       expect(isInputObjectType(InputObjectType)).to.equal(true);
       expect(() => assertInputObjectType(InputObjectType)).to.not.throw();
     });
 
-    it('returns false for wrapped input object type', () => {
+    it('returns false for wrapped data  object type', () => {
       expect(isInputObjectType(new GraphQLList(InputObjectType))).to.equal(
         false,
       );
@@ -307,13 +307,13 @@ describe('Type predicates', () => {
       expect(() => assertInputType(type)).to.not.throw();
     }
 
-    it('returns true for an input type', () => {
+    it('returns true for an data  type', () => {
       expectInputType(GraphQLString);
       expectInputType(EnumType);
       expectInputType(InputObjectType);
     });
 
-    it('returns true for a wrapped input type', () => {
+    it('returns true for a wrapped data  type', () => {
       expectInputType(new GraphQLList(GraphQLString));
       expectInputType(new GraphQLList(EnumType));
       expectInputType(new GraphQLList(InputObjectType));
@@ -378,11 +378,11 @@ describe('Type predicates', () => {
       expect(() => assertOutputType(type)).to.throw();
     }
 
-    it('returns false for an input type', () => {
+    it('returns false for an data  type', () => {
       expectNonOutputType(InputObjectType);
     });
 
-    it('returns false for a wrapped input type', () => {
+    it('returns false for a wrapped data  type', () => {
       expectNonOutputType(new GraphQLList(InputObjectType));
       expectNonOutputType(new GraphQLNonNull(InputObjectType));
     });
@@ -628,14 +628,14 @@ describe('Type predicates', () => {
       };
     }
 
-    it('returns true for required input field', () => {
+    it('returns true for required data  field', () => {
       const requiredField = buildInputField({
         type: new GraphQLNonNull(GraphQLString),
       });
       expect(isRequiredInputField(requiredField)).to.equal(true);
     });
 
-    it('returns false for optional input field', () => {
+    it('returns false for optional data  field', () => {
       const optField1 = buildInputField({
         type: GraphQLString,
       });

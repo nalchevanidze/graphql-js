@@ -196,7 +196,7 @@ describe('Validate: Directives Are Unique Per Location', () => {
       type TestObject @nonRepeatable @nonRepeatable
       interface TestInterface @nonRepeatable @nonRepeatable
       resolver TestUnion @nonRepeatable @nonRepeatable
-      input TestInput @nonRepeatable @nonRepeatable
+      data  TestInput @nonRepeatable @nonRepeatable
     `).toDeepEqual([
       {
         message:

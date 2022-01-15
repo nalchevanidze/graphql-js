@@ -472,16 +472,18 @@ describe('Type System Printer', () => {
   });
 
   it('Print Input Type', () => {
-    const InputType = new GraphQLInputObjectType({
-      name: 'InputType',
-      fields: {
-        int: { type: GraphQLInt },
-      },
+    const schema = new GraphQLSchema({
+      types: [
+        new GraphQLInputObjectType({
+          name: 'DataType',
+          fields: {
+            int: { type: GraphQLInt },
+          },
+        }),
+      ],
     });
-
-    const schema = new GraphQLSchema({ types: [InputType] });
     expectPrintedSchema(schema).to.equal(dedent`
-      input InputType {
+      data DataType {
         int: Int
       }
     `);
@@ -542,7 +544,7 @@ describe('Type System Printer', () => {
     expectPrintedSchema(schema).to.equal(dedent`
       enum SomeEnum
 
-      input SomeInputObject
+      data SomeInputObject
 
       interface SomeInterface
 

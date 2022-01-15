@@ -278,7 +278,7 @@ describe('Validate: Known directives', () => {
             MY_VALUE @onEnumValue
           }
 
-          input MyInput @onInputObject {
+          data MyInput @onInputObject {
             myField: Int @onInputFieldDefinition
           }
 
@@ -309,7 +309,7 @@ describe('Validate: Known directives', () => {
             MY_VALUE @onUnion
           }
 
-          input MyInput @onEnum {
+          data MyInput @onEnum {
             myField: Int @onArgumentDefinition
           }
 
@@ -365,7 +365,7 @@ describe('Validate: Known directives', () => {
         },
         {
           message: 'Directive "@onEnum" may not be used on INPUT_OBJECT.',
-          locations: [{ line: 18, column: 25 }],
+          locations: [{ line: 18, column: 24 }],
         },
         {
           message:

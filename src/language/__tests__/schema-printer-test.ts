@@ -116,17 +116,17 @@ describe('Printer: SDL document', () => {
 
   //     enum UndefinedEnum
 
-  //     input InputType {
+  //     data  InputType {
   //       key: String!
   //       answer: Int = 42
   //       other: Float = 1.23e4 @onInputFieldDefinition
   //     }
 
-  //     input AnnotatedInput @onInputObject {
+  //     data  AnnotatedInput @onInputObject {
   //       annotatedField: Type @onInputFieldDefinition
   //     }
 
-  //     input UndefinedInput
+  //     data  UndefinedInput
 
   //     directive @include(if: Boolean!) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
 

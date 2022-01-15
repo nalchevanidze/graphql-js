@@ -159,7 +159,7 @@ describe('Validate: no deprecated', () => {
 
   describe('no deprecated input fields', () => {
     const { expectValid, expectErrors } = buildAssertion(`
-      input InputType {
+      data  InputType {
         normalField: String
         deprecatedField: String @deprecated(reason: "Some input field reason.")
       }

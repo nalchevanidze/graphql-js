@@ -180,8 +180,8 @@ describe('Schema Builder', () => {
       """Who knows what inside this scalar?"""
       scalar MysteryScalar
 
-      """This is a input object type"""
-      input FooInput {
+      """This is a data  object type"""
+      data FooInput {
         """It has a field"""
         field: Int
       }
@@ -387,7 +387,7 @@ describe('Schema Builder', () => {
     expect(cycleSDL(sdl)).to.equal(sdl);
   });
 
-  it('Simple input enum', () => {
+  it('Simple enum argument', () => {
     const sdl = dedent`
       enum Hello {
         WORLD
@@ -480,14 +480,14 @@ describe('Schema Builder', () => {
 
   it('Empty Input Object', () => {
     const sdl = dedent`
-      input EmptyInputObject
+      data EmptyInputObject
     `;
     expect(cycleSDL(sdl)).to.equal(sdl);
   });
 
   it('Simple Input Object', () => {
     const sdl = dedent`
-      input Input {
+      data Input {
         int: Int
       }
 
@@ -615,7 +615,7 @@ describe('Schema Builder', () => {
         OTHER_VALUE @deprecated(reason: "Terrible reasons")
       }
 
-      input MyInput {
+      data MyInput {
         oldInput: String @deprecated
         otherInput: String @deprecated(reason: "Use newInput")
         newInput: String
@@ -714,7 +714,7 @@ describe('Schema Builder', () => {
         testField(testArg: TestInput): TestUnion
       }
 
-      input TestInput {
+      data  TestInput {
         testInputField: TestEnum
       }
 

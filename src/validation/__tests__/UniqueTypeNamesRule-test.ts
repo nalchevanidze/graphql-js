@@ -56,7 +56,7 @@ describe('Validate: Unique type names', () => {
       interface Foo
       resolver Foo
       enum Foo
-      input Foo
+      data  Foo
     `).toDeepEqual([
       {
         message: 'There can be only one type named "Foo".',
@@ -123,7 +123,7 @@ describe('Validate: Unique type names', () => {
       interface Foo
       resolver Foo
       enum Foo
-      input Foo
+      data  Foo
     `;
 
     expectSDLErrors(sdl, schema).toDeepEqual([

@@ -15,7 +15,7 @@ function sortSDL(sdl: string): string {
 describe('lexicographicSortSchema', () => {
   it('sort fields', () => {
     const sorted = sortSDL(`
-      input Bar {
+      data  Bar {
         barB: String!
         barA: String
         barC: [String]
@@ -39,7 +39,7 @@ describe('lexicographicSortSchema', () => {
     `);
 
     expect(sorted).to.equal(dedent`
-      input Bar {
+      data Bar {
         barA: String
         barB: String!
         barC: [String]
@@ -199,7 +199,7 @@ describe('lexicographicSortSchema', () => {
 
       scalar FooA
 
-      input FooF {
+      data FooF {
         dummy: String
       }
 
@@ -231,7 +231,7 @@ describe('lexicographicSortSchema', () => {
         dummy: String
       }
 
-      input FooF {
+      data FooF {
         dummy: String
       }
 
