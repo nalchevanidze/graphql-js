@@ -17,7 +17,6 @@ import type {
   DirectiveDefinitionNode,
   DirectiveNode,
   DocumentNode,
-  EnumValueDefinitionNode,
   EnumValueNode,
   FieldDefinitionNode,
   FieldNode,
@@ -981,7 +980,7 @@ export class Parser {
   /**
    * EnumValue : Name but not `true`, `false` or `null`
    */
-  parseEnumValueName(): NameNode {
+  parseVariantName(): NameNode {
     if (
       this._lexer.token.value === 'true' ||
       this._lexer.token.value === 'false' ||
@@ -1022,7 +1021,7 @@ export class Parser {
   parseVariantDefinition(typeName?: NameNode): VariantDefinitionNode {
     const start = this._lexer.token;
     const description = this.parseDescription();
-    const name = typeName ?? this.parseEnumValueName()
+    const name = typeName ?? this.parseVariantName()
     const directives = this.parseConstDirectives();
     const fields = this.optionalMany(
       TokenKind.BRACE_L,
