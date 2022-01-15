@@ -6,14 +6,13 @@ import { mapValue } from '../jsutils/mapValue';
 import type { Maybe } from '../jsutils/Maybe';
 
 import type {
+  DataTypeDefinitionNode,
   DirectiveDefinitionNode,
   DocumentNode,
   EnumTypeDefinitionNode,
   EnumTypeExtensionNode,
   EnumValueDefinitionNode,
   FieldDefinitionNode,
-  InputObjectTypeDefinitionNode,
-  InputObjectTypeExtensionNode,
   InputValueDefinitionNode,
   InterfaceTypeDefinitionNode,
   InterfaceTypeExtensionNode,
@@ -501,7 +500,7 @@ export function extendSchemaImpl(
 
   function buildInputFieldMap(
     nodes: ReadonlyArray<
-      InputObjectTypeDefinitionNode | InputObjectTypeExtensionNode
+      DataTypeDefinitionNode 
     >,
   ): GraphQLInputFieldConfigMap {
     const inputFieldMap = Object.create(null);

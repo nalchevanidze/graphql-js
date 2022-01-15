@@ -298,7 +298,6 @@ export type {
   UnionTypeDefinitionNode,
   EnumTypeDefinitionNode,
   EnumValueDefinitionNode,
-  InputObjectTypeDefinitionNode,
   DirectiveDefinitionNode,
   TypeSystemExtensionNode,
   SchemaExtensionNode,

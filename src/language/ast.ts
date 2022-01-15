@@ -171,7 +171,7 @@ export type ASTNode =
   | UnionTypeDefinitionNode
   | EnumTypeDefinitionNode
   | EnumValueDefinitionNode
-  | InputObjectTypeDefinitionNode
+  | DataTypeDefinitionNode
   | DirectiveDefinitionNode
   | SchemaExtensionNode
   | ScalarTypeExtensionNode
@@ -569,7 +569,7 @@ export type TypeDefinitionNode =
   | InterfaceTypeDefinitionNode
   | UnionTypeDefinitionNode
   | EnumTypeDefinitionNode
-  | InputObjectTypeDefinitionNode;
+  | DataTypeDefinitionNode;
 
 export interface ScalarTypeDefinitionNode {
   readonly kind: Kind.SCALAR_TYPE_DEFINITION;
@@ -645,7 +645,7 @@ export interface EnumValueDefinitionNode {
   readonly directives?: ReadonlyArray<ConstDirectiveNode>;
 }
 
-export interface InputObjectTypeDefinitionNode {
+export interface DataTypeDefinitionNode {
   readonly kind: Kind.INPUT_OBJECT_TYPE_DEFINITION;
   readonly loc?: Location;
   readonly description?: StringValueNode;

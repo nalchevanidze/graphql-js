@@ -12,6 +12,7 @@ import type {
   ConstObjectFieldNode,
   ConstObjectValueNode,
   ConstValueNode,
+  DataTypeDefinitionNode,
   DefinitionNode,
   DirectiveDefinitionNode,
   DirectiveNode,
@@ -25,7 +26,6 @@ import type {
   FragmentDefinitionNode,
   FragmentSpreadNode,
   InlineFragmentNode,
-  InputObjectTypeDefinitionNode,
   InputValueDefinitionNode,
   InterfaceTypeDefinitionNode,
   IntValueNode,
@@ -255,7 +255,7 @@ export class Parser {
         case 'enum':
           return this.parseEnumTypeDefinition();
         case 'data':
-          return this.parseDataTypeDefinition();
+          return this.parseAlgebraicDataType('data');
         case 'directive':
           return this.parseDirectiveDefinition();
       }
@@ -1048,16 +1048,15 @@ export class Parser {
     return this.parseName();
   }
 
-
-  parseDataTypeDefinition(): InputObjectTypeDefinitionNode {
+  parseAlgebraicDataType (role: 'resolver' | 'data'): DataTypeDefinitionNode {
     const start = this._lexer.token;
     const description = this.parseDescription();
-    this.expectKeyword('data');
+    this.expectKeyword(role);
     const name = this.parseName();
     const directives = this.parseConstDirectives();
     this.expectOptionalToken(TokenKind.EQUALS)
-    const fields = this.parseInputFieldsDefinition();
-    return this.node<InputObjectTypeDefinitionNode>(start, {
+    const fields = this.parseVariantDefinition();
+    return this.node<DataTypeDefinitionNode>(start, {
       kind: Kind.INPUT_OBJECT_TYPE_DEFINITION,
       description,
       name,
@@ -1071,7 +1070,7 @@ export class Parser {
    * InputFieldsDefinition : { InputValueDefinition+ }
    * ```
    */
-  parseInputFieldsDefinition(): Array<InputValueDefinitionNode> {
+  parseVariantDefinition(): Array<InputValueDefinitionNode> {
     return this.optionalMany(
       TokenKind.BRACE_L,
       this.parseInputValueDef,

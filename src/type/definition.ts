@@ -17,13 +17,13 @@ import { toObjMap } from '../jsutils/toObjMap';
 import { GraphQLError } from '../error/GraphQLError';
 
 import type {
+  DataTypeDefinitionNode,
   EnumTypeDefinitionNode,
   EnumTypeExtensionNode,
   EnumValueDefinitionNode,
   FieldDefinitionNode,
   FieldNode,
   FragmentDefinitionNode,
-  InputObjectTypeDefinitionNode,
   InputObjectTypeExtensionNode,
   InputValueDefinitionNode,
   InterfaceTypeDefinitionNode,
@@ -1603,7 +1603,7 @@ export class GraphQLInputObjectType {
   name: string;
   description: Maybe<string>;
   extensions: Readonly<GraphQLInputObjectTypeExtensions>;
-  astNode: Maybe<InputObjectTypeDefinitionNode>;
+  astNode: Maybe<DataTypeDefinitionNode>;
   extensionASTNodes: ReadonlyArray<InputObjectTypeExtensionNode>;
 
   private _fields: ThunkObjMap<GraphQLInputField>;
@@ -1689,7 +1689,7 @@ export interface GraphQLInputObjectTypeConfig {
   description?: Maybe<string>;
   fields: ThunkObjMap<GraphQLInputFieldConfig>;
   extensions?: Maybe<Readonly<GraphQLInputObjectTypeExtensions>>;
-  astNode?: Maybe<InputObjectTypeDefinitionNode>;
+  astNode?: Maybe<DataTypeDefinitionNode>;
   extensionASTNodes?: Maybe<ReadonlyArray<InputObjectTypeExtensionNode>>;
 }
 
