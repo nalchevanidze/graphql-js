@@ -204,7 +204,7 @@ export function assertNonNullType(type: unknown): GraphQLNonNull<GraphQLType> {
 }
 
 /**
- * These types may be used as data  types for arguments and directives.
+ * These types may be used as in-types for arguments and directives.
  */
 export type GraphQLInputType =
   | GraphQLScalarType

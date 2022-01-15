@@ -51,7 +51,7 @@ const SomeSchema = buildSchema(`
 
   enum SomeEnum { ONLY }
 
-  data  SomeInputObject { val: String = "hello" }
+  data SomeInputObject = { val: String = "hello" }
 
   directive @SomeDirective on QUERY
 `);
@@ -225,7 +225,7 @@ describe('Type System: A Schema must have Object root types', () => {
 
   it('rejects a Schema whose query root type is not an Object type', () => {
     const schema = buildSchema(`
-      data  Query {
+      data Query = {
         test: String
       }
     `);
@@ -658,7 +658,7 @@ describe('Type System: Input Objects must have fields', () => {
         field(arg: SomeInputObject): String
       }
 
-      data  SomeInputObject
+      data SomeInputObject
     `);
 
     expectJSON(validateSchema(schema)).toDeepEqual([
@@ -997,7 +997,7 @@ describe('Type System: Objects can only implement unique interfaces', () => {
         test: BadObject
       }
 
-      data  SomeInputObject {
+      data SomeInputObject = {
         field: String
       }
 
@@ -1167,7 +1167,7 @@ describe('Type System: Interface fields must have output types', () => {
         field: SomeInputObject
       }
 
-      data  SomeInputObject {
+      data SomeInputObject = {
         foo: String
       }
 

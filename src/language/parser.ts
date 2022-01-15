@@ -1055,6 +1055,7 @@ export class Parser {
     this.expectKeyword('data');
     const name = this.parseName();
     const directives = this.parseConstDirectives();
+    this.expectOptionalToken(TokenKind.EQUALS)
     const fields = this.parseInputFieldsDefinition();
     return this.node<InputObjectTypeDefinitionNode>(start, {
       kind: Kind.INPUT_OBJECT_TYPE_DEFINITION,

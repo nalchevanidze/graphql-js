@@ -78,17 +78,17 @@ enum AnnotatedEnum @onEnum {
 
 enum UndefinedEnum
 
-data  InputType {
+data InputType = {
   key: String!
   answer: Int = 42
   other: Float = 1.23e4 @onInputFieldDefinition
 }
 
-data  AnnotatedInput @onInputObject {
+data AnnotatedInput @onInputObject = {
   annotatedField: Type @onInputFieldDefinition
 }
 
-data  UndefinedInput
+data UndefinedInput
 
 directive @include(if: Boolean!) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
 

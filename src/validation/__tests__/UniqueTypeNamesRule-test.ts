@@ -56,7 +56,7 @@ describe('Validate: Unique type names', () => {
       interface Foo
       resolver Foo
       enum Foo
-      data  Foo
+      data Foo
     `).toDeepEqual([
       {
         message: 'There can be only one type named "Foo".',
@@ -97,7 +97,7 @@ describe('Validate: Unique type names', () => {
         message: 'There can be only one type named "Foo".',
         locations: [
           { line: 2, column: 12 },
-          { line: 9, column: 13 },
+          { line: 9, column: 12 },
         ],
       },
     ]);

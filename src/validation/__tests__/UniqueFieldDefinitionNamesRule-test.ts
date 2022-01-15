@@ -23,7 +23,7 @@ describe('Validate: Unique field definition names', () => {
     expectValidSDL(`
       type SomeObject
       interface SomeInterface
-      data  SomeInputObject
+      data SomeInputObject
     `);
   });
 
@@ -37,7 +37,7 @@ describe('Validate: Unique field definition names', () => {
         foo: String
       }
 
-      data  SomeInputObject {
+      data SomeInputObject = {
         foo: String
       }
     `);
@@ -55,7 +55,7 @@ describe('Validate: Unique field definition names', () => {
         bar: String
       }
 
-      data  SomeInputObject {
+      data SomeInputObject = {
         foo: String
         bar: String
       }
