@@ -40,6 +40,7 @@ import type {
   ObjectValueNode,
   OperationDefinitionNode,
   OperationTypeDefinitionNode,
+  Role,
   ScalarTypeDefinitionNode,
   SchemaDefinitionNode,
   SelectionNode,
@@ -1048,7 +1049,7 @@ export class Parser {
     return this.parseName();
   }
 
-  parseAlgebraicDataType (role: 'resolver' | 'data'): DataTypeDefinitionNode {
+  parseAlgebraicDataType (role: Role): DataTypeDefinitionNode {
     const start = this._lexer.token;
     const description = this.parseDescription();
     this.expectKeyword(role);

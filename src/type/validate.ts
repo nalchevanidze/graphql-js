@@ -507,7 +507,7 @@ function validateInputFields(
   if (fields.length === 0) {
     context.reportError(
       `Input Object type ${inputObj.name} must define one or more fields.`,
-      [inputObj.astNode, ...inputObj.extensionASTNodes],
+      [inputObj.astNode],
     );
   }
 

@@ -645,6 +645,8 @@ export interface EnumValueDefinitionNode {
   readonly directives?: ReadonlyArray<ConstDirectiveNode>;
 }
 
+export type Role = 'resolver' | 'data';
+
 export interface DataTypeDefinitionNode {
   readonly kind: Kind.INPUT_OBJECT_TYPE_DEFINITION;
   readonly loc?: Location;

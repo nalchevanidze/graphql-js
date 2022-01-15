@@ -1602,19 +1602,14 @@ export interface GraphQLInputObjectTypeExtensions {
 export class GraphQLInputObjectType {
   name: string;
   description: Maybe<string>;
-  extensions: Readonly<GraphQLInputObjectTypeExtensions>;
   astNode: Maybe<DataTypeDefinitionNode>;
-  extensionASTNodes: ReadonlyArray<InputObjectTypeExtensionNode>;
 
   private _fields: ThunkObjMap<GraphQLInputField>;
 
   constructor(config: Readonly<GraphQLInputObjectTypeConfig>) {
     this.name = assertName(config.name);
     this.description = config.description;
-    this.extensions = toObjMap(config.extensions);
     this.astNode = config.astNode;
-    this.extensionASTNodes = config.extensionASTNodes ?? [];
-
     this._fields = defineInputFieldMap.bind(undefined, config);
   }
 
@@ -1635,7 +1630,6 @@ export class GraphQLInputObjectType {
       type: field.type,
       defaultValue: field.defaultValue,
       deprecationReason: field.deprecationReason,
-      extensions: field.extensions,
       astNode: field.astNode,
     }));
 
@@ -1643,9 +1637,7 @@ export class GraphQLInputObjectType {
       name: this.name,
       description: this.description,
       fields,
-      extensions: this.extensions,
       astNode: this.astNode,
-      extensionASTNodes: this.extensionASTNodes,
     };
   }
 
@@ -1696,8 +1688,6 @@ export interface GraphQLInputObjectTypeConfig {
 interface GraphQLInputObjectTypeNormalizedConfig
   extends GraphQLInputObjectTypeConfig {
   fields: GraphQLInputFieldConfigMap;
-  extensions: Readonly<GraphQLInputObjectTypeExtensions>;
-  extensionASTNodes: ReadonlyArray<InputObjectTypeExtensionNode>;
 }
 
 /**

@@ -284,8 +284,7 @@ export function extendSchemaImpl(
           type: replaceType(field.type),
         })),
         ...buildInputFieldMap(extensions),
-      }),
-      extensionASTNodes: config.extensionASTNodes.concat(extensions),
+      })
     });
   }
 
