@@ -2,11 +2,10 @@ import { expect } from 'chai';
 import { describe, it } from 'mocha';
 
 import {
-  GraphQLEnumType,
-  GraphQLInputObjectType,
   GraphQLList,
   GraphQLNonNull,
   GraphQLScalarType,
+  IrisDataType,
 } from '../../type/definition';
 import {
   GraphQLBoolean,
@@ -242,7 +241,7 @@ describe('astFromValue', () => {
 
   const complexValue = { someArbitrary: 'complexValue' };
 
-  const myEnum = new GraphQLEnumType({
+  const myEnum = new IrisDataType({
     name: 'MyEnum',
     values: {
       HELLO: {},
@@ -334,7 +333,7 @@ describe('astFromValue', () => {
     });
   });
 
-  const inputObj = new GraphQLInputObjectType({
+  const inputObj = new IrisDataType({
     name: 'MyInputObj',
     fields: {
       foo: { type: GraphQLFloat },

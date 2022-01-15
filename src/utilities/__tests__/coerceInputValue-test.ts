@@ -3,11 +3,10 @@ import { describe, it } from 'mocha';
 
 import type { GraphQLInputType } from '../../type/definition';
 import {
-  GraphQLEnumType,
-  GraphQLInputObjectType,
   GraphQLList,
   GraphQLNonNull,
   GraphQLScalarType,
+  IrisDataType,
 } from '../../type/definition';
 import { GraphQLInt } from '../../type/scalars';
 
@@ -132,7 +131,7 @@ describe('coerceInputValue', () => {
   });
 
   describe('for GraphQLEnum', () => {
-    const TestEnum = new GraphQLEnumType({
+    const TestEnum = new IrisDataType({
       name: 'TestEnum',
       values: {
         FOO: { value: 'InternalFoo' },
@@ -183,7 +182,7 @@ describe('coerceInputValue', () => {
   });
 
   describe('for GraphQLInputObject', () => {
-    const TestInputObject = new GraphQLInputObjectType({
+    const TestInputObject = new IrisDataType({
       name: 'TestInputObject',
       fields: {
         foo: { type: new GraphQLNonNull(GraphQLInt) },
@@ -275,7 +274,7 @@ describe('coerceInputValue', () => {
 
   describe('for GraphQLInputObject with default value', () => {
     const makeTestInputObject = (defaultValue: any) =>
-      new GraphQLInputObjectType({
+      new IrisDataType({
         name: 'TestInputObject',
         fields: {
           foo: {
@@ -348,7 +347,7 @@ describe('coerceInputValue', () => {
 
     it('returns a list for a non-list object value', () => {
       const TestListOfObjects = new GraphQLList(
-        new GraphQLInputObjectType({
+        new IrisDataType({
           name: 'TestObject',
           fields: {
             length: { type: GraphQLInt },

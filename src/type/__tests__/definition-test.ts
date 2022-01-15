@@ -8,14 +8,13 @@ import { parseValue } from '../../language/parser';
 
 import type { GraphQLNullableType, GraphQLType } from '../definition';
 import {
-  GraphQLEnumType,
-  GraphQLInputObjectType,
   GraphQLInterfaceType,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLScalarType,
   GraphQLUnionType,
+  IrisDataType,
 } from '../definition';
 
 const ScalarType = new GraphQLScalarType({ name: 'Scalar' });
@@ -25,8 +24,8 @@ const InterfaceType = new GraphQLInterfaceType({
   fields: {},
 });
 const UnionType = new GraphQLUnionType({ name: 'Union', types: [ObjectType] });
-const EnumType = new GraphQLEnumType({ name: 'Enum', values: { foo: {} } });
-const InputObjectType = new GraphQLInputObjectType({
+const EnumType = new IrisDataType({ name: 'Enum', values: { foo: {} } });
+const InputObjectType = new IrisDataType({
   name: 'InputObject',
   fields: {},
 });
@@ -188,11 +187,11 @@ describe('Type System: Objects', () => {
       field1: { type: ScalarType },
       field2: { type: ScalarType },
     };
-    const testInputObject1 = new GraphQLInputObjectType({
+    const testInputObject1 = new IrisDataType({
       name: 'Test1',
       fields: inputFields,
     });
-    const testInputObject2 = new GraphQLInputObjectType({
+    const testInputObject2 = new IrisDataType({
       name: 'Test2',
       fields: inputFields,
     });
@@ -623,7 +622,7 @@ describe('Type System: Unions', () => {
 
 describe('Type System: Enums', () => {
   it('defines an enum type with deprecated value', () => {
-    const EnumTypeWithDeprecatedValue = new GraphQLEnumType({
+    const EnumTypeWithDeprecatedValue = new IrisDataType({
       name: 'EnumWithDeprecatedValue',
       values: {
         foo: { deprecationReason: 'Just because' },
@@ -643,7 +642,7 @@ describe('Type System: Enums', () => {
   });
 
   it('defines an enum type with a value of `null` and `undefined`', () => {
-    const EnumTypeWithNullishValue = new GraphQLEnumType({
+    const EnumTypeWithNullishValue = new IrisDataType({
       name: 'EnumWithNullishValue',
       values: {
         NULL: { value: null },
@@ -681,7 +680,7 @@ describe('Type System: Enums', () => {
   });
 
   it('accepts a well defined Enum type with empty value definition', () => {
-    const enumType = new GraphQLEnumType({
+    const enumType = new IrisDataType({
       name: 'SomeEnum',
       values: {
         FOO: {},
@@ -693,7 +692,7 @@ describe('Type System: Enums', () => {
   });
 
   it('accepts a well defined Enum type with internal value definition', () => {
-    const enumType = new GraphQLEnumType({
+    const enumType = new IrisDataType({
       name: 'SomeEnum',
       values: {
         FOO: { value: 10 },
@@ -705,15 +704,15 @@ describe('Type System: Enums', () => {
   });
 
   it('rejects an Enum type with invalid name', () => {
-    expect(
-      () => new GraphQLEnumType({ name: 'bad-name', values: {} }),
-    ).to.throw('Names must only contain [_a-zA-Z0-9] but "bad-name" does not.');
+    expect(() => new IrisDataType({ name: 'bad-name', values: {} })).to.throw(
+      'Names must only contain [_a-zA-Z0-9] but "bad-name" does not.',
+    );
   });
 
   it('rejects an Enum type with incorrectly typed values', () => {
     expect(
       () =>
-        new GraphQLEnumType({
+        new IrisDataType({
           name: 'SomeEnum',
           // @ts-expect-error
           values: [{ FOO: 10 }],
@@ -724,7 +723,7 @@ describe('Type System: Enums', () => {
   it('rejects an Enum type with incorrectly named values', () => {
     expect(
       () =>
-        new GraphQLEnumType({
+        new IrisDataType({
           name: 'SomeEnum',
           values: {
             'bad-name': {},
@@ -736,7 +735,7 @@ describe('Type System: Enums', () => {
   it('rejects an Enum type with missing value definition', () => {
     expect(
       () =>
-        new GraphQLEnumType({
+        new IrisDataType({
           name: 'SomeEnum',
           // @ts-expect-error (must not be null)
           values: { FOO: null },
@@ -749,7 +748,7 @@ describe('Type System: Enums', () => {
   it('rejects an Enum type with incorrectly typed value definition', () => {
     expect(
       () =>
-        new GraphQLEnumType({
+        new IrisDataType({
           name: 'SomeEnum',
           // @ts-expect-error
           values: { FOO: 10 },
@@ -763,7 +762,7 @@ describe('Type System: Enums', () => {
 describe('Type System: Input Objects', () => {
   describe('Input Objects must have fields', () => {
     it('accepts an Input Object type with fields', () => {
-      const inputObjType = new GraphQLInputObjectType({
+      const inputObjType = new IrisDataType({
         name: 'SomeInputObject',
         fields: {
           f: { type: ScalarType },
@@ -783,7 +782,7 @@ describe('Type System: Input Objects', () => {
     });
 
     it('accepts an Input Object type with a field function', () => {
-      const inputObjType = new GraphQLInputObjectType({
+      const inputObjType = new IrisDataType({
         name: 'SomeInputObject',
         fields: () => ({
           f: { type: ScalarType },
@@ -803,15 +802,13 @@ describe('Type System: Input Objects', () => {
     });
 
     it('rejects an Input Object type with invalid name', () => {
-      expect(
-        () => new GraphQLInputObjectType({ name: 'bad-name', fields: {} }),
-      ).to.throw(
+      expect(() => new IrisDataType({ name: 'bad-name', fields: {} })).to.throw(
         'Names must only contain [_a-zA-Z0-9] but "bad-name" does not.',
       );
     });
 
     it('rejects an Input Object type with incorrect fields', () => {
-      const inputObjType = new GraphQLInputObjectType({
+      const inputObjType = new IrisDataType({
         name: 'SomeInputObject',
         // @ts-expect-error
         fields: [],
@@ -822,7 +819,7 @@ describe('Type System: Input Objects', () => {
     });
 
     it('rejects an Input Object type with fields function that returns incorrect type', () => {
-      const inputObjType = new GraphQLInputObjectType({
+      const inputObjType = new IrisDataType({
         name: 'SomeInputObject',
         // @ts-expect-error
         fields: () => [],
@@ -833,7 +830,7 @@ describe('Type System: Input Objects', () => {
     });
 
     it('rejects an Input Object type with incorrectly named fields', () => {
-      const inputObjType = new GraphQLInputObjectType({
+      const inputObjType = new IrisDataType({
         name: 'SomeInputObject',
         fields: {
           'bad-name': { type: ScalarType },
@@ -847,7 +844,7 @@ describe('Type System: Input Objects', () => {
 
   describe('Input Object fields must not have resolvers', () => {
     it('rejects an Input Object type with resolvers', () => {
-      const inputObjType = new GraphQLInputObjectType({
+      const inputObjType = new IrisDataType({
         name: 'SomeInputObject',
         fields: {
           // @ts-expect-error (Input fields cannot have resolvers)
@@ -860,7 +857,7 @@ describe('Type System: Input Objects', () => {
     });
 
     it('rejects an Input Object type with resolver constant', () => {
-      const inputObjType = new GraphQLInputObjectType({
+      const inputObjType = new IrisDataType({
         name: 'SomeInputObject',
         fields: {
           // @ts-expect-error (Input fields cannot have resolvers)
@@ -874,7 +871,7 @@ describe('Type System: Input Objects', () => {
   });
 
   it('Deprecation reason is preserved on fields', () => {
-    const inputObjType = new GraphQLInputObjectType({
+    const inputObjType = new IrisDataType({
       name: 'SomeInputObject',
       fields: {
         deprecatedField: {
@@ -999,10 +996,8 @@ describe('Type System: test utility methods', () => {
     expect(toString(ObjectType)).to.equal('[object GraphQLObjectType]');
     expect(toString(InterfaceType)).to.equal('[object GraphQLInterfaceType]');
     expect(toString(UnionType)).to.equal('[object GraphQLUnionType]');
-    expect(toString(EnumType)).to.equal('[object GraphQLEnumType]');
-    expect(toString(InputObjectType)).to.equal(
-      '[object GraphQLInputObjectType]',
-    );
+    expect(toString(EnumType)).to.equal('[object IrisDataType]');
+    expect(toString(InputObjectType)).to.equal('[object IrisDataType]');
     expect(toString(NonNullScalarType)).to.equal('[object GraphQLNonNull]');
     expect(toString(ListOfScalarsType)).to.equal('[object GraphQLList]');
   });

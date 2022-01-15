@@ -9,11 +9,10 @@ import { parseValue } from '../../language/parser';
 
 import type { GraphQLInputType } from '../../type/definition';
 import {
-  GraphQLEnumType,
-  GraphQLInputObjectType,
   GraphQLList,
   GraphQLNonNull,
   GraphQLScalarType,
+  IrisDataType,
 } from '../../type/definition';
 import {
   GraphQLBoolean,
@@ -96,7 +95,7 @@ describe('valueFromAST', () => {
   });
 
   it('converts Enum values according to input coercion rules', () => {
-    const testEnum = new GraphQLEnumType({
+    const testEnum = new IrisDataType({
       name: 'TestColor',
       values: {
         RED: { value: 1 },
@@ -188,7 +187,7 @@ describe('valueFromAST', () => {
     );
   });
 
-  const testInputObj = new GraphQLInputObjectType({
+  const testInputObj = new IrisDataType({
     name: 'TestInput',
     fields: {
       int: { type: GraphQLInt, defaultValue: 42 },

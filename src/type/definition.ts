@@ -50,7 +50,6 @@ export type GraphQLType =
   | GraphQLInterfaceType
   | GraphQLUnionType
   | GraphQLEnumType
-  | GraphQLInputObjectType
   | GraphQLList<GraphQLType>
   | GraphQLNonNull<
       | GraphQLScalarType
@@ -58,7 +57,6 @@ export type GraphQLType =
       | GraphQLInterfaceType
       | GraphQLUnionType
       | GraphQLEnumType
-      | GraphQLInputObjectType
       | GraphQLList<GraphQLType>
     >;
 
@@ -132,7 +130,11 @@ export function assertUnionType(type: unknown): GraphQLUnionType {
 }
 
 export function isEnumType(type: unknown): type is GraphQLEnumType {
-  return instanceOf(type, GraphQLEnumType);
+  return isDataType(type) && Boolean(type.getValues().length > 0);
+}
+
+export function isDataType(type: unknown): type is IrisDataType {
+  return instanceOf(type, IrisDataType);
 }
 
 export function assertEnumType(type: unknown): GraphQLEnumType {
@@ -142,13 +144,11 @@ export function assertEnumType(type: unknown): GraphQLEnumType {
   return type;
 }
 
-export function isInputObjectType(
-  type: unknown,
-): type is GraphQLInputObjectType {
-  return instanceOf(type, GraphQLInputObjectType);
+export function isInputObjectType(type: unknown): type is GraphQLEnumType {
+  return isDataType(type) && Boolean(type.getValues().length === 0);
 }
 
-export function assertInputObjectType(type: unknown): GraphQLInputObjectType {
+export function assertInputObjectType(type: unknown): GraphQLEnumType {
   if (!isInputObjectType(type)) {
     throw new Error(
       `Expected ${inspect(type)} to be a GraphQL Input Object type.`,
@@ -203,13 +203,9 @@ export function assertNonNullType(type: unknown): GraphQLNonNull<GraphQLType> {
 export type GraphQLInputType =
   | GraphQLScalarType
   | GraphQLEnumType
-  | GraphQLInputObjectType
   | GraphQLList<GraphQLInputType>
   | GraphQLNonNull<
-      | GraphQLScalarType
-      | GraphQLEnumType
-      | GraphQLInputObjectType
-      | GraphQLList<GraphQLInputType>
+      GraphQLScalarType | GraphQLEnumType | GraphQLList<GraphQLInputType>
     >;
 
 export function isInputType(type: unknown): type is GraphQLInputType {
@@ -436,7 +432,6 @@ export type GraphQLNullableType =
   | GraphQLInterfaceType
   | GraphQLUnionType
   | GraphQLEnumType
-  | GraphQLInputObjectType
   | GraphQLList<GraphQLType>;
 
 export function isNullableType(type: unknown): type is GraphQLNullableType {
@@ -470,10 +465,7 @@ export function getNullableType(
  */
 export type GraphQLNamedType = GraphQLNamedInputType | GraphQLNamedOutputType;
 
-export type GraphQLNamedInputType =
-  | GraphQLScalarType
-  | GraphQLEnumType
-  | GraphQLInputObjectType;
+export type GraphQLNamedInputType = GraphQLScalarType | GraphQLEnumType;
 
 export type GraphQLNamedOutputType =
   | GraphQLScalarType
@@ -1320,7 +1312,7 @@ export interface GraphQLEnumTypeExtensions {
  * Example:
  *
  * ```ts
- * const RGBType = new GraphQLEnumType({
+ * const RGBType = new IrisDataType({
  *   name: 'RGB',
  *   values: {
  *     RED: { value: 0 },
@@ -1333,7 +1325,33 @@ export interface GraphQLEnumTypeExtensions {
  * Note: If a value is not provided in a definition, the name of the Enum value
  * will be used as its internal value.
  */
-export class GraphQLEnumType /* <T> */ {
+
+export type GraphQLEnumTypeNormalizedConfig = IrisDataTypeNormalizedConfig;
+
+export type GraphQLInputObjectTypeNormalizedConfig =
+  IrisDataTypeNormalizedConfig;
+
+export type GraphQLEnumTypeConfig = IrisDataTypeConfig;
+
+export type GraphQLInputObjectType = GraphQLEnumType
+
+export type GraphQLEnumType = IrisDataType
+
+export interface IrisDataTypeConfig {
+  name: string;
+  description?: Maybe<string>;
+  values?: GraphQLEnumValueConfigMap;
+  fields?: ThunkObjMap<GraphQLInputFieldConfig>;
+  astNode?: Maybe<DataTypeDefinitionNode>;
+  extensions?: Maybe<Readonly<GraphQLEnumTypeExtensions>>;
+}
+
+interface IrisDataTypeNormalizedConfig extends IrisDataTypeConfig {
+  fields: GraphQLInputFieldConfigMap;
+  values: GraphQLEnumValueConfigMap;
+}
+
+export class IrisDataType {
   name: string;
   description: Maybe<string>;
   extensions: Readonly<GraphQLEnumTypeExtensions>;
@@ -1342,14 +1360,21 @@ export class GraphQLEnumType /* <T> */ {
   private _values: ReadonlyArray<GraphQLEnumValue /* <T> */>;
   private _valueLookup: ReadonlyMap<any /* T */, GraphQLEnumValue>;
   private _nameLookup: ObjMap<GraphQLEnumValue>;
+  private _fields: ThunkObjMap<GraphQLInputField>;
 
-  constructor(config: Readonly<GraphQLEnumTypeConfig /* <T> */>) {
+  constructor(config: Readonly<IrisDataTypeConfig>) {
+    this.astNode = config.astNode;
     this.name = assertName(config.name);
     this.description = config.description;
     this.extensions = toObjMap(config.extensions);
-    this.astNode = config.astNode;
-
-    this._values = defineEnumValues(this.name, config.values);
+    // input
+    this._fields = config.fields
+      ? defineInputFieldMap.bind(undefined, config)
+      : {};
+    // enum
+    this._values = config.values
+      ? defineEnumValues(this.name, config.values)
+      : [];
     this._valueLookup = new Map(
       this._values.map((enumValue) => [enumValue.value, enumValue]),
     );
@@ -1357,7 +1382,49 @@ export class GraphQLEnumType /* <T> */ {
   }
 
   get [Symbol.toStringTag]() {
-    return 'GraphQLEnumType';
+    return 'IrisDataType';
+  }
+
+  getVariants(): ReadonlyArray<VariantDefinitionNode> {
+    return this.astNode?.variants ?? [];
+  }
+
+  getFields(): GraphQLInputFieldMap {
+    if (typeof this._fields === 'function') {
+      this._fields = this._fields();
+    }
+    return this._fields;
+  }
+
+  toConfig(): GraphQLInputObjectTypeNormalizedConfig {
+    const values = keyValMap(
+      this.getValues(),
+      (value) => value.name,
+      (value) => ({
+        description: value.description,
+        value: value.value,
+        deprecationReason: value.deprecationReason,
+        extensions: value.extensions,
+        astNode: value.astNode,
+      }),
+    );
+
+    const fields = mapValue(this.getFields(), (field) => ({
+      description: field.description,
+      type: field.type,
+      defaultValue: field.defaultValue,
+      deprecationReason: field.deprecationReason,
+      astNode: field.astNode,
+    }));
+
+    return {
+      name: this.name,
+      description: this.description,
+      values,
+      fields,
+      extensions: this.extensions,
+      astNode: this.astNode,
+    };
   }
 
   getValues(): ReadonlyArray<GraphQLEnumValue /* <T> */> {
@@ -1423,28 +1490,6 @@ export class GraphQLEnumType /* <T> */ {
     return enumValue.value;
   }
 
-  toConfig(): GraphQLEnumTypeNormalizedConfig {
-    const values = keyValMap(
-      this.getValues(),
-      (value) => value.name,
-      (value) => ({
-        description: value.description,
-        value: value.value,
-        deprecationReason: value.deprecationReason,
-        extensions: value.extensions,
-        astNode: value.astNode,
-      }),
-    );
-
-    return {
-      name: this.name,
-      description: this.description,
-      values,
-      extensions: this.extensions,
-      astNode: this.astNode,
-    };
-  }
-
   toString(): string {
     return this.name;
   }
@@ -1487,18 +1532,6 @@ function defineEnumValues(
       astNode: valueConfig.astNode,
     };
   });
-}
-
-export interface GraphQLEnumTypeConfig {
-  name: string;
-  description?: Maybe<string>;
-  values: GraphQLEnumValueConfigMap /* <T> */;
-  extensions?: Maybe<Readonly<GraphQLEnumTypeExtensions>>;
-  astNode?: Maybe<DataTypeDefinitionNode>;
-}
-
-interface GraphQLEnumTypeNormalizedConfig extends GraphQLEnumTypeConfig {
-  extensions: Readonly<GraphQLEnumTypeExtensions>;
 }
 
 export type GraphQLEnumValueConfigMap /* <T> */ =
@@ -1558,7 +1591,7 @@ export interface GraphQLInputObjectTypeExtensions {
  * Example:
  *
  * ```ts
- * const GeoPoint = new GraphQLInputObjectType({
+ * const GeoPoint = new IrisDataType({
  *   name: 'GeoPoint',
  *   fields: {
  *     lat: { type: new GraphQLNonNull(GraphQLFloat) },
@@ -1568,65 +1601,11 @@ export interface GraphQLInputObjectTypeExtensions {
  * });
  * ```
  */
-export class GraphQLInputObjectType {
-  name: string;
-  description: Maybe<string>;
-  astNode: Maybe<DataTypeDefinitionNode>;
-
-  private _fields: ThunkObjMap<GraphQLInputField>;
-
-  constructor(config: Readonly<IrisDataTypeConfig>) {
-    this.name = assertName(config.name);
-    this.description = config.description;
-    this.astNode = config.astNode;
-    this._fields = defineInputFieldMap.bind(undefined, config);
-  }
-
-  get [Symbol.toStringTag]() {
-    return 'GraphQLInputObjectType';
-  }
-
-  getVariants(): ReadonlyArray<VariantDefinitionNode> {
-    return this.astNode?.variants ?? [];
-  }
-
-  getFields(): GraphQLInputFieldMap {
-    if (typeof this._fields === 'function') {
-      this._fields = this._fields();
-    }
-    return this._fields;
-  }
-
-  toConfig(): GraphQLInputObjectTypeNormalizedConfig {
-    const fields = mapValue(this.getFields(), (field) => ({
-      description: field.description,
-      type: field.type,
-      defaultValue: field.defaultValue,
-      deprecationReason: field.deprecationReason,
-      astNode: field.astNode,
-    }));
-
-    return {
-      name: this.name,
-      description: this.description,
-      fields,
-      astNode: this.astNode,
-    };
-  }
-
-  toString(): string {
-    return this.name;
-  }
-
-  toJSON(): string {
-    return this.toString();
-  }
-}
 
 function defineInputFieldMap(
   config: Readonly<IrisDataTypeConfig>,
 ): GraphQLInputFieldMap {
-  const fieldMap = resolveObjMapThunk(config.fields);
+  const fieldMap = resolveObjMapThunk(config.fields ?? {});
   devAssert(
     isPlainObj(fieldMap),
     `${config.name} fields must be an object with field names as keys or a function which returns such an object.`,
@@ -1647,18 +1626,6 @@ function defineInputFieldMap(
       astNode: fieldConfig.astNode,
     };
   });
-}
-
-export interface IrisDataTypeConfig {
-  name: string;
-  description?: Maybe<string>;
-  fields: ThunkObjMap<GraphQLInputFieldConfig>;
-  astNode?: Maybe<DataTypeDefinitionNode>;
-}
-
-interface GraphQLInputObjectTypeNormalizedConfig
-  extends IrisDataTypeConfig {
-  fields: GraphQLInputFieldConfigMap;
 }
 
 /**

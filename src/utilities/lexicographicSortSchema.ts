@@ -5,23 +5,22 @@ import type { Maybe } from '../jsutils/Maybe';
 import { naturalCompare } from '../jsutils/naturalCompare';
 import type { ObjMap } from '../jsutils/ObjMap';
 
-import type {
+import {
   GraphQLFieldConfigArgumentMap,
   GraphQLFieldConfigMap,
   GraphQLInputFieldConfigMap,
   GraphQLNamedType,
   GraphQLType,
+  isDataType,
 } from '../type/definition';
 import {
-  GraphQLEnumType,
-  GraphQLInputObjectType,
   GraphQLInterfaceType,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLUnionType,
+  IrisDataType,
   isEnumType,
-  isInputObjectType,
   isInterfaceType,
   isListType,
   isNonNullType,
@@ -141,17 +140,11 @@ export function lexicographicSortSchema(schema: GraphQLSchema): GraphQLSchema {
         types: () => sortTypes(config.types),
       });
     }
-    if (isEnumType(type)) {
+    if (isDataType(type)) {
       const config = type.toConfig();
-      return new GraphQLEnumType({
+      return new IrisDataType({
         ...config,
         values: sortObjMap(config.values, (value) => value),
-      });
-    }
-    if (isInputObjectType(type)) {
-      const config = type.toConfig();
-      return new GraphQLInputObjectType({
-        ...config,
         fields: () => sortInputFields(config.fields),
       });
     }

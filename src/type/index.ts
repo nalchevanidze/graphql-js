@@ -10,61 +10,8 @@ export {
 } from './schema';
 export type { GraphQLSchemaConfig, GraphQLSchemaExtensions } from './schema';
 
-export {
-  resolveObjMapThunk,
-  resolveReadonlyArrayThunk,
-  // Predicates
-  isType,
-  isScalarType,
-  isObjectType,
-  isInterfaceType,
-  isUnionType,
-  isEnumType,
-  isInputObjectType,
-  isListType,
-  isNonNullType,
-  isInputType,
-  isOutputType,
-  isLeafType,
-  isCompositeType,
-  isAbstractType,
-  isWrappingType,
-  isNullableType,
-  isNamedType,
-  isRequiredArgument,
-  isRequiredInputField,
-  // Assertions
-  assertType,
-  assertScalarType,
-  assertObjectType,
-  assertInterfaceType,
-  assertUnionType,
-  assertEnumType,
-  assertInputObjectType,
-  assertListType,
-  assertNonNullType,
-  assertInputType,
-  assertOutputType,
-  assertLeafType,
-  assertCompositeType,
-  assertAbstractType,
-  assertWrappingType,
-  assertNullableType,
-  assertNamedType,
-  // Un-modifiers
-  getNullableType,
-  getNamedType,
-  // Definitions
-  GraphQLScalarType,
-  GraphQLObjectType,
-  GraphQLInterfaceType,
-  GraphQLUnionType,
-  GraphQLEnumType,
-  GraphQLInputObjectType,
-  // Type Wrappers
-  GraphQLList,
-  GraphQLNonNull,
-} from './definition';
+export type { GraphQLEnumType, GraphQLInputObjectType } from './definition';
+export { resolveObjMapThunk, resolveReadonlyArrayThunk, isType, isScalarType, isObjectType, isInterfaceType, isUnionType, isEnumType, isInputObjectType, isListType, isNonNullType, isInputType, isOutputType, isLeafType, isCompositeType, isAbstractType, isWrappingType, isNullableType, isNamedType, isRequiredArgument, isRequiredInputField, assertType, assertScalarType, assertObjectType, assertInterfaceType, assertUnionType, assertEnumType, assertInputObjectType, assertListType, assertNonNullType, assertInputType, assertOutputType, assertLeafType, assertCompositeType, assertAbstractType, assertWrappingType, assertNullableType, assertNamedType, getNullableType, getNamedType, GraphQLScalarType, GraphQLObjectType, GraphQLInterfaceType, GraphQLUnionType, GraphQLList, GraphQLNonNull } from './definition';
 
 export type {
   GraphQLType,

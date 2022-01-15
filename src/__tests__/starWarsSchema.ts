@@ -1,9 +1,9 @@
 import {
-  GraphQLEnumType,
   GraphQLInterfaceType,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
+  IrisDataType,
 } from '../type/definition';
 import { GraphQLString } from '../type/scalars';
 import { GraphQLSchema } from '../type/schema';
@@ -69,7 +69,7 @@ import { getDroid, getFriends, getHero, getHuman } from './starWarsData';
  * data Episode = NEW_HOPE | EMPIRE | JEDI
  * ```
  */
-const episodeEnum = new GraphQLEnumType({
+const episodeEnum = new IrisDataType({
   name: 'Episode',
   description: 'One of the films in the Star Wars Trilogy',
   values: {

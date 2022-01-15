@@ -11,15 +11,14 @@ import { parse } from '../../language/parser';
 
 import type {
   GraphQLArgumentConfig,
-  GraphQLFieldConfig,
-} from '../../type/definition';
+  GraphQLFieldConfig} from '../../type/definition';
 import {
-  GraphQLEnumType,
   GraphQLInputObjectType,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLScalarType,
+  IrisDataType,
 } from '../../type/definition';
 import { GraphQLString } from '../../type/scalars';
 import { GraphQLSchema } from '../../type/schema';
@@ -39,7 +38,7 @@ const TestComplexScalar = new GraphQLScalarType({
   },
 });
 
-const TestInputObject = new GraphQLInputObjectType({
+const TestInputObject = new IrisDataType({
   name: 'TestInputObject',
   fields: {
     a: { type: GraphQLString },
@@ -49,7 +48,7 @@ const TestInputObject = new GraphQLInputObjectType({
   },
 });
 
-const TestNestedInputObject = new GraphQLInputObjectType({
+const TestNestedInputObject = new IrisDataType({
   name: 'TestNestedInputObject',
   fields: {
     na: { type: new GraphQLNonNull(TestInputObject) },
@@ -57,7 +56,7 @@ const TestNestedInputObject = new GraphQLInputObjectType({
   },
 });
 
-const TestEnum = new GraphQLEnumType({
+const TestEnum = new IrisDataType({
   name: 'TestEnum',
   values: {
     NULL: { value: null },

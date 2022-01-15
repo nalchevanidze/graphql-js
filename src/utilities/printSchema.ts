@@ -10,7 +10,6 @@ import type {
   GraphQLArgument,
   GraphQLEnumType,
   GraphQLInputField,
-  GraphQLInputObjectType,
   GraphQLInterfaceType,
   GraphQLNamedType,
   GraphQLObjectType,
@@ -188,10 +187,10 @@ function printUnion(type: GraphQLUnionType): string {
   return printDescription(type) + 'resolver ' + type.name + possibleTypes;
 }
 
-function printDATA(type: GraphQLEnumType | GraphQLInputObjectType): string {
+function printDATA(type: GraphQLEnumType): string {
   const start = printDescription(type) + `data ${type.name}`;
 
-  if (isInputObjectType(type)) {
+  if (type.getValues().length === 0) {
     return (
       start +
       printBlock(

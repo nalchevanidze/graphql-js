@@ -7,11 +7,11 @@ import { introspectionFromSchema } from '../../utilities/introspectionFromSchema
 
 import { graphqlSync } from '../../graphql';
 
-import { GraphQLEnumType, GraphQLObjectType } from '../definition';
+import { GraphQLObjectType, IrisDataType } from '../definition';
 import { GraphQLBoolean, GraphQLInt, GraphQLString } from '../scalars';
 import { GraphQLSchema } from '../schema';
 
-const ColorType = new GraphQLEnumType({
+const ColorType = new IrisDataType({
   name: 'Color',
   values: {
     RED: { value: 0 },
@@ -23,7 +23,7 @@ const ColorType = new GraphQLEnumType({
 const Complex1 = { someRandomObject: new Date() };
 const Complex2 = { someRandomValue: 123 };
 
-const ComplexEnum = new GraphQLEnumType({
+const ComplexEnum = new IrisDataType({
   name: 'Complex',
   values: {
     ONE: { value: Complex1 },

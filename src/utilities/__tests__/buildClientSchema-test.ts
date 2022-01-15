@@ -7,8 +7,8 @@ import { invariant } from '../../jsutils/invariant';
 
 import {
   assertEnumType,
-  GraphQLEnumType,
   GraphQLObjectType,
+  IrisDataType,
 } from '../../type/definition';
 import {
   GraphQLBoolean,
@@ -333,7 +333,7 @@ describe('Type System: build schema from introspection', () => {
   });
 
   it('builds a schema with an enum', () => {
-    const foodEnum = new GraphQLEnumType({
+    const foodEnum = new IrisDataType({
       name: 'Food',
       description: 'Varieties of food stuffs',
       values: {

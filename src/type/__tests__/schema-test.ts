@@ -8,11 +8,11 @@ import { DirectiveLocation } from '../../language/directiveLocation';
 import { printSchema } from '../../utilities/printSchema';
 
 import {
-  GraphQLInputObjectType,
   GraphQLInterfaceType,
   GraphQLList,
   GraphQLObjectType,
   GraphQLScalarType,
+  IrisDataType,
 } from '../definition';
 import { GraphQLDirective } from '../directives';
 import { GraphQLBoolean, GraphQLInt, GraphQLString } from '../scalars';
@@ -213,12 +213,12 @@ describe('Type System: Schema', () => {
     });
 
     it('includes nested data  objects in the map', () => {
-      const NestedInputObject = new GraphQLInputObjectType({
+      const NestedInputObject = new IrisDataType({
         name: 'NestedInputObject',
         fields: {},
       });
 
-      const SomeInputObject = new GraphQLInputObjectType({
+      const SomeInputObject = new IrisDataType({
         name: 'SomeInputObject',
         fields: { nested: { type: NestedInputObject } },
       });
@@ -245,11 +245,11 @@ describe('Type System: Schema', () => {
         locations: [DirectiveLocation.OBJECT],
         args: {
           arg: {
-            type: new GraphQLInputObjectType({ name: 'Foo', fields: {} }),
+            type: new IrisDataType({ name: 'Foo', fields: {} }),
           },
           argList: {
             type: new GraphQLList(
-              new GraphQLInputObjectType({ name: 'Bar', fields: {} }),
+              new IrisDataType({ name: 'Bar', fields: {} }),
             ),
           },
         },

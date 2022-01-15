@@ -6,8 +6,7 @@ import { DirectiveLocation } from '../../language/directiveLocation';
 import type {
   GraphQLArgument,
   GraphQLInputField,
-  GraphQLInputType,
-} from '../definition';
+  GraphQLInputType} from '../definition';
 import {
   assertAbstractType,
   assertCompositeType,
@@ -28,14 +27,13 @@ import {
   assertWrappingType,
   getNamedType,
   getNullableType,
-  GraphQLEnumType,
-  GraphQLInputObjectType,
   GraphQLInterfaceType,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLScalarType,
   GraphQLUnionType,
+  IrisDataType,
   isAbstractType,
   isCompositeType,
   isEnumType,
@@ -80,8 +78,8 @@ const InterfaceType = new GraphQLInterfaceType({
   fields: {},
 });
 const UnionType = new GraphQLUnionType({ name: 'Union', types: [ObjectType] });
-const EnumType = new GraphQLEnumType({ name: 'Enum', values: { foo: {} } });
-const InputObjectType = new GraphQLInputObjectType({
+const EnumType = new IrisDataType({ name: 'Enum', values: { foo: {} } });
+const InputObjectType = new IrisDataType({
   name: 'InputObject',
   fields: {},
 });

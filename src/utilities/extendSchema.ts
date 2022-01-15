@@ -27,23 +27,22 @@ import { isTypeDefinitionNode } from '../language/predicates';
 
 import type {
   GraphQLArgumentConfig,
+  GraphQLEnumType,
   GraphQLEnumValueConfigMap,
   GraphQLFieldConfig,
   GraphQLFieldConfigArgumentMap,
   GraphQLFieldConfigMap,
   GraphQLInputFieldConfigMap,
-  GraphQLNamedType,
-  GraphQLType,
-} from '../type/definition';
+  GraphQLInputObjectType,  GraphQLNamedType,
+  GraphQLType} from '../type/definition';
 import {
-  GraphQLEnumType,
-  GraphQLInputObjectType,
   GraphQLInterfaceType,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLScalarType,
   GraphQLUnionType,
+  IrisDataType,
   isEnumType,
   isInputObjectType,
   isInterfaceType,
@@ -255,7 +254,7 @@ export function extendSchemaImpl(
     const config = type.toConfig();
     const extensions = typeExtensionsMap[config.name] ?? [];
 
-    return new GraphQLInputObjectType({
+    return new IrisDataType({
       ...config,
       fields: () => ({
         ...mapValue(config.fields, (field) => ({
@@ -271,7 +270,7 @@ export function extendSchemaImpl(
     const config = type.toConfig();
     const extensions = typeExtensionsMap[type.name] ?? [];
 
-    return new GraphQLEnumType({
+    return new IrisDataType({
       ...config,
       values: {
         ...config.values,
@@ -588,7 +587,7 @@ export function extendSchemaImpl(
         const [variant, ...ext] = astNode.variants;
 
         if (ext.length === 0 && variant.fields.length > 0) {
-          return new GraphQLInputObjectType({
+          return new IrisDataType({
             name,
             description: astNode.description?.value,
             fields: () => buildInputFieldMap([astNode]),
@@ -596,7 +595,7 @@ export function extendSchemaImpl(
           });
         }
 
-        return new GraphQLEnumType({
+        return new IrisDataType({
           name,
           description: astNode.description?.value,
           values: buildEnumValueMap([astNode]),

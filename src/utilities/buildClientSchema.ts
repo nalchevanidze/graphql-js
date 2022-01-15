@@ -6,23 +6,22 @@ import { keyValMap } from '../jsutils/keyValMap';
 import { parseValue } from '../language/parser';
 
 import type {
+  GraphQLEnumType,
   GraphQLFieldConfig,
   GraphQLFieldConfigMap,
-  GraphQLNamedType,
-  GraphQLType,
-} from '../type/definition';
+  GraphQLInputObjectType,  GraphQLNamedType,
+  GraphQLType} from '../type/definition';
 import {
   assertInterfaceType,
   assertNullableType,
   assertObjectType,
-  GraphQLEnumType,
-  GraphQLInputObjectType,
   GraphQLInterfaceType,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLScalarType,
   GraphQLUnionType,
+  IrisDataType,
   isInputType,
   isOutputType,
 } from '../type/definition';
@@ -277,7 +276,7 @@ export function buildClientSchema(
         `Introspection result missing enumValues: ${enumIntrospectionStr}.`,
       );
     }
-    return new GraphQLEnumType({
+    return new IrisDataType({
       name: enumIntrospection.name,
       description: enumIntrospection.description,
       values: keyValMap(
@@ -300,7 +299,7 @@ export function buildClientSchema(
         `Introspection result missing inputFields: ${inputObjectIntrospectionStr}.`,
       );
     }
-    return new GraphQLInputObjectType({
+    return new IrisDataType({
       name: inputObjectIntrospection.name,
       description: inputObjectIntrospection.description,
       fields: () => buildInputValueDefMap(inputObjectIntrospection.inputFields),

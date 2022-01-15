@@ -7,14 +7,13 @@ import { DirectiveLocation } from '../../language/directiveLocation';
 
 import type { GraphQLFieldConfig } from '../../type/definition';
 import {
-  GraphQLEnumType,
-  GraphQLInputObjectType,
   GraphQLInterfaceType,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLScalarType,
   GraphQLUnionType,
+  IrisDataType,
 } from '../../type/definition';
 import { GraphQLDirective } from '../../type/directives';
 import { GraphQLBoolean, GraphQLInt, GraphQLString } from '../../type/scalars';
@@ -474,7 +473,7 @@ describe('Type System Printer', () => {
   it('Print Input Type', () => {
     const schema = new GraphQLSchema({
       types: [
-        new GraphQLInputObjectType({
+        new IrisDataType({
           name: 'DataType',
           fields: {
             int: { type: GraphQLInt },
@@ -511,7 +510,7 @@ describe('Type System Printer', () => {
   });
 
   it('Enum', () => {
-    const RGBType = new GraphQLEnumType({
+    const RGBType = new IrisDataType({
       name: 'RGB',
       values: {
         RED: {},
@@ -529,7 +528,7 @@ describe('Type System Printer', () => {
   it('Prints empty types', () => {
     const schema = new GraphQLSchema({
       types: [
-        new GraphQLInputObjectType({ name: 'SomeInputObject', fields: {} }),
+        new IrisDataType({ name: 'SomeInputObject', fields: {} }),
         new GraphQLInterfaceType({ name: 'SomeInterface', fields: {} }),
         new GraphQLObjectType({ name: 'SomeObject', fields: {} }),
         new GraphQLUnionType({ name: 'SomeUnion', types: [] }),

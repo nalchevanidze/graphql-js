@@ -18,8 +18,7 @@ import type {
   GraphQLInputFieldConfig,
   GraphQLInputType,
   GraphQLNamedType,
-  GraphQLOutputType,
-} from '../definition';
+  GraphQLOutputType} from '../definition';
 import {
   assertEnumType,
   assertInputObjectType,
@@ -27,13 +26,12 @@ import {
   assertObjectType,
   assertScalarType,
   assertUnionType,
-  GraphQLEnumType,
-  GraphQLInputObjectType,
   GraphQLInterfaceType,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLUnionType,
+  IrisDataType,
 } from '../definition';
 import { assertDirective, GraphQLDirective } from '../directives';
 import { GraphQLString } from '../scalars';
@@ -844,7 +842,7 @@ describe('Type System: Input Objects must have fields', () => {
 describe('Type System: Enum types must be well defined', () => {
   it('rejects an Enum type with incorrectly named values', () => {
     const schema = schemaWithFieldType(
-      new GraphQLEnumType({
+      new IrisDataType({
         name: 'SomeEnum',
         values: {
           __badName: {},
@@ -905,7 +903,6 @@ describe('Type System: Object fields must have output types', () => {
   for (const type of notOutputTypes) {
     const typeStr = inspect(type);
     it(`rejects a non-output type as an Object field type: ${typeStr}`, () => {
-      // @ts-expect-error
       const schema = schemaWithObjectField({ type });
       expectJSON(validateSchema(schema)).toDeepEqual([
         {
@@ -1103,7 +1100,6 @@ describe('Type System: Interface fields must have output types', () => {
   for (const type of notOutputTypes) {
     const typeStr = inspect(type);
     it(`rejects a non-output type as an Interface field type: ${typeStr}`, () => {
-      // @ts-expect-error
       const schema = schemaWithInterfaceField({ type });
       expectJSON(validateSchema(schema)).toDeepEqual([
         {
@@ -1329,7 +1325,7 @@ describe('Type System: Input Object fields must have input types', () => {
   function schemaWithInputField(
     inputFieldConfig: GraphQLInputFieldConfig,
   ): GraphQLSchema {
-    const BadInputObjectType = new GraphQLInputObjectType({
+    const BadInputObjectType = new IrisDataType({
       name: 'BadInputObject',
       fields: {
         badField: inputFieldConfig,
