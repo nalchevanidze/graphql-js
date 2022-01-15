@@ -573,7 +573,6 @@ describe('Type predicates', () => {
         description: undefined,
         defaultValue: config.defaultValue,
         deprecationReason: null,
-        extensions: Object.create(null),
         astNode: undefined,
       };
     }

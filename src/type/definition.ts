@@ -12,7 +12,6 @@ import type { ObjMap } from '../jsutils/ObjMap';
 import type { Path } from '../jsutils/Path';
 import type { PromiseOrValue } from '../jsutils/PromiseOrValue';
 import { suggestionList } from '../jsutils/suggestionList';
-import { toObjMap } from '../jsutils/toObjMap';
 
 import { GraphQLError } from '../error/GraphQLError';
 
@@ -479,44 +478,6 @@ export function resolveObjMapThunk<T>(thunk: ThunkObjMap<T>): ObjMap<T> {
   return typeof thunk === 'function' ? thunk() : thunk;
 }
 
-/**
- * Custom extensions
- *
- * @remarks
- * Use a unique identifier name for your extension, for example the name of
- * your library or project. Do not use a shortened identifier as this increases
- * the risk of conflicts. We recommend you add at most one extension field,
- * an object which can contain all the values you need.
- */
-export interface GraphQLScalarTypeExtensions {
-  [attributeName: string]: unknown;
-}
-
-/**
- * Scalar Type Definition
- *
- * The leaf values of any request and input values to arguments are
- * Scalars (or Enums) and are defined with a name and a series of functions
- * used to parse input from ast or variables and to ensure validity.
- *
- * If a type's serialize function does not return a value (i.e. it returns
- * `undefined`) then an error will be raised and a `null` value will be returned
- * in the response. If the serialize function returns `null`, then no error will
- * be included in the response.
- *
- * Example:
- *
- * ```ts
- * const OddType = new GraphQLScalarType({
- *   name: 'Odd',
- *   serialize(value) {
- *     if (value % 2 === 1) {
- *       return value;
- *     }
- *   }
- * });
- * ```
- */
 export class GraphQLScalarType<TInternal = unknown, TExternal = TInternal> {
   name: string;
   description: Maybe<string>;
@@ -524,7 +485,6 @@ export class GraphQLScalarType<TInternal = unknown, TExternal = TInternal> {
   serialize: GraphQLScalarSerializer<TExternal>;
   parseValue: GraphQLScalarValueParser<TInternal>;
   parseLiteral: GraphQLScalarLiteralParser<TInternal>;
-  extensions: Readonly<GraphQLScalarTypeExtensions>;
   astNode: Maybe<ScalarTypeDefinitionNode>;
 
   constructor(config: Readonly<GraphQLScalarTypeConfig<TInternal, TExternal>>) {
@@ -541,7 +501,6 @@ export class GraphQLScalarType<TInternal = unknown, TExternal = TInternal> {
     this.parseLiteral =
       config.parseLiteral ??
       ((node, variables) => parseValue(valueFromASTUntyped(node, variables)));
-    this.extensions = toObjMap(config.extensions);
     this.astNode = config.astNode;
 
     devAssert(
@@ -577,7 +536,6 @@ export class GraphQLScalarType<TInternal = unknown, TExternal = TInternal> {
       serialize: this.serialize,
       parseValue: this.parseValue,
       parseLiteral: this.parseLiteral,
-      extensions: this.extensions,
       astNode: this.astNode,
     };
   }
@@ -614,7 +572,6 @@ export interface GraphQLScalarTypeConfig<TInternal, TExternal> {
   parseValue?: GraphQLScalarValueParser<TInternal>;
   /** Parses an externally provided literal value to use as an input. */
   parseLiteral?: GraphQLScalarLiteralParser<TInternal>;
-  extensions?: Maybe<Readonly<GraphQLScalarTypeExtensions>>;
   astNode?: Maybe<ScalarTypeDefinitionNode>;
 }
 
@@ -623,70 +580,16 @@ interface GraphQLScalarTypeNormalizedConfig<TInternal, TExternal>
   serialize: GraphQLScalarSerializer<TExternal>;
   parseValue: GraphQLScalarValueParser<TInternal>;
   parseLiteral: GraphQLScalarLiteralParser<TInternal>;
-  extensions: Readonly<GraphQLScalarTypeExtensions>;
 }
 
-/**
- * Custom extensions
- *
- * @remarks
- * Use a unique identifier name for your extension, for example the name of
- * your library or project. Do not use a shortened identifier as this increases
- * the risk of conflicts. We recommend you add at most one extension field,
- * an object which can contain all the values you need.
- *
- * We've provided these template arguments because this is an open type and
- * you may find them useful.
- */
 export interface GraphQLObjectTypeExtensions<_TSource = any, _TContext = any> {
   [attributeName: string]: unknown;
 }
 
-/**
- * Object Type Definition
- *
- * Almost all of the GraphQL types you define will be object types. Object types
- * have a name, but most importantly describe their fields.
- *
- * Example:
- *
- * ```ts
- * const AddressType = new GraphQLObjectType({
- *   name: 'Address',
- *   fields: {
- *     street: { type: GraphQLString },
- *     number: { type: GraphQLInt },
- *     formatted: {
- *       type: GraphQLString,
- *       resolve(obj) {
- *         return obj.number + ' ' + obj.street
- *       }
- *     }
- *   }
- * });
- * ```
- *
- * When two types need to refer to each other, or a type needs to refer to
- * itself in a field, you can use a function expression (aka a closure or a
- * thunk) to supply the fields lazily.
- *
- * Example:
- *
- * ```ts
- * const PersonType = new GraphQLObjectType({
- *   name: 'Person',
- *   fields: () => ({
- *     name: { type: GraphQLString },
- *     bestFriend: { type: PersonType },
- *   })
- * });
- * ```
- */
 export class GraphQLObjectType<TSource = any, TContext = any> {
   name: string;
   description: Maybe<string>;
   isTypeOf: Maybe<GraphQLIsTypeOfFn<TSource, TContext>>;
-  extensions: Readonly<GraphQLObjectTypeExtensions<TSource, TContext>>;
   astNode: Maybe<ObjectTypeDefinitionNode>;
 
   private _fields: ThunkObjMap<GraphQLField<TSource, TContext>>;
@@ -696,7 +599,6 @@ export class GraphQLObjectType<TSource = any, TContext = any> {
     this.name = assertName(config.name);
     this.description = config.description;
     this.isTypeOf = config.isTypeOf;
-    this.extensions = toObjMap(config.extensions);
     this.astNode = config.astNode;
 
     this._fields = () => defineFieldMap(config);
@@ -726,14 +628,13 @@ export class GraphQLObjectType<TSource = any, TContext = any> {
     return this._interfaces;
   }
 
-  toConfig(): GraphQLObjectTypeNormalizedConfig<TSource, TContext> {
+  toConfig(): GraphQLObjectTypeNormalizedConfig {
     return {
       name: this.name,
       description: this.description,
       interfaces: this.getInterfaces(),
       fields: fieldsToFieldsConfig(this.getFields()),
       isTypeOf: this.isTypeOf,
-      extensions: this.extensions,
       astNode: this.astNode,
     };
   }
@@ -795,7 +696,6 @@ function defineFieldMap<TSource, TContext>(
       resolve: fieldConfig.resolve,
       subscribe: fieldConfig.subscribe,
       deprecationReason: fieldConfig.deprecationReason,
-      extensions: toObjMap(fieldConfig.extensions),
       astNode: fieldConfig.astNode,
     };
   });
@@ -828,7 +728,6 @@ function fieldsToFieldsConfig<TSource, TContext>(
     resolve: field.resolve,
     subscribe: field.subscribe,
     deprecationReason: field.deprecationReason,
-    extensions: field.extensions,
     astNode: field.astNode,
   }));
 }
@@ -858,15 +757,13 @@ export interface GraphQLObjectTypeConfig<TSource, TContext> {
   interfaces?: ThunkReadonlyArray<GraphQLInterfaceType>;
   fields: ThunkObjMap<GraphQLFieldConfig<TSource, TContext>>;
   isTypeOf?: Maybe<GraphQLIsTypeOfFn<TSource, TContext>>;
-  extensions?: Maybe<Readonly<GraphQLObjectTypeExtensions<TSource, TContext>>>;
   astNode?: Maybe<ObjectTypeDefinitionNode>;
 }
 
-interface GraphQLObjectTypeNormalizedConfig<TSource, TContext>
+interface GraphQLObjectTypeNormalizedConfig
   extends GraphQLObjectTypeConfig<any, any> {
   interfaces: ReadonlyArray<GraphQLInterfaceType>;
   fields: GraphQLFieldConfigMap<any, any>;
-  extensions: Readonly<GraphQLObjectTypeExtensions<TSource, TContext>>;
 }
 
 export type GraphQLTypeResolver<TSource, TContext> = (
@@ -907,22 +804,6 @@ export interface GraphQLResolveInfo {
   readonly variableValues: { [variable: string]: unknown };
 }
 
-/**
- * Custom extensions
- *
- * @remarks
- * Use a unique identifier name for your extension, for example the name of
- * your library or project. Do not use a shortened identifier as this increases
- * the risk of conflicts. We recommend you add at most one extension field,
- * an object which can contain all the values you need.
- *
- * We've provided these template arguments because this is an open type and
- * you may find them useful.
- */
-export interface GraphQLFieldExtensions<_TSource, _TContext, _TArgs = any> {
-  [attributeName: string]: unknown;
-}
-
 export interface GraphQLFieldConfig<TSource, TContext, TArgs = any> {
   description?: Maybe<string>;
   type: GraphQLOutputType;
@@ -930,9 +811,6 @@ export interface GraphQLFieldConfig<TSource, TContext, TArgs = any> {
   resolve?: GraphQLFieldResolver<TSource, TContext, TArgs>;
   subscribe?: GraphQLFieldResolver<TSource, TContext, TArgs>;
   deprecationReason?: Maybe<string>;
-  extensions?: Maybe<
-    Readonly<GraphQLFieldExtensions<TSource, TContext, TArgs>>
-  >;
   astNode?: Maybe<FieldDefinitionNode>;
 }
 
@@ -958,7 +836,6 @@ export interface GraphQLField<TSource, TContext, TArgs = any> {
   resolve?: GraphQLFieldResolver<TSource, TContext, TArgs>;
   subscribe?: GraphQLFieldResolver<TSource, TContext, TArgs>;
   deprecationReason: Maybe<string>;
-  extensions: Readonly<GraphQLFieldExtensions<TSource, TContext, TArgs>>;
   astNode: Maybe<FieldDefinitionNode>;
 }
 

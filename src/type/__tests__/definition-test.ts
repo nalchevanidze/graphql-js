@@ -247,7 +247,6 @@ describe('Type System: Objects', () => {
         resolve: undefined,
         subscribe: undefined,
         deprecationReason: undefined,
-        extensions: {},
         astNode: undefined,
       },
     });
@@ -277,14 +276,12 @@ describe('Type System: Objects', () => {
             type: ScalarType,
             defaultValue: undefined,
             deprecationReason: undefined,
-            extensions: {},
             astNode: undefined,
           },
         ],
         resolve: undefined,
         subscribe: undefined,
         deprecationReason: undefined,
-        extensions: {},
         astNode: undefined,
       },
     });
