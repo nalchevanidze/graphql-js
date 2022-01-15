@@ -797,9 +797,7 @@ export class GraphQLObjectType<TSource = any, TContext = any> {
 }
 
 function defineInterfaces(
-  config: Readonly<
-    GraphQLObjectTypeConfig<any, any> | GraphQLInterfaceTypeConfig<any, any>
-  >,
+  config: Readonly<GraphQLObjectTypeConfig<any, any>>,
 ): ReadonlyArray<GraphQLInterfaceType> {
   const interfaces = resolveReadonlyArrayThunk(config.interfaces ?? []);
   devAssert(
@@ -1047,57 +1045,20 @@ export type GraphQLFieldMap<TSource, TContext> = ObjMap<
   GraphQLField<TSource, TContext>
 >;
 
-/**
- * Custom extensions
- *
- * @remarks
- * Use a unique identifier name for your extension, for example the name of
- * your library or project. Do not use a shortened identifier as this increases
- * the risk of conflicts. We recommend you add at most one extension field,
- * an object which can contain all the values you need.
- */
-export interface GraphQLInterfaceTypeExtensions {
-  [attributeName: string]: unknown;
-}
-
-/**
- * Interface Type Definition
- *
- * When a field can return one of a heterogeneous set of types, a Interface type
- * is used to describe what types are possible, what fields are in common across
- * all types, as well as a function to determine which type is actually used
- * when the field is resolved.
- *
- * Example:
- *
- * ```ts
- * const EntityType = new GraphQLInterfaceType({
- *   name: 'Entity',
- *   fields: {
- *     name: { type: GraphQLString }
- *   }
- * });
- * ```
- */
 export class GraphQLInterfaceType {
   name: string;
   description: Maybe<string>;
   resolveType: Maybe<GraphQLTypeResolver<any, any>>;
-  extensions: Readonly<GraphQLInterfaceTypeExtensions>;
   astNode: Maybe<InterfaceTypeDefinitionNode>;
-
   private _fields: ThunkObjMap<GraphQLField<any, any>>;
-  private _interfaces: ThunkReadonlyArray<GraphQLInterfaceType>;
 
   constructor(config: Readonly<GraphQLInterfaceTypeConfig<any, any>>) {
     this.name = assertName(config.name);
     this.description = config.description;
     this.resolveType = config.resolveType;
-    this.extensions = toObjMap(config.extensions);
     this.astNode = config.astNode;
 
     this._fields = defineFieldMap.bind(undefined, config);
-    this._interfaces = defineInterfaces.bind(undefined, config);
     devAssert(
       config.resolveType == null || typeof config.resolveType === 'function',
       `${this.name} must provide "resolveType" as a function, ` +
@@ -1116,21 +1077,12 @@ export class GraphQLInterfaceType {
     return this._fields;
   }
 
-  getInterfaces(): ReadonlyArray<GraphQLInterfaceType> {
-    if (typeof this._interfaces === 'function') {
-      this._interfaces = this._interfaces();
-    }
-    return this._interfaces;
-  }
-
   toConfig(): GraphQLInterfaceTypeNormalizedConfig {
     return {
       name: this.name,
       description: this.description,
-      interfaces: this.getInterfaces(),
       fields: fieldsToFieldsConfig(this.getFields()),
       resolveType: this.resolveType,
-      extensions: this.extensions,
       astNode: this.astNode,
     };
   }
@@ -1147,7 +1099,6 @@ export class GraphQLInterfaceType {
 export interface GraphQLInterfaceTypeConfig<TSource, TContext> {
   name: string;
   description?: Maybe<string>;
-  interfaces?: ThunkReadonlyArray<GraphQLInterfaceType>;
   fields: ThunkObjMap<GraphQLFieldConfig<TSource, TContext>>;
   /**
    * Optionally provide a custom type resolver function. If one is not provided,
@@ -1155,18 +1106,13 @@ export interface GraphQLInterfaceTypeConfig<TSource, TContext> {
    * Object type.
    */
   resolveType?: Maybe<GraphQLTypeResolver<TSource, TContext>>;
-  extensions?: Maybe<Readonly<GraphQLInterfaceTypeExtensions>>;
   astNode?: Maybe<InterfaceTypeDefinitionNode>;
 }
 
 export interface GraphQLInterfaceTypeNormalizedConfig
   extends GraphQLInterfaceTypeConfig<any, any> {
-  interfaces: ReadonlyArray<GraphQLInterfaceType>;
   fields: GraphQLFieldConfigMap<any, any>;
-  extensions: Readonly<GraphQLInterfaceTypeExtensions>;
 }
-
-
 
 /**
  * Union Type Definition
@@ -1193,7 +1139,7 @@ export interface GraphQLInterfaceTypeNormalizedConfig
  * ```
  */
 
-export type GraphQLUnionType = IrisResolverType
+export type GraphQLUnionType = IrisResolverType;
 
 export class IrisResolverType {
   name: string;
@@ -1247,7 +1193,6 @@ export class IrisResolverType {
   }
 }
 
-
 function defineTypes(
   config: Readonly<GraphQLUnionTypeConfig<unknown, unknown>>,
 ): ReadonlyArray<GraphQLObjectType> {
@@ -1271,8 +1216,6 @@ interface GraphQLUnionTypeNormalizedConfig
   extends GraphQLUnionTypeConfig<any, any> {
   types: ReadonlyArray<GraphQLObjectType>;
 }
-
-
 
 /**
  * Data Type Definition
@@ -1489,7 +1432,7 @@ function defineEnumValues(
   });
 }
 
-export type GraphQLEnumValueConfigMap = ObjMap<GraphQLEnumValueConfig >;
+export type GraphQLEnumValueConfigMap = ObjMap<GraphQLEnumValueConfig>;
 
 export interface GraphQLEnumValueConfig {
   description?: Maybe<string>;
@@ -1505,7 +1448,6 @@ export interface GraphQLEnumValue {
   deprecationReason: Maybe<string>;
   astNode: Maybe<EnumValueDefinitionNode>;
 }
-
 
 /**
  * Input Object Type Definition
@@ -1553,7 +1495,6 @@ function defineInputFieldMap(
     };
   });
 }
-
 
 export interface GraphQLInputFieldConfig {
   description?: Maybe<string>;

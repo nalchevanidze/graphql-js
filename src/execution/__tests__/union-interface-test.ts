@@ -74,7 +74,6 @@ const LifeType: GraphQLInterfaceType = new GraphQLInterfaceType({
 
 const MammalType: GraphQLInterfaceType = new GraphQLInterfaceType({
   name: 'Mammal',
-  interfaces: [LifeType],
   fields: () => ({
     progeny: { type: new GraphQLList(MammalType) },
     mother: { type: MammalType },
@@ -203,7 +202,7 @@ describe('Execute: Union and intersection types', () => {
           kind: 'INTERFACE',
           name: 'Mammal',
           fields: [{ name: 'progeny' }, { name: 'mother' }, { name: 'father' }],
-          interfaces: [{ name: 'Life' }],
+          interfaces: [],
           possibleTypes: [{ name: 'Dog' }, { name: 'Cat' }, { name: 'Person' }],
           enumValues: null,
           inputFields: null,

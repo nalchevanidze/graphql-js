@@ -200,10 +200,7 @@ function findTypeChanges(
         ...findImplementedInterfacesChanges(oldType, newType),
       );
     } else if (isInterfaceType(oldType) && isInterfaceType(newType)) {
-      schemaChanges.push(
-        ...findFieldChanges(oldType, newType),
-        ...findImplementedInterfacesChanges(oldType, newType),
-      );
+      schemaChanges.push(...findFieldChanges(oldType, newType));
     } else if (oldType.constructor !== newType.constructor) {
       schemaChanges.push({
         type: BreakingChangeType.TYPE_CHANGED_KIND,
@@ -315,8 +312,8 @@ function findEnumTypeChanges(
 }
 
 function findImplementedInterfacesChanges(
-  oldType: GraphQLObjectType | GraphQLInterfaceType,
-  newType: GraphQLObjectType | GraphQLInterfaceType,
+  oldType: GraphQLObjectType,
+  newType: GraphQLObjectType,
 ): Array<BreakingChange | DangerousChange> {
   const schemaChanges = [];
   const interfacesDiff = diff(oldType.getInterfaces(), newType.getInterfaces());

@@ -47,7 +47,6 @@ export type {
   GraphQLInputFieldMap,
   IrisDataTypeConfig,
   GraphQLInterfaceTypeConfig,
-  GraphQLInterfaceTypeExtensions,
   GraphQLIsTypeOfFn,
   GraphQLObjectTypeConfig,
   GraphQLObjectTypeExtensions,

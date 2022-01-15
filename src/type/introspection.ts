@@ -273,8 +273,10 @@ export const __Type: GraphQLObjectType = new GraphQLObjectType({
       interfaces: {
         type: new GraphQLList(new GraphQLNonNull(__Type)),
         resolve(type) {
-          if (isObjectType(type) || isInterfaceType(type)) {
+          if (isObjectType(type)) {
             return type.getInterfaces();
+          }else if (isInterfaceType(type)){
+            return []
           }
         },
       },

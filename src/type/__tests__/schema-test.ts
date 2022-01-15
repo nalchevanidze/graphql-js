@@ -187,31 +187,6 @@ describe('Type System: Schema', () => {
       expect(schema.isSubType(SomeInterface, SomeSubtype)).to.equal(true);
     });
 
-    it("includes interface's thunk subtypes in the type map", () => {
-      const SomeInterface = new GraphQLInterfaceType({
-        name: 'SomeInterface',
-        fields: {},
-        interfaces: () => [AnotherInterface],
-      });
-
-      const AnotherInterface = new GraphQLInterfaceType({
-        name: 'AnotherInterface',
-        fields: {},
-      });
-
-      const SomeSubtype = new GraphQLObjectType({
-        name: 'SomeSubtype',
-        fields: {},
-        interfaces: () => [SomeInterface],
-      });
-
-      const schema = new GraphQLSchema({ types: [SomeSubtype] });
-
-      expect(schema.getType('SomeInterface')).to.equal(SomeInterface);
-      expect(schema.getType('AnotherInterface')).to.equal(AnotherInterface);
-      expect(schema.getType('SomeSubtype')).to.equal(SomeSubtype);
-    });
-
     it('includes nested data  objects in the map', () => {
       const NestedInputObject = new IrisDataType({
         name: 'NestedInputObject',
