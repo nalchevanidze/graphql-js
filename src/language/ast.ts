@@ -266,7 +266,7 @@ export const QueryDocumentKeys: {
   UnionTypeDefinition: ['description', 'name', 'directives', 'types'],
   EnumTypeDefinition: ['description', 'name', 'directives', 'values'],
   EnumValueDefinition: ['description', 'name', 'directives'],
-  InputObjectTypeDefinition: ['description', 'name', 'directives', 'variants'],
+  DataTypeDefinition: ['description', 'name', 'directives', 'variants'],
   VariantDefinition: ['name', 'fields'],
   DirectiveDefinition: ['description', 'name', 'arguments', 'locations'],
 
@@ -649,7 +649,7 @@ export interface EnumValueDefinitionNode {
 export type Role = 'resolver' | 'data';
 
 export interface DataTypeDefinitionNode {
-  readonly kind: Kind.INPUT_OBJECT_TYPE_DEFINITION;
+  readonly kind: Kind.DATA_TYPE_DEFINITION;
   readonly loc?: Location;
   readonly description?: StringValueNode;
   readonly name: NameNode;

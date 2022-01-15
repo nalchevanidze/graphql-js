@@ -110,13 +110,15 @@ function getDirectiveLocationForASTPath(
       return DirectiveLocation.ENUM;
     case Kind.ENUM_VALUE_DEFINITION:
       return DirectiveLocation.ENUM_VALUE;
-    case Kind.INPUT_OBJECT_TYPE_DEFINITION:
+    case Kind.DATA_TYPE_DEFINITION:
     case Kind.INPUT_OBJECT_TYPE_EXTENSION:
       return DirectiveLocation.INPUT_OBJECT;
     case Kind.INPUT_VALUE_DEFINITION: {
       const parentNode = ancestors[ancestors.length - 3];
       invariant('kind' in parentNode);
-      return parentNode.kind === Kind.INPUT_OBJECT_TYPE_DEFINITION
+      return [Kind.DATA_TYPE_DEFINITION, Kind.VARIANT_DEFINITION].includes(
+        parentNode.kind,
+      )
         ? DirectiveLocation.INPUT_FIELD_DEFINITION
         : DirectiveLocation.ARGUMENT_DEFINITION;
     }

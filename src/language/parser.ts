@@ -229,7 +229,7 @@ export class Parser {
    *   - InterfaceTypeDefinition
    *   - UnionTypeDefinition
    *   - EnumTypeDefinition
-   *   - InputObjectTypeDefinition
+   *   - DataTypeDefinition
    */
   parseDefinition(): DefinitionNode {
     if (this.peek(TokenKind.BRACE_L)) {
@@ -1062,7 +1062,7 @@ export class Parser {
         ? this.delimitedMany(TokenKind.PIPE, this.parseVariantDefinition)
         : [{ kind: Kind.VARIANT_DEFINITION, name, fields: this.parseFields() }];
     return this.node<DataTypeDefinitionNode>(start, {
-      kind: Kind.INPUT_OBJECT_TYPE_DEFINITION,
+      kind: Kind.DATA_TYPE_DEFINITION,
       description,
       name,
       directives,

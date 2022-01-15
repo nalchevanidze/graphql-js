@@ -51,7 +51,7 @@ export enum Kind {
   UNION_TYPE_DEFINITION = 'UnionTypeDefinition',
   ENUM_TYPE_DEFINITION = 'EnumTypeDefinition',
   ENUM_VALUE_DEFINITION = 'EnumValueDefinition',
-  INPUT_OBJECT_TYPE_DEFINITION = 'InputObjectTypeDefinition',
+  DATA_TYPE_DEFINITION = 'DataTypeDefinition',
 
   /** Directive Definitions */
   DIRECTIVE_DEFINITION = 'DirectiveDefinition',

@@ -221,7 +221,7 @@ const printDocASTReducer: ASTReducer<string> = {
       wrap('', description, '\n') + join([name, join(directives, ' ')], ' '),
   },
 
-  InputObjectTypeDefinition: {
+  DataTypeDefinition: {
     leave: ({ description, name, directives, variants }) =>
       wrap('', description, '\n') +
       join(['data', name, join(directives, ' '), block(variants)], ' '),

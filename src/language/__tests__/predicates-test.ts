@@ -35,7 +35,7 @@ describe('AST node predicates', () => {
       'InterfaceTypeDefinition',
       'UnionTypeDefinition',
       'EnumTypeDefinition',
-      'InputObjectTypeDefinition',
+      'DataTypeDefinition',
       'DirectiveDefinition',
       'SchemaExtension',
       'ScalarTypeExtension',
@@ -103,7 +103,7 @@ describe('AST node predicates', () => {
       'InterfaceTypeDefinition',
       'UnionTypeDefinition',
       'EnumTypeDefinition',
-      'InputObjectTypeDefinition',
+      'DataTypeDefinition',
       'DirectiveDefinition',
     ]);
   });
@@ -115,7 +115,7 @@ describe('AST node predicates', () => {
       'InterfaceTypeDefinition',
       'UnionTypeDefinition',
       'EnumTypeDefinition',
-      'InputObjectTypeDefinition',
+      'DataTypeDefinition',
     ]);
   });
 

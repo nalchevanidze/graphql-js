@@ -633,7 +633,7 @@ export function extendSchemaImpl(
           extensionASTNodes,
         });
       }
-      case Kind.INPUT_OBJECT_TYPE_DEFINITION: {
+      case Kind.DATA_TYPE_DEFINITION: {
         const allNodes = [astNode, ...extensionASTNodes];
 
         return new GraphQLInputObjectType({

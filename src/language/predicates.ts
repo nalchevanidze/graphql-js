@@ -90,7 +90,7 @@ export function isTypeDefinitionNode(
     node.kind === Kind.INTERFACE_TYPE_DEFINITION ||
     node.kind === Kind.UNION_TYPE_DEFINITION ||
     node.kind === Kind.ENUM_TYPE_DEFINITION ||
-    node.kind === Kind.INPUT_OBJECT_TYPE_DEFINITION
+    node.kind === Kind.DATA_TYPE_DEFINITION
   );
 }
 

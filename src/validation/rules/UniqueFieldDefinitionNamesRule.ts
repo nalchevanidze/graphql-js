@@ -1,6 +1,7 @@
 import { GraphQLError } from '../../error/GraphQLError';
 
 import type {
+  DataTypeDefinitionNode,
   FieldDefinitionNode,
   InputValueDefinitionNode,
   NameNode,
@@ -29,13 +30,18 @@ export function UniqueFieldDefinitionNamesRule(
   const knownFieldNames = Object.create(null);
 
   return {
-    InputObjectTypeDefinition: checkFieldUniqueness,
+    DataTypeDefinition: checkVariantUniqueness,
     InputObjectTypeExtension: checkFieldUniqueness,
     InterfaceTypeDefinition: checkFieldUniqueness,
     InterfaceTypeExtension: checkFieldUniqueness,
     ObjectTypeDefinition: checkFieldUniqueness,
     ObjectTypeExtension: checkFieldUniqueness,
   };
+
+  function checkVariantUniqueness({ variants }: DataTypeDefinitionNode) {
+    variants.map(checkFieldUniqueness);
+    return false;
+  }
 
   function checkFieldUniqueness(node: {
     readonly name: NameNode;

@@ -723,7 +723,7 @@ describe('Schema Parser', () => {
       kind: 'Document',
       definitions: [
         {
-          kind: 'InputObjectTypeDefinition',
+          kind: 'DataTypeDefinition',
           name: nameNode('Hello', { start: 10, end: 15 }),
           description: undefined,
           directives: [],
