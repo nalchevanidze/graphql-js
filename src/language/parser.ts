@@ -252,8 +252,6 @@ export class Parser {
           return this.parseInterfaceTypeDefinition();
         case 'resolver':
           return this.parseResolverTypeDefinition();
-        case 'enum':
-          return this.parseEnumTypeDefinition();
         case 'data':
           return this.parseAlgebraicDataType('data');
         case 'directive':

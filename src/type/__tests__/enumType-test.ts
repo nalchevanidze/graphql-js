@@ -273,7 +273,7 @@ describe('Type System: Enum Values', () => {
     });
   });
 
-  it('does not accept string variables as enum input', () => {
+  it('does not accept string variables as Enum input', () => {
     const doc = 'query ($color: String!) { colorEnum(fromEnum: $color) }';
     const result = executeQuery(doc, { color: 'BLUE' });
 
@@ -291,7 +291,7 @@ describe('Type System: Enum Values', () => {
     });
   });
 
-  it('does not accept internal value variable as enum input', () => {
+  it('does not accept internal value variable as Enum input', () => {
     const doc = 'query ($color: Int!) { colorEnum(fromEnum: $color) }';
     const result = executeQuery(doc, { color: 2 });
 
@@ -309,7 +309,7 @@ describe('Type System: Enum Values', () => {
     });
   });
 
-  it('enum value may have an internal value of 0', () => {
+  it('Enum value may have an internal value of 0', () => {
     const result = executeQuery(`
       {
         colorEnum(fromEnum: RED)
@@ -325,7 +325,7 @@ describe('Type System: Enum Values', () => {
     });
   });
 
-  it('enum inputs may be nullable', () => {
+  it('Enum inputs may be nullable', () => {
     const result = executeQuery(`
       {
         colorEnum

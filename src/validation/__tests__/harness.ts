@@ -27,11 +27,10 @@ export const testSchema: GraphQLSchema = buildSchema(`
     father: Canine
   }
 
-  enum DogCommand {
-    SIT
-    HEEL
-    DOWN
-  }
+  data DogCommand 
+    = SIT
+    | HEEL
+    | DOWN
 
   type Dog implements Pet & Mammal & Canine {
     name(surname: Boolean): String
@@ -61,14 +60,13 @@ export const testSchema: GraphQLSchema = buildSchema(`
     relatives: [Human]
   }
 
-  enum FurColor {
-    BROWN
-    BLACK
-    TAN
-    SPOTTED
-    NO_FUR
-    UNKNOWN
-  }
+  data FurColor 
+    = BROWN
+    | BLACK
+    | TAN
+    | SPOTTED
+    | NO_FUR
+    | UNKNOWN
 
   data  ComplexInput {
     requiredField: Boolean!

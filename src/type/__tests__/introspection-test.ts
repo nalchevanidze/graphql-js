@@ -1328,13 +1328,12 @@ describe('Introspection', () => {
     });
   });
 
-  it('identifies deprecated enum values', () => {
+  it('identifies deprecated Enum values', () => {
     const schema = buildSchema(`
-      enum SomeEnum {
-        NON_DEPRECATED
-        DEPRECATED @deprecated(reason: "Removed in 1.0")
-        ALSO_NON_DEPRECATED
-      }
+      data SomeEnum 
+        = NON_DEPRECATED 
+        | DEPRECATED @deprecated(reason: "Removed in 1.0")
+        | ALSO_NON_DEPRECATED
 
       type Query {
         someField(someArg: SomeEnum): String
@@ -1380,12 +1379,11 @@ describe('Introspection', () => {
 
   it('respects the includeDeprecated parameter for enum values', () => {
     const schema = buildSchema(`
-      enum SomeEnum {
-        NON_DEPRECATED
-        DEPRECATED @deprecated(reason: "Removed in 1.0")
-        DEPRECATED_WITH_EMPTY_REASON @deprecated(reason: "")
-        ALSO_NON_DEPRECATED
-      }
+      data SomeEnum 
+        = NON_DEPRECATED
+        | DEPRECATED @deprecated(reason: "Removed in 1.0")
+        | DEPRECATED_WITH_EMPTY_REASON @deprecated(reason: "")
+        | ALSO_NON_DEPRECATED
 
       type Query {
         someField(someArg: SomeEnum): String
@@ -1548,10 +1546,7 @@ describe('Introspection', () => {
   it('exposes descriptions', () => {
     const schema = buildSchema(`
       """Enum description"""
-      enum SomeEnum {
-        """Value description"""
-        VALUE
-      }
+      data SomeEnum = VALUE
 
       """Object description"""
       type SomeObject {
@@ -1594,8 +1589,8 @@ describe('Introspection', () => {
           description: 'Enum description',
           enumValues: [
             {
+              description: null,
               name: 'VALUE',
-              description: 'Value description',
             },
           ],
         },

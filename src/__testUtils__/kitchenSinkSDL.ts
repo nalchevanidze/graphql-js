@@ -61,22 +61,11 @@ scalar CustomScalar
 
 scalar AnnotatedScalar @onScalar
 
-enum Site {
-  """This is a description of the \`DESKTOP\` value"""
-  DESKTOP
-  """This is a description of the \`MOBILE\` value"""
-  MOBILE
-  "This is a description of the \`WEB\` value"
-  WEB
-  VR
-}
+data Site = DESKTOP | MOBILE | WEB | VR
 
-enum AnnotatedEnum @onEnum {
-  ANNOTATED_VALUE @onEnumValue
-  OTHER_VALUE
-}
+data AnnotatedEnum @onEnum = ANNOTATED_VALUE @onEnumValue | OTHER_VALUE
 
-enum UndefinedEnum
+data UndefinedEnum
 
 data InputType = {
   key: String!

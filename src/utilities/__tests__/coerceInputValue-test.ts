@@ -140,7 +140,7 @@ describe('coerceInputValue', () => {
       },
     });
 
-    it('returns no error for a known enum name', () => {
+    it('returns no error for a known Enum name', () => {
       const fooResult = coerceValue('FOO', TestEnum);
       expectValue(fooResult).to.equal('InternalFoo');
 
@@ -148,7 +148,7 @@ describe('coerceInputValue', () => {
       expectValue(barResult).to.equal(123456789);
     });
 
-    it('returns an error for misspelled enum value', () => {
+    it('returns an error for misspelled Enum value', () => {
       const result = coerceValue('foo', TestEnum);
       expectErrors(result).to.deep.equal([
         {

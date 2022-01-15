@@ -1355,7 +1355,7 @@ export interface GraphQLEnumTypeExtensions {
  * });
  * ```
  *
- * Note: If a value is not provided in a definition, the name of the enum value
+ * Note: If a value is not provided in a definition, the name of the Enum value
  * will be used as its internal value.
  */
 export class GraphQLEnumType /* <T> */ {

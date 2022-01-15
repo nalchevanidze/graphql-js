@@ -26,7 +26,7 @@ export enum DirectiveLocation {
 }
 
 /**
- * The enum type representing the directive location values.
+ * The Enum type representing the directive location values.
  *
  * @deprecated Please use `DirectiveLocation`. Will be remove in v17.
  */

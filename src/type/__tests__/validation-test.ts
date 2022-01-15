@@ -49,7 +49,7 @@ const SomeSchema = buildSchema(`
 
   resolver SomeUnion = SomeObject
 
-  enum SomeEnum { ONLY }
+  data SomeEnum = ONLY
 
   data SomeInputObject = { val: String = "hello" }
 
