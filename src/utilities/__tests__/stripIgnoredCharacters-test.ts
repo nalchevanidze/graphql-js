@@ -3,13 +3,11 @@ import { describe, it } from 'mocha';
 
 import { dedent } from '../../__testUtils__/dedent';
 import { inspectStr } from '../../__testUtils__/inspectStr';
-import { kitchenSinkQuery } from '../../__testUtils__/kitchenSinkQuery';
 
 import { invariant } from '../../jsutils/invariant';
 import type { Maybe } from '../../jsutils/Maybe';
 
 import { Lexer } from '../../language/lexer';
-import { parse } from '../../language/parser';
 import { Source } from '../../language/source';
 
 import { stripIgnoredCharacters } from '../stripIgnoredCharacters';
@@ -423,15 +421,6 @@ describe('stripIgnoredCharacters', () => {
     expectStrippedString('"""\na\n b"""').toStayTheSame();
     expectStrippedString('"""\n a\n b"""').toEqual('"""a\nb"""');
     expectStrippedString('"""\na\n b\nc"""').toEqual('"""a\n b\nc"""');
-  });
-
-  it('strips kitchen sink query but maintains the exact same AST', () => {
-    const strippedQuery = stripIgnoredCharacters(kitchenSinkQuery);
-    expect(stripIgnoredCharacters(strippedQuery)).to.equal(strippedQuery);
-
-    const queryAST = parse(kitchenSinkQuery, { noLocation: true });
-    const strippedAST = parse(strippedQuery, { noLocation: true });
-    expect(strippedAST).to.deep.equal(queryAST);
   });
 
 });
