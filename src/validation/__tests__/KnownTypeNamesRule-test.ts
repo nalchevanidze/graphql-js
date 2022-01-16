@@ -119,16 +119,12 @@ describe('Validate: Known type names', () => {
       expectValidSDL(`
         resolver SomeUnion= SomeObject | AnotherObject
 
-        type SomeObject implements SomeInterface {
+        type SomeObject {
           someScalar(arg: SomeInputObject): SomeScalar
         }
 
         type AnotherObject {
           foo(arg: SomeInputObject): String
-        }
-
-        type SomeInterface {
-          someScalar(arg: SomeInputObject): SomeScalar
         }
 
         data  SomeInputObject {
@@ -138,7 +134,6 @@ describe('Validate: Known type names', () => {
         scalar SomeScalar
 
         type RootQuery {
-          someInterface: SomeInterface
           someUnion: SomeUnion
           someScalar: SomeScalar
           someObject: SomeObject
@@ -155,17 +150,13 @@ describe('Validate: Known type names', () => {
         type A
         type B
 
-        type SomeObject implements C {
+        type SomeObject {
           e(d: D): E
         }
 
-        resolver SomeUnion= F | G
+        resolver SomeUnion = F | G
 
-        interface SomeInterface {
-          i(h: H): I
-        }
-
-        data  SomeInput {
+        data SomeInput {
           j: J
         }
 
@@ -178,10 +169,6 @@ describe('Validate: Known type names', () => {
         }
       `).toDeepEqual([
         {
-          message: 'Unknown type "C". Did you mean "A" or "B"?',
-          locations: [{ line: 5, column: 36 }],
-        },
-        {
           message: 'Unknown type "D". Did you mean "A", "B", or "ID"?',
           locations: [{ line: 6, column: 16 }],
         },
@@ -191,39 +178,31 @@ describe('Validate: Known type names', () => {
         },
         {
           message: 'Unknown type "F". Did you mean "A" or "B"?',
-          locations: [{ line: 9, column: 29 }],
+          locations: [{ line: 9, column: 30 }],
         },
         {
           message: 'Unknown type "G". Did you mean "A" or "B"?',
-          locations: [{ line: 9, column: 33 }],
-        },
-        {
-          message: 'Unknown type "H". Did you mean "A" or "B"?',
-          locations: [{ line: 12, column: 16 }],
-        },
-        {
-          message: 'Unknown type "I". Did you mean "A", "B", or "ID"?',
-          locations: [{ line: 12, column: 20 }],
+          locations: [{ line: 9, column: 34 }],
         },
         {
           message: 'Unknown type "J". Did you mean "A" or "B"?',
-          locations: [{ line: 16, column: 14 }],
+          locations: [{ line: 12, column: 14 }],
         },
         {
           message: 'Unknown type "K". Did you mean "A" or "B"?',
-          locations: [{ line: 19, column: 37 }],
+          locations: [{ line: 15, column: 37 }],
         },
         {
           message: 'Unknown type "L". Did you mean "A" or "B"?',
-          locations: [{ line: 22, column: 18 }],
+          locations: [{ line: 18, column: 18 }],
         },
         {
           message: 'Unknown type "M". Did you mean "A" or "B"?',
-          locations: [{ line: 23, column: 21 }],
+          locations: [{ line: 19, column: 21 }],
         },
         {
           message: 'Unknown type "N". Did you mean "A" or "B"?',
-          locations: [{ line: 24, column: 25 }],
+          locations: [{ line: 20, column: 25 }],
         },
       ]);
     });
