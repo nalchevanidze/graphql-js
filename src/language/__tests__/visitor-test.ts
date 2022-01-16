@@ -2,10 +2,8 @@ import { expect } from 'chai';
 import { describe, it } from 'mocha';
 
 import type { ASTNode, SelectionSetNode } from '../ast';
-import { isNode } from '../ast';
 import { Kind } from '../kinds';
 import { parse } from '../parser';
-import type { ASTVisitor, ASTVisitorKeyMap } from '../visitor';
 import { BREAK, visit, visitInParallel } from '../visitor';
 
 function checkVisitorFnArgs(ast: any, args: any, isEdited: boolean = false) {
@@ -415,41 +413,6 @@ describe('Visitor', () => {
       ['leave', 'SelectionSet', undefined],
       ['enter', 'Name', 'c'],
       ['leave', 'SelectionSet', undefined],
-    ]);
-  });
-
-  it('visits only the specified `Kind` in visitorKeyMap', () => {
-    const visited: Array<any> = [];
-
-    const visitorKeyMap: ASTVisitorKeyMap = {
-      Document: ['definitions'],
-      OperationDefinition: ['name'],
-    };
-
-    const visitor: ASTVisitor = {
-      enter(node) {
-        visited.push(['enter', node.kind, getValue(node)]);
-      },
-      leave(node) {
-        visited.push(['leave', node.kind, getValue(node)]);
-      },
-    };
-
-    const exampleDocumentAST = parse(`
-      query ExampleOperation {
-        someField
-      }
-    `);
-
-    visit(exampleDocumentAST, visitor, visitorKeyMap);
-
-    expect(visited).to.deep.equal([
-      ['enter', 'Document', undefined],
-      ['enter', 'OperationDefinition', undefined],
-      ['enter', 'Name', 'ExampleOperation'],
-      ['leave', 'Name', 'ExampleOperation'],
-      ['leave', 'OperationDefinition', undefined],
-      ['leave', 'Document', undefined],
     ]);
   });
 

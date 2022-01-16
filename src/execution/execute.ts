@@ -27,7 +27,6 @@ import { OperationTypeNode } from '../language/ast';
 import { Kind } from '../language/kinds';
 
 import type {
-  IrisResolverType,
   GraphQLField,
   GraphQLFieldResolver,
   GraphQLLeafType,
@@ -36,6 +35,7 @@ import type {
   GraphQLOutputType,
   GraphQLResolveInfo,
   GraphQLTypeResolver,
+  IrisResolverType,
 } from '../type/definition';
 import {
   isAbstractType,
