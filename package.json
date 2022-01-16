@@ -1,6 +1,6 @@
 {
-  "name": "graphql",
-  "version": "16.2.0",
+  "name": "iris",
+  "version": "0.1.0",
   "description": "A Query Language and Runtime which can target any service.",
   "license": "MIT",
   "private": true,
@@ -23,8 +23,8 @@
     "url": "https://github.com/graphql/graphql-js.git"
   },
   "keywords": [
-    "graphql",
-    "graphql-js"
+    "iris",
+    "graphql"
   ],
   "engines": {
     "node": "^12.22.0 || ^14.16.0 || >=16.0.0"
