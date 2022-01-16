@@ -3,7 +3,6 @@ import { describe, it } from 'mocha';
 
 import { dedent } from '../../__testUtils__/dedent';
 import { expectJSON, expectToThrowJSON } from '../../__testUtils__/expectJSON';
-import { kitchenSinkQuery } from '../../__testUtils__/kitchenSinkQuery';
 
 import { inspect } from '../../jsutils/inspect';
 
@@ -150,10 +149,6 @@ describe('Parser', () => {
       'definitions[0].selectionSet.selections[0].arguments[0].value.value',
       'Has a \u0A0A multi-byte character.',
     );
-  });
-
-  it('parses kitchen sink', () => {
-    expect(() => parse(kitchenSinkQuery)).to.not.throw();
   });
 
   it('allows non-keywords anywhere a Name is allowed', () => {
