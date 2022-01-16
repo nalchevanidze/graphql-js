@@ -31,7 +31,6 @@ export function UniqueVariantAndFieldDefinitionNamesRule(
 
   return {
     DataTypeDefinition: checkVariantUniqueness,
-    InterfaceTypeDefinition: checkFieldUniqueness,
     ObjectTypeDefinition: checkFieldUniqueness,
   };
 

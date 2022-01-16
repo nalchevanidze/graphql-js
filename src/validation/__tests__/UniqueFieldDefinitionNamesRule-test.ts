@@ -33,10 +33,6 @@ describe('Validate: Unique field definition names', () => {
         foo: String
       }
 
-      interface SomeInterface {
-        foo: String
-      }
-
       data SomeInputObject = {
         foo: String
       }
@@ -49,12 +45,7 @@ describe('Validate: Unique field definition names', () => {
         foo: String
         bar: String
       }
-
-      interface SomeInterface {
-        foo: String
-        bar: String
-      }
-
+  
       data SomeInputObject = {
         foo: String
         bar: String
@@ -70,13 +61,7 @@ describe('Validate: Unique field definition names', () => {
         foo: String
       }
 
-      interface SomeInterface {
-        foo: String
-        bar: String
-        foo: String
-      }
-
-      data  SomeInputObject {
+      data SomeInputObject {
         foo: String
         bar: String
         foo: String
@@ -90,19 +75,12 @@ describe('Validate: Unique field definition names', () => {
         ],
       },
       {
-        message: 'Field "SomeInterface.foo" can only be defined once.',
+        message: 'Field "SomeInputObject.foo" can only be defined once.',
         locations: [
           { line: 9, column: 9 },
           { line: 11, column: 9 },
         ],
-      },
-      {
-        message: 'Field "SomeInputObject.foo" can only be defined once.',
-        locations: [
-          { line: 15, column: 9 },
-          { line: 17, column: 9 },
-        ],
-      },
+      }
     ]);
   });
 

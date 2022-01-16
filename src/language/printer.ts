@@ -179,21 +179,6 @@ const printDocASTReducer: ASTReducer<string> = {
       ),
   },
 
-  InterfaceTypeDefinition: {
-    leave: ({ description, name, interfaces, directives, fields }) =>
-      wrap('', description, '\n') +
-      join(
-        [
-          'interface',
-          name,
-          wrap('implements ', join(interfaces, ' & ')),
-          join(directives, ' '),
-          block(fields),
-        ],
-        ' ',
-      ),
-  },
-
   UnionTypeDefinition: {
     leave: ({ description, name, directives, types }) =>
       wrap('', description, '\n') +

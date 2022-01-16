@@ -239,36 +239,6 @@ describe('Schema Parser', () => {
     });
   });
 
-  it('Simple interface', () => {
-    const doc = parse(dedent`
-      interface Hello {
-        world: String
-      }
-    `);
-
-    expectJSON(doc).toDeepEqual({
-      kind: 'Document',
-      definitions: [
-        {
-          kind: 'InterfaceTypeDefinition',
-          name: nameNode('Hello', { start: 10, end: 15 }),
-          description: undefined,
-          interfaces: [],
-          directives: [],
-          fields: [
-            fieldNode(
-              nameNode('world', { start: 20, end: 25 }),
-              typeNode('String', { start: 27, end: 33 }),
-              { start: 20, end: 33 },
-            ),
-          ],
-          loc: { start: 0, end: 35 },
-        },
-      ],
-      loc: { start: 0, end: 35 },
-    });
-  });
-
   it('Simple field with arg', () => {
     const doc = parse(dedent`
       type Hello {

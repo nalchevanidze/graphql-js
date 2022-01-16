@@ -2,8 +2,6 @@ import { describe, it } from 'mocha';
 
 import type { GraphQLSchema } from '../../type/schema';
 
-import { buildSchema } from '../../utilities/buildASTSchema';
-
 import { UniqueDirectiveNamesRule } from '../rules/UniqueDirectiveNamesRule';
 
 import { expectSDLValidationErrors } from './harness';
@@ -59,42 +57,6 @@ describe('Validate: Unique directive names', () => {
           { line: 2, column: 18 },
           { line: 4, column: 18 },
         ],
-      },
-    ]);
-  });
-
-  it('adding new directive to existing schema', () => {
-    const schema = buildSchema('directive @foo on SCHEMA');
-
-    expectValidSDL('directive @bar on SCHEMA', schema);
-  });
-
-  it('adding new directive with standard name to existing schema', () => {
-    const schema = buildSchema('type foo');
-
-    expectSDLErrors('directive @skip on SCHEMA', schema).toDeepEqual([
-      {
-        message:
-          'Directive "@skip" already exists in the schema. It cannot be redefined.',
-        locations: [{ line: 1, column: 12 }],
-      },
-    ]);
-  });
-
-  it('adding new directive to existing schema with same-named type', () => {
-    const schema = buildSchema('type foo');
-
-    expectValidSDL('directive @foo on SCHEMA', schema);
-  });
-
-  it('adding conflicting directives to existing schema', () => {
-    const schema = buildSchema('directive @foo on SCHEMA');
-
-    expectSDLErrors('directive @foo on SCHEMA', schema).toDeepEqual([
-      {
-        message:
-          'Directive "@foo" already exists in the schema. It cannot be redefined.',
-        locations: [{ line: 1, column: 12 }],
       },
     ]);
   });

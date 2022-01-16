@@ -167,7 +167,6 @@ export type ASTNode =
   | ObjectTypeDefinitionNode
   | FieldDefinitionNode
   | InputValueDefinitionNode
-  | InterfaceTypeDefinitionNode
   | UnionTypeDefinitionNode
   | EnumValueDefinitionNode
   | DataTypeDefinitionNode
@@ -247,13 +246,6 @@ export const QueryDocumentKeys: {
     'type',
     'defaultValue',
     'directives',
-  ],
-  InterfaceTypeDefinition: [
-    'description',
-    'name',
-    'interfaces',
-    'directives',
-    'fields',
   ],
   UnionTypeDefinition: ['description', 'name', 'directives', 'types'],
   DataTypeDefinition: ['description', 'name', 'directives', 'variants'],
@@ -591,7 +583,7 @@ export interface InputValueDefinitionNode {
 }
 
 export interface InterfaceTypeDefinitionNode {
-  readonly kind: Kind.INTERFACE_TYPE_DEFINITION;
+  readonly kind: Kind.UNION_TYPE_DEFINITION;
   readonly loc?: Location;
   readonly description?: StringValueNode;
   readonly name: NameNode;

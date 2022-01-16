@@ -49,98 +49,25 @@ describe('Validate: Unique type names', () => {
 
   it('types named the same', () => {
     expectSDLErrors(`
-      type Foo
-
-      scalar Foo
-      type Foo
-      interface Foo
       resolver Foo
+      scalar Foo
       data Foo
     `).toDeepEqual([
       {
         message: 'There can be only one type named "Foo".',
         locations: [
-          { line: 2, column: 12 },
-          { line: 4, column: 14 },
+          { line: 2, column: 16 },
+          { line: 3, column: 14 },
         ],
       },
       {
         message: 'There can be only one type named "Foo".',
         locations: [
-          { line: 2, column: 12 },
-          { line: 5, column: 12 },
-        ],
-      },
-      {
-        message: 'There can be only one type named "Foo".',
-        locations: [
-          { line: 2, column: 12 },
-          { line: 6, column: 17 },
-        ],
-      },
-      {
-        message: 'There can be only one type named "Foo".',
-        locations: [
-          { line: 2, column: 12 },
-          { line: 7, column: 16 },
-        ],
-      },
-      {
-        message: 'There can be only one type named "Foo".',
-        locations: [
-          { line: 2, column: 12 },
-          { line: 8, column: 12 },
+          { line: 2, column: 16 },
+          { line: 4, column: 12 },
         ],
       }
     ]);
   });
 
-  it('adding new type to existing schema', () => {
-    expectValidSDL('type Bar', buildSchema('type Foo'));
-  });
-
-  it('adding new type to existing schema with same-named directive', () => {
-    const schema = buildSchema('directive @Foo on SCHEMA');
-
-    expectValidSDL('type Foo', schema);
-  });
-
-  it('adding conflicting types to existing schema', () => {
-    const schema = buildSchema('type Foo');
-    const sdl = `
-      scalar Foo
-      type Foo
-      interface Foo
-      resolver Foo
-      data Foo
-    `;
-
-    expectSDLErrors(sdl, schema).toDeepEqual([
-      {
-        message:
-          'Type "Foo" already exists in the schema. It cannot also be defined in this type definition.',
-        locations: [{ line: 2, column: 14 }],
-      },
-      {
-        message:
-          'Type "Foo" already exists in the schema. It cannot also be defined in this type definition.',
-        locations: [{ line: 3, column: 12 }],
-      },
-      {
-        message:
-          'Type "Foo" already exists in the schema. It cannot also be defined in this type definition.',
-        locations: [{ line: 4, column: 17 }],
-      },
-      {
-        message:
-          'Type "Foo" already exists in the schema. It cannot also be defined in this type definition.',
-        locations: [{ line: 5, column: 16 }],
-      },
-      {
-        message:
-          'Type "Foo" already exists in the schema. It cannot also be defined in this type definition.',
-        locations: [{ line: 6, column: 12 }],
-      }
-    ]);
-  });
 });

@@ -78,14 +78,6 @@ describe('Validate: Unique argument definition names', () => {
         ): String
       }
 
-      interface SomeInterface {
-        someField(
-          foo: String
-          bar: String
-          foo: String
-        ): String
-      }
-
       directive @someDirective(
         foo: String
         bar: String
@@ -101,18 +93,10 @@ describe('Validate: Unique argument definition names', () => {
         ],
       },
       {
-        message:
-          'Argument "SomeInterface.someField(foo:)" can only be defined once.',
+        'message': 'Argument "@someDirective(foo:)" can only be defined once.',
         locations: [
-          { line: 12, column: 11 },
-          { line: 14, column: 11 },
-        ],
-      },
-      {
-        message: 'Argument "@someDirective(foo:)" can only be defined once.',
-        locations: [
-          { line: 19, column: 9 },
-          { line: 21, column: 9 },
+          { line: 11, column: 9 },
+          { line: 13, column: 9 },
         ],
       },
     ]);

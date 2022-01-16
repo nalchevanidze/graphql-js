@@ -278,10 +278,7 @@ export {
   getOperationAST,
   // Gets the Type for the target Operation AST.
   getOperationRootType,
-  // Convert a GraphQLSchema to an IntrospectionQuery.
-  introspectionFromSchema,
   // Build a GraphQLSchema from an introspection result.
-  buildClientSchema,
   // Build a GraphQLSchema from a parsed GraphQL Schema language AST.
   buildASTSchema,
   // Build a GraphQLSchema from a GraphQL schema language document.

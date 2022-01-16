@@ -501,16 +501,6 @@ export function extendSchemaImpl(
           astNode
         });
       }
-      case Kind.INTERFACE_TYPE_DEFINITION: {
-        const allNodes = [astNode, ...extensionASTNodes];
-
-        return new GraphQLInterfaceType({
-          name,
-          description: astNode.description?.value,
-          fields: () => buildFieldMap(allNodes),
-          astNode
-        });
-      }
       case Kind.UNION_TYPE_DEFINITION: {
         const allNodes = [astNode, ...extensionASTNodes];
 

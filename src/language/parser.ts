@@ -224,7 +224,6 @@ export class Parser {
    * TypeDefinition :
    *   - ScalarTypeDefinition
    *   - ObjectTypeDefinition
-   *   - InterfaceTypeDefinition
    *   - UnionTypeDefinition
    *   - DataTypeDefinition
    */
@@ -939,7 +938,7 @@ export class Parser {
     const directives = this.parseConstDirectives();
     const fields = this.parseFieldsDefinition();
     return this.node<InterfaceTypeDefinitionNode>(start, {
-      kind: Kind.INTERFACE_TYPE_DEFINITION,
+      kind: Kind.UNION_TYPE_DEFINITION,
       description,
       name,
       interfaces,

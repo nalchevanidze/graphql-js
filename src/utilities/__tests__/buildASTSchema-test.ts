@@ -186,12 +186,6 @@ describe('Schema Builder', () => {
         field: Int
       }
 
-      """This is a interface type"""
-      interface Energy {
-        """It also has a field"""
-        str: String
-      }
-
       """There is nothing inside!"""
       resolver BlackHole
 
@@ -311,19 +305,6 @@ describe('Schema Builder', () => {
         str(int: Int, bool: Boolean): String
       }
     `;
-    expect(cycleSDL(sdl)).to.equal(sdl);
-  });
-
-  it('Empty interface', () => {
-    const sdl = dedent`
-      interface EmptyInterface
-    `;
-
-    const definition = parse(sdl).definitions[0];
-    expect(
-      definition.kind === 'InterfaceTypeDefinition' && definition.interfaces,
-    ).to.deep.equal([], 'The interfaces property must be an empty array.');
-
     expect(cycleSDL(sdl)).to.equal(sdl);
   });
 

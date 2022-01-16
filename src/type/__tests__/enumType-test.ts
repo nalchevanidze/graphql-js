@@ -3,8 +3,6 @@ import { describe, it } from 'mocha';
 
 import { expectJSON } from '../../__testUtils__/expectJSON';
 
-import { introspectionFromSchema } from '../../utilities/introspectionFromSchema';
-
 import { graphqlSync } from '../../graphql';
 
 import { GraphQLObjectType, IrisDataType } from '../definition';
@@ -396,9 +394,5 @@ describe('Type System: Enum Values', () => {
         },
       ],
     });
-  });
-
-  it('can be introspected without error', () => {
-    expect(() => introspectionFromSchema(schema)).to.not.throw();
   });
 });
