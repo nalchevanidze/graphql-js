@@ -227,19 +227,6 @@ describe('Validate: Fields on correct type', () => {
     ]);
   });
 
-  it('Defined on implementors but not on interface', () => {
-    expectErrors(`
-      fragment definedOnImplementorsButNotInterface on Pet {
-        nickname
-      }
-    `).toDeepEqual([
-      {
-        message:
-          'Cannot query field "nickname" on type "Pet". Did you mean to use an inline fragment on "Cat" or "Dog"?',
-        locations: [{ line: 3, column: 9 }],
-      },
-    ]);
-  });
 
   it('Meta field selection on unions', () => {
     expectValid(`
@@ -257,20 +244,6 @@ describe('Validate: Fields on correct type', () => {
     `).toDeepEqual([
       {
         message: 'Cannot query field "directField" on type "CatOrDog".',
-        locations: [{ line: 3, column: 9 }],
-      },
-    ]);
-  });
-
-  it('Defined on implementors queried on union', () => {
-    expectErrors(`
-      fragment definedOnImplementorsQueriedOnUnion on CatOrDog {
-        name
-      }
-    `).toDeepEqual([
-      {
-        message:
-          'Cannot query field "name" on type "CatOrDog". Did you mean to use an inline fragment on "Pet", "Cat", or "Dog"?',
         locations: [{ line: 3, column: 9 }],
       },
     ]);
@@ -336,31 +309,6 @@ describe('Validate: Fields on correct type', () => {
 
       expectErrorMessage(schema, '{ t { f } }').to.equal(
         'Cannot query field "f" on type "T". Did you mean "y" or "z"?',
-      );
-    });
-
-    it('Only shows one set of suggestions at a time, preferring types', () => {
-      const schema = buildSchema(`
-        interface T {
-          y: String
-          z: String
-        }
-        type Query { t: T }
-
-        type A implements T {
-          f: String
-          y: String
-          z: String
-        }
-        type B implements T {
-          f: String
-          y: String
-          z: String
-        }
-      `);
-
-      expectErrorMessage(schema, '{ t { f } }').to.equal(
-        'Cannot query field "f" on type "T". Did you mean to use an inline fragment on "A" or "B"?',
       );
     });
 

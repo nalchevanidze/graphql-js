@@ -191,48 +191,6 @@ describe('Type System: build schema from introspection', () => {
     expect(cycleIntrospection(sdl)).to.equal(sdl);
   });
 
-  it('builds a schema with an interface', () => {
-    const sdl = dedent`
-      type Dog implements Friendly {
-        bestFriend: Friendly
-      }
-
-      interface Friendly {
-        """The best friend of this friendly thing"""
-        bestFriend: Friendly
-      }
-
-      type Human implements Friendly {
-        bestFriend: Friendly
-      }
-
-      type Query {
-        friendly: Friendly
-      }
-    `;
-
-    expect(cycleIntrospection(sdl)).to.equal(sdl);
-  });
-
-  it('builds a schema with an implicit interface', () => {
-    const sdl = dedent`
-      type Dog implements Friendly {
-        bestFriend: Friendly
-      }
-
-      interface Friendly {
-        """The best friend of this friendly thing"""
-        bestFriend: Friendly
-      }
-
-      type Query {
-        dog: Dog
-      }
-    `;
-
-    expect(cycleIntrospection(sdl)).to.equal(sdl);
-  });
-
   it('builds a schema with a union', () => {
     const sdl = dedent`
       type Dog {
@@ -652,36 +610,6 @@ describe('Type System: build schema from introspection', () => {
       );
     });
 
-    it('throws when missing interfaces', () => {
-      const introspection = introspectionFromSchema(dummySchema);
-      const queryTypeIntrospection = introspection.__schema.types.find(
-        ({ name }) => name === 'Query',
-      );
-
-      expect(queryTypeIntrospection).to.have.property('interfaces');
-
-      invariant(queryTypeIntrospection?.kind === 'OBJECT');
-      // @ts-expect-error
-      delete queryTypeIntrospection.interfaces;
-
-      expect(() => buildClientSchema(introspection)).to.throw(
-        /Introspection result missing interfaces: { kind: "OBJECT", name: "Query", .* }\./,
-      );
-    });
-
-    it('Legacy support for interfaces with null as interfaces field', () => {
-      const introspection = introspectionFromSchema(dummySchema);
-      const someInterfaceIntrospection = introspection.__schema.types.find(
-        ({ name }) => name === 'SomeInterface',
-      );
-
-      invariant(someInterfaceIntrospection?.kind === 'INTERFACE');
-      // @ts-expect-error
-      someInterfaceIntrospection.interfaces = null;
-
-      const clientSchema = buildClientSchema(introspection);
-      expect(printSchema(clientSchema)).to.equal(printSchema(dummySchema));
-    });
 
     it('throws when missing fields', () => {
       const introspection = introspectionFromSchema(dummySchema);
@@ -871,31 +799,6 @@ describe('Type System: build schema from introspection', () => {
   });
 
   describe('prevents infinite recursion on invalid introspection', () => {
-    it('recursive interfaces', () => {
-      const sdl = `
-        type Query {
-          foo: Foo
-        }
-
-        type Foo implements Foo {
-          foo: String
-        }
-      `;
-      const schema = buildSchema(sdl, { assumeValid: true });
-      const introspection = introspectionFromSchema(schema);
-
-      const fooIntrospection = introspection.__schema.types.find(
-        (type) => type.name === 'Foo',
-      );
-      expect(fooIntrospection).to.deep.include({
-        name: 'Foo',
-        interfaces: [{ kind: 'OBJECT', name: 'Foo', ofType: null }],
-      });
-
-      expect(() => buildClientSchema(introspection)).to.throw(
-        'Expected Foo to be a GraphQL Interface type.',
-      );
-    });
 
     it('recursive union', () => {
       const sdl = `

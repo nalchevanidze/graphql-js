@@ -327,19 +327,6 @@ describe('Schema Builder', () => {
     expect(cycleSDL(sdl)).to.equal(sdl);
   });
 
-  it('Simple type with interface', () => {
-    const sdl = dedent`
-      type Query implements WorldInterface {
-        str: String
-      }
-
-      interface WorldInterface {
-        str: String
-      }
-    `;
-    expect(cycleSDL(sdl)).to.equal(sdl);
-  });
-
   it('Empty Enum', () => {
     const sdl = dedent`
       data EmptyEnum
@@ -519,23 +506,6 @@ describe('Schema Builder', () => {
 
       type Subscription {
         subscribeHelloScalars(str: String, int: Int, bool: Boolean): HelloScalars
-      }
-    `;
-    expect(cycleSDL(sdl)).to.equal(sdl);
-  });
-
-  it('Unreferenced type implementing referenced interface', () => {
-    const sdl = dedent`
-      type Concrete implements Interface {
-        key: String
-      }
-
-      interface Interface {
-        key: String
-      }
-
-      type Query {
-        interface: Interface
       }
     `;
     expect(cycleSDL(sdl)).to.equal(sdl);

@@ -42,9 +42,6 @@ export { buildClientSchema } from './buildClientSchema';
 export { buildASTSchema, buildSchema } from './buildASTSchema';
 export type { BuildSchemaOptions } from './buildASTSchema';
 
-// Extends an existing GraphQLSchema from a parsed GraphQL Schema language AST.
-export { extendSchema } from './extendSchema';
-
 // Sort a GraphQLSchema.
 export { lexicographicSortSchema } from './lexicographicSortSchema';
 

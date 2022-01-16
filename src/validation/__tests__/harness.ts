@@ -12,19 +12,8 @@ import { validate, validateSDL } from '../validate';
 import type { SDLValidationRule, ValidationRule } from '../ValidationContext';
 
 export const testSchema: GraphQLSchema = buildSchema(`
-  interface Mammal {
-    mother: Mammal
-    father: Mammal
-  }
-
-  interface Pet {
+  type Pet {
     name(surname: Boolean): String
-  }
-
-  interface Canine implements Mammal {
-    name(surname: Boolean): String
-    mother: Canine
-    father: Canine
   }
 
   data DogCommand 
@@ -32,7 +21,7 @@ export const testSchema: GraphQLSchema = buildSchema(`
     | HEEL
     | DOWN
 
-  type Dog implements Pet & Mammal & Canine {
+  type Dog {
     name(surname: Boolean): String
     nickname: String
     barkVolume: Int
@@ -44,7 +33,7 @@ export const testSchema: GraphQLSchema = buildSchema(`
     father: Dog
   }
 
-  type Cat implements Pet {
+  type Cat {
     name(surname: Boolean): String
     nickname: String
     meows: Boolean

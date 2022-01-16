@@ -4,7 +4,6 @@ import { describe, it } from 'mocha';
 import { dedent } from '../../__testUtils__/dedent';
 import { inspectStr } from '../../__testUtils__/inspectStr';
 import { kitchenSinkQuery } from '../../__testUtils__/kitchenSinkQuery';
-import { kitchenSinkSDL } from '../../__testUtils__/kitchenSinkSDL';
 
 import { invariant } from '../../jsutils/invariant';
 import type { Maybe } from '../../jsutils/Maybe';
@@ -435,12 +434,4 @@ describe('stripIgnoredCharacters', () => {
     expect(strippedAST).to.deep.equal(queryAST);
   });
 
-  it('strips kitchen sink SDL but maintains the exact same AST', () => {
-    const strippedSDL = stripIgnoredCharacters(kitchenSinkSDL);
-    expect(stripIgnoredCharacters(strippedSDL)).to.equal(strippedSDL);
-
-    const sdlAST = parse(kitchenSinkSDL, { noLocation: true });
-    const strippedAST = parse(strippedSDL, { noLocation: true });
-    expect(strippedAST).to.deep.equal(sdlAST);
-  });
 });

@@ -3,7 +3,6 @@ import { describe, it } from 'mocha';
 
 import { dedent } from '../../__testUtils__/dedent';
 import { expectJSON, expectToThrowJSON } from '../../__testUtils__/expectJSON';
-import { kitchenSinkSDL } from '../../__testUtils__/kitchenSinkSDL';
 
 import { parse } from '../parser';
 
@@ -250,34 +249,7 @@ describe('Schema Parser', () => {
     });
   });
 
-  it('Simple type inheriting multiple interfaces', () => {
-    const doc = parse('type Hello implements Wo & rld { field: String }');
 
-    expectJSON(doc).toDeepEqual({
-      kind: 'Document',
-      definitions: [
-        {
-          kind: 'ObjectTypeDefinition',
-          name: nameNode('Hello', { start: 5, end: 10 }),
-          description: undefined,
-          interfaces: [
-            typeNode('Wo', { start: 22, end: 24 }),
-            typeNode('rld', { start: 27, end: 30 }),
-          ],
-          directives: [],
-          fields: [
-            fieldNode(
-              nameNode('field', { start: 33, end: 38 }),
-              typeNode('String', { start: 40, end: 46 }),
-              { start: 33, end: 46 },
-            ),
-          ],
-          loc: { start: 0, end: 48 },
-        },
-      ],
-      loc: { start: 0, end: 48 },
-    });
-  });
 
   it('Simple interface inheriting multiple interfaces', () => {
     const doc = parse('interface Hello implements Wo & rld { field: String }');
@@ -847,7 +819,4 @@ describe('Schema Parser', () => {
     });
   });
 
-  it('parses kitchen sink schema', () => {
-    expect(() => parse(kitchenSinkSDL)).to.not.throw();
-  });
 });

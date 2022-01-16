@@ -1,4 +1,3 @@
-import { devAssert } from '../jsutils/devAssert';
 import { inspect } from '../jsutils/inspect';
 import { invariant } from '../jsutils/invariant';
 import { keyMap } from '../jsutils/keyMap';
@@ -12,7 +11,6 @@ import type {
   EnumValueDefinitionNode,
   FieldDefinitionNode,
   InputValueDefinitionNode,
-  InterfaceTypeDefinitionNode,
   NamedTypeNode,
   ObjectTypeDefinitionNode,
   ScalarTypeDefinitionNode,
@@ -61,9 +59,6 @@ import type {
   GraphQLSchemaNormalizedConfig,
   GraphQLSchemaValidationOptions,
 } from '../type/schema';
-import { assertSchema, GraphQLSchema } from '../type/schema';
-
-import { assertValidSDLExtension } from '../validation/validate';
 
 import { getDirectiveValues } from '../execution/values';
 
@@ -90,28 +85,6 @@ interface Options extends GraphQLSchemaValidationOptions {
  * This algorithm copies the provided schema, applying extensions while
  * producing the copy. The original schema remains unaltered.
  */
-export function extendSchema(
-  schema: GraphQLSchema,
-  documentAST: DocumentNode,
-  options?: Options,
-): GraphQLSchema {
-  assertSchema(schema);
-
-  devAssert(
-    documentAST != null && documentAST.kind === Kind.DOCUMENT,
-    'Must provide valid Document AST.',
-  );
-
-  if (options?.assumeValid !== true && options?.assumeValidSDL !== true) {
-    assertValidSDLExtension(documentAST, schema);
-  }
-
-  const schemaConfig = schema.toConfig();
-  const extendedConfig = extendSchemaImpl(schemaConfig, documentAST, options);
-  return schemaConfig === extendedConfig
-    ? schema
-    : new GraphQLSchema(extendedConfig);
-}
 
 /**
  * @internal
@@ -298,10 +271,7 @@ export function extendSchemaImpl(
 
     return new GraphQLObjectType({
       ...config,
-      interfaces: () => [
-        ...type.getInterfaces().map(replaceNamedType),
-        ...buildInterfaces(extensions),
-      ],
+      interfaces: () => type.getInterfaces().map(replaceNamedType),
       fields: () => ({
         ...mapValue(config.fields, extendField),
         ...buildFieldMap(extensions),
@@ -502,23 +472,6 @@ export function extendSchemaImpl(
     return enumValueMap;
   }
 
-  function buildInterfaces(
-    nodes: ReadonlyArray<
-      | InterfaceTypeDefinitionNode
-      | ObjectTypeDefinitionNode
-
-    >,
-  ): Array<GraphQLInterfaceType> {
-    // Note: While this could make assertions to get the correctly typed
-    // values below, that would throw immediately while type system
-    // validation with validateSchema() will produce more actionable results.
-    // @ts-expect-error
-    return nodes.flatMap(
-      // FIXME: https://github.com/graphql/graphql-js/issues/2203
-      (node) => /* c8 ignore next */ node.interfaces?.map(getNamedType) ?? [],
-    );
-  }
-
   function buildUnionTypes(
     nodes: ReadonlyArray<UnionTypeDefinitionNode>,
   ): Array<GraphQLObjectType> {
@@ -543,7 +496,7 @@ export function extendSchemaImpl(
         return new GraphQLObjectType({
           name,
           description: astNode.description?.value,
-          interfaces: () => buildInterfaces(allNodes),
+          interfaces: () => [],
           fields: () => buildFieldMap(allNodes),
           astNode
         });
