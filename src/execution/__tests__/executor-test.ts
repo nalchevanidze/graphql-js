@@ -10,7 +10,6 @@ import { Kind } from '../../language/kinds';
 import { parse } from '../../language/parser';
 
 import {
-  GraphQLInterfaceType,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
@@ -1221,52 +1220,5 @@ describe('Execute: Handles basic execution tasks', () => {
     });
 
     expect(result).to.deep.equal({ data: { foo: 'foo' } });
-  });
-
-  it('uses a custom type resolver', () => {
-    const document = parse('{ foo { bar } }');
-
-    const fooInterface = new GraphQLInterfaceType({
-      name: 'FooInterface',
-      fields: {
-        bar: { type: GraphQLString },
-      },
-    });
-
-    const fooObject = new GraphQLObjectType({
-      name: 'FooObject',
-      interfaces: [fooInterface],
-      fields: {
-        bar: { type: GraphQLString },
-      },
-    });
-
-    const schema = new GraphQLSchema({
-      query: new GraphQLObjectType({
-        name: 'Query',
-        fields: {
-          foo: { type: fooInterface },
-        },
-      }),
-      types: [fooObject],
-    });
-
-    const rootValue = { foo: { bar: 'bar' } };
-
-    let possibleTypes;
-    const result = executeSync({
-      schema,
-      document,
-      rootValue,
-      typeResolver(_source, _context, info, abstractType) {
-        // Resolver should be able to figure out all possible types on its own
-        possibleTypes = info.schema.getPossibleTypes(abstractType);
-
-        return 'FooObject';
-      },
-    });
-
-    expect(result).to.deep.equal({ data: { foo: { bar: 'bar' } } });
-    expect(possibleTypes).to.deep.equal([fooObject]);
   });
 });

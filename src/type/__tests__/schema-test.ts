@@ -8,7 +8,6 @@ import { DirectiveLocation } from '../../language/directiveLocation';
 import { printSchema } from '../../utilities/printSchema';
 
 import {
-  GraphQLInterfaceType,
   GraphQLList,
   GraphQLObjectType,
   GraphQLScalarType,
@@ -159,34 +158,6 @@ describe('Type System: Schema', () => {
   });
 
   describe('Type Map', () => {
-    it('includes interface possible types in the type map', () => {
-      const SomeInterface = new GraphQLInterfaceType({
-        name: 'SomeInterface',
-        fields: {},
-      });
-
-      const SomeSubtype = new GraphQLObjectType({
-        name: 'SomeSubtype',
-        fields: {},
-        interfaces: [SomeInterface],
-      });
-
-      const schema = new GraphQLSchema({
-        query: new GraphQLObjectType({
-          name: 'Query',
-          fields: {
-            iface: { type: SomeInterface },
-          },
-        }),
-        types: [SomeSubtype],
-      });
-
-      expect(schema.getType('SomeInterface')).to.equal(SomeInterface);
-      expect(schema.getType('SomeSubtype')).to.equal(SomeSubtype);
-
-      expect(schema.isSubType(SomeInterface, SomeSubtype)).to.equal(true);
-    });
-
     it('includes nested data  objects in the map', () => {
       const NestedInputObject = new IrisDataType({
         name: 'NestedInputObject',

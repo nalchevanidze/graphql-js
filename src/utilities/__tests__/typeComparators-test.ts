@@ -3,7 +3,6 @@ import { describe, it } from 'mocha';
 
 import type { GraphQLFieldConfigMap } from '../../type/definition';
 import {
-  GraphQLInterfaceType,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
@@ -112,24 +111,6 @@ describe('typeComparators', () => {
       const union = new IrisResolverType({ name: 'Union', types: [member] });
       const schema = testSchema({ field: { type: union } });
       expect(isTypeSubTypeOf(schema, member, union)).to.equal(true);
-    });
-
-    it('implementing object is subtype of interface', () => {
-      const iface = new GraphQLInterfaceType({
-        name: 'Interface',
-        fields: {
-          field: { type: GraphQLString },
-        },
-      });
-      const impl = new GraphQLObjectType({
-        name: 'Object',
-        interfaces: [iface],
-        fields: {
-          field: { type: GraphQLString },
-        },
-      });
-      const schema = testSchema({ field: { type: impl } });
-      expect(isTypeSubTypeOf(schema, impl, iface)).to.equal(true);
-    });
+    });  
   });
 });

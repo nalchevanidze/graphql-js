@@ -8,7 +8,6 @@ import { parseValue } from '../../language/parser';
 
 import type { GraphQLNullableType, GraphQLType } from '../definition';
 import {
-  GraphQLInterfaceType,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
@@ -19,10 +18,6 @@ import {
 
 const ScalarType = new GraphQLScalarType({ name: 'Scalar' });
 const ObjectType = new GraphQLObjectType({ name: 'Object', fields: {} });
-const InterfaceType = new GraphQLInterfaceType({
-  name: 'Interface',
-  fields: {},
-});
 const UnionType = new IrisResolverType({ name: 'Union', types: [ObjectType] });
 const EnumType = new IrisDataType({ name: 'Enum', values: { foo: {} } });
 const InputObjectType = new IrisDataType({
@@ -287,24 +282,6 @@ describe('Type System: Objects', () => {
     });
   });
 
-  it('accepts an Object type with array interfaces', () => {
-    const objType = new GraphQLObjectType({
-      name: 'SomeObject',
-      fields: {},
-      interfaces: [InterfaceType],
-    });
-    expect(objType.getInterfaces()).to.deep.equal([InterfaceType]);
-  });
-
-  it('accepts an Object type with interfaces as a function returning an array', () => {
-    const objType = new GraphQLObjectType({
-      name: 'SomeObject',
-      fields: {},
-      interfaces: () => [InterfaceType],
-    });
-    expect(objType.getInterfaces()).to.deep.equal([InterfaceType]);
-  });
-
   it('accepts a lambda as an Object field resolver', () => {
     const objType = new GraphQLObjectType({
       name: 'SomeObject',
@@ -469,38 +446,6 @@ describe('Type System: Objects', () => {
         }),
     ).to.throw(
       'AnotherObject must provide "isTypeOf" as a function, but got: {}.',
-    );
-  });
-});
-
-describe('Type System: Interfaces', () => {
-  it('accepts an Interface type defining resolveType', () => {
-    expect(
-      () =>
-        new GraphQLInterfaceType({
-          name: 'AnotherInterface',
-          fields: { f: { type: ScalarType } },
-        }),
-    ).to.not.throw();
-  });
-
-  it('rejects an Interface type with invalid name', () => {
-    expect(
-      () => new GraphQLInterfaceType({ name: 'bad-name', fields: {} }),
-    ).to.throw('Names must only contain [_a-zA-Z0-9] but "bad-name" does not.');
-  });
-
-  it('rejects an Interface type with an incorrect type for resolveType', () => {
-    expect(
-      () =>
-        new GraphQLInterfaceType({
-          name: 'AnotherInterface',
-          fields: {},
-          // @ts-expect-error
-          resolveType: {},
-        }),
-    ).to.throw(
-      'AnotherInterface must provide "resolveType" as a function, but got: {}.',
     );
   });
 });
@@ -844,7 +789,6 @@ describe('Type System: List', () => {
     expectList(ScalarType).to.not.throw();
     expectList(ObjectType).to.not.throw();
     expectList(UnionType).to.not.throw();
-    expectList(InterfaceType).to.not.throw();
     expectList(EnumType).to.not.throw();
     expectList(InputObjectType).to.not.throw();
     expectList(ListOfScalarsType).to.not.throw();
@@ -874,7 +818,6 @@ describe('Type System: Non-Null', () => {
     expectNonNull(ScalarType).to.not.throw();
     expectNonNull(ObjectType).to.not.throw();
     expectNonNull(UnionType).to.not.throw();
-    expectNonNull(InterfaceType).to.not.throw();
     expectNonNull(EnumType).to.not.throw();
     expectNonNull(InputObjectType).to.not.throw();
     expectNonNull(ListOfScalarsType).to.not.throw();
@@ -906,7 +849,6 @@ describe('Type System: test utility methods', () => {
   it('stringifies types', () => {
     expect(String(ScalarType)).to.equal('Scalar');
     expect(String(ObjectType)).to.equal('Object');
-    expect(String(InterfaceType)).to.equal('Interface');
     expect(String(UnionType)).to.equal('Union');
     expect(String(EnumType)).to.equal('Enum');
     expect(String(InputObjectType)).to.equal('InputObject');
@@ -921,7 +863,6 @@ describe('Type System: test utility methods', () => {
   it('JSON.stringifies types', () => {
     expect(JSON.stringify(ScalarType)).to.equal('"Scalar"');
     expect(JSON.stringify(ObjectType)).to.equal('"Object"');
-    expect(JSON.stringify(InterfaceType)).to.equal('"Interface"');
     expect(JSON.stringify(UnionType)).to.equal('"Union"');
     expect(JSON.stringify(EnumType)).to.equal('"Enum"');
     expect(JSON.stringify(InputObjectType)).to.equal('"InputObject"');
@@ -942,7 +883,6 @@ describe('Type System: test utility methods', () => {
 
     expect(toString(ScalarType)).to.equal('[object GraphQLScalarType]');
     expect(toString(ObjectType)).to.equal('[object GraphQLObjectType]');
-    expect(toString(InterfaceType)).to.equal('[object GraphQLInterfaceType]');
     expect(toString(UnionType)).to.equal('[object GraphQLUnionType]');
     expect(toString(EnumType)).to.equal('[object IrisDataType]');
     expect(toString(InputObjectType)).to.equal('[object IrisDataType]');
