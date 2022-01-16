@@ -18,7 +18,7 @@ import { visit } from '../language/visitor';
 import type {
   GraphQLArgument,
   GraphQLCompositeType,
-  GraphQLEnumValue,
+  IrisDataVariant,
   GraphQLField,
   GraphQLInputType,
   GraphQLOutputType,
@@ -261,7 +261,7 @@ export class ValidationContext extends ASTValidationContext {
     return this._typeInfo.getArgument();
   }
 
-  getEnumValue(): Maybe<GraphQLEnumValue> {
+  getEnumValue(): Maybe<IrisDataVariant> {
     return this._typeInfo.getEnumValue();
   }
 }

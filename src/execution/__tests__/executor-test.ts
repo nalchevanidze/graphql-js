@@ -78,7 +78,6 @@ describe('Execute: Handles basic execution tasks', () => {
       d: () => 'Donut',
       e: () => 'Egg',
       f: 'Fish',
-      // Called only by DataType::pic static resolver
       pic: (size: number) => 'Pic of size: ' + size,
       deep: () => deepData,
       promise: promiseData,

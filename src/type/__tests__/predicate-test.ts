@@ -10,16 +10,12 @@ import type {
 import {
   assertAbstractType,
   assertCompositeType,
-  assertEnumType,
-  assertInputObjectType,
-  assertInputType,
   assertLeafType,
   assertListType,
   assertNamedType,
   assertNonNullType,
   assertNullableType,
   assertObjectType,
-  assertOutputType,
   assertScalarType,
   assertType,
   assertUnionType,
@@ -190,38 +186,30 @@ describe('Type predicates', () => {
   describe('isEnumType', () => {
     it('returns true for enum type', () => {
       expect(isEnumType(EnumType)).to.equal(true);
-      expect(() => assertEnumType(EnumType)).to.not.throw();
     });
 
     it('returns false for wrapped enum type', () => {
       expect(isEnumType(new GraphQLList(EnumType))).to.equal(false);
-      expect(() => assertEnumType(new GraphQLList(EnumType))).to.throw();
     });
 
     it('returns false for non-enum type', () => {
       expect(isEnumType(ScalarType)).to.equal(false);
-      expect(() => assertEnumType(ScalarType)).to.throw();
     });
   });
 
   describe('isInputObjectType', () => {
     it('returns true for data  object type', () => {
       expect(isInputObjectType(InputObjectType)).to.equal(true);
-      expect(() => assertInputObjectType(InputObjectType)).to.not.throw();
     });
 
     it('returns false for wrapped data  object type', () => {
       expect(isInputObjectType(new GraphQLList(InputObjectType))).to.equal(
         false,
       );
-      expect(() =>
-        assertInputObjectType(new GraphQLList(InputObjectType)),
-      ).to.throw();
     });
 
     it('returns false for non-input-object type', () => {
       expect(isInputObjectType(ObjectType)).to.equal(false);
-      expect(() => assertInputObjectType(ObjectType)).to.throw();
     });
   });
 
@@ -272,7 +260,6 @@ describe('Type predicates', () => {
   describe('isInputType', () => {
     function expectInputType(type: unknown) {
       expect(isInputType(type)).to.equal(true);
-      expect(() => assertInputType(type)).to.not.throw();
     }
 
     it('returns true for an data  type', () => {
@@ -293,7 +280,6 @@ describe('Type predicates', () => {
 
     function expectNonInputType(type: unknown) {
       expect(isInputType(type)).to.equal(false);
-      expect(() => assertInputType(type)).to.throw();
     }
 
     it('returns false for an output type', () => {
@@ -311,9 +297,10 @@ describe('Type predicates', () => {
   });
 
   describe('isOutputType', () => {
+
+
     function expectOutputType(type: unknown) {
       expect(isOutputType(type)).to.equal(true);
-      expect(() => assertOutputType(type)).to.not.throw();
     }
 
     it('returns true for an output type', () => {
@@ -337,7 +324,6 @@ describe('Type predicates', () => {
 
     function expectNonOutputType(type: unknown) {
       expect(isOutputType(type)).to.equal(false);
-      expect(() => assertOutputType(type)).to.throw();
     }
 
     it('returns false for an data  type', () => {

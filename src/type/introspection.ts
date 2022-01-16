@@ -7,7 +7,6 @@ import { print } from '../language/printer';
 import { astFromValue } from '../utilities/astFromValue';
 
 import type {
-GraphQLEnumValue,
   GraphQLField,
   GraphQLFieldConfigMap,
   GraphQLInputField,
@@ -418,7 +417,7 @@ export const __EnumValue: GraphQLObjectType = new GraphQLObjectType({
         type: GraphQLString,
         resolve: (enumValue) => enumValue.deprecationReason,
       },
-    } as GraphQLFieldConfigMap<GraphQLEnumValue, unknown>),
+    } as GraphQLFieldConfigMap<any, unknown>),
 });
 
 export enum TypeKind {

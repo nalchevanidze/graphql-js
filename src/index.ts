@@ -33,8 +33,6 @@ export { version, versionInfo } from './version';
 export type { GraphQLArgs } from './graphql';
 export { graphql, graphqlSync } from './graphql';
 
-// Create and operate on GraphQL type definitions and schema.
-export type { IrisDataType } from './type/index';
 export type { GraphQLUnionType } from './type/index';
 export {
   resolveObjMapThunk,
@@ -101,12 +99,8 @@ export {
   assertScalarType,
   assertObjectType,
   assertUnionType,
-  assertEnumType,
-  assertInputObjectType,
   assertListType,
   assertNonNullType,
-  assertInputType,
-  assertOutputType,
   assertLeafType,
   assertCompositeType,
   assertAbstractType,
@@ -127,7 +121,7 @@ export type {
   GraphQLOutputType,
   GraphQLLeafType,
   GraphQLCompositeType,
-  GraphQLAbstractType,
+  IrisResolverType,
   GraphQLWrappingType,
   GraphQLNullableType,
   GraphQLNamedType,
@@ -141,7 +135,6 @@ export type {
   GraphQLDirectiveExtensions,
   GraphQLArgument,
   GraphQLArgumentConfig,
-  IrisDataTypeConfig,
   GraphQLEnumValue,
   GraphQLEnumValueConfig,
   GraphQLEnumValueConfigMap,
@@ -152,9 +145,7 @@ export type {
   GraphQLFieldMap,
   GraphQLFieldResolver,
   GraphQLInputField,
-  GraphQLInputFieldConfig,
-  GraphQLInputFieldConfigMap,
-  GraphQLInputFieldMap,
+  IrisDataVariantFieldFields,
   GraphQLIsTypeOfFn,
   GraphQLObjectTypeConfig,
   GraphQLObjectTypeExtensions,
@@ -324,7 +315,6 @@ export {
   VariablesInAllowedPositionRule,
   // SDL-specific validation rules
   LoneSchemaDefinitionRule,
-  UniqueOperationTypesRule,
   UniqueTypeNamesRule,
   UniqueVariantAndFieldDefinitionNamesRule,
   UniqueArgumentDefinitionNamesRule,
@@ -364,8 +354,6 @@ export {
   buildASTSchema,
   // Build a GraphQLSchema from a GraphQL schema language document.
   buildSchema,
-  // Sort a GraphQLSchema.
-  lexicographicSortSchema,
   // Print a GraphQLSchema to GraphQL Schema language.
   printSchema,
   // Print a GraphQLType to GraphQL Schema language.

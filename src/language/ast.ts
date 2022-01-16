@@ -516,7 +516,6 @@ export interface NonNullTypeNode {
 /** Type System Definition */
 
 export type TypeSystemDefinitionNode =
-  | SchemaDefinitionNode
   | TypeDefinitionNode
   | DirectiveDefinitionNode;
 
@@ -613,9 +612,9 @@ export interface VariantDefinitionNode {
   readonly kind: Kind.VARIANT_DEFINITION;
   readonly loc?: Location;
   readonly description?: StringValueNode;
-  name: NameNode;
   readonly directives?: ReadonlyArray<ConstDirectiveNode>;
-  fields: ReadonlyArray<InputValueDefinitionNode>;
+  readonly name: NameNode;
+  readonly fields: ReadonlyArray<InputValueDefinitionNode>;
 }
 
 /** Directive Definitions */

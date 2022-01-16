@@ -58,71 +58,11 @@ function printFilteredSchema(
   const types = Object.values(schema.getTypeMap()).filter(typeFilter);
 
   return [
-    printSchemaDefinition(schema),
     ...directives.map((directive) => printDirective(directive)),
     ...types.map((type) => printType(type)),
   ]
     .filter(Boolean)
     .join('\n\n');
-}
-
-function printSchemaDefinition(schema: GraphQLSchema): Maybe<string> {
-  if (schema.description == null && isSchemaOfCommonNames(schema)) {
-    return;
-  }
-
-  const operationTypes = [];
-
-  const queryType = schema.getQueryType();
-  if (queryType) {
-    operationTypes.push(`  query: ${queryType.name}`);
-  }
-
-  const mutationType = schema.getMutationType();
-  if (mutationType) {
-    operationTypes.push(`  mutation: ${mutationType.name}`);
-  }
-
-  const subscriptionType = schema.getSubscriptionType();
-  if (subscriptionType) {
-    operationTypes.push(`  subscription: ${subscriptionType.name}`);
-  }
-
-  return printDescription(schema) + `schema {\n${operationTypes.join('\n')}\n}`;
-}
-
-/**
- * GraphQL schema define root types for each type of operation. These types are
- * the same as any other type and can be named in any manner, however there is
- * a common naming convention:
- *
- * ```graphql
- *   schema {
- *     query: Query
- *     mutation: Mutation
- *     subscription: Subscription
- *   }
- * ```
- *
- * When using this naming convention, the schema description can be omitted.
- */
-function isSchemaOfCommonNames(schema: GraphQLSchema): boolean {
-  const queryType = schema.getQueryType();
-  if (queryType && queryType.name !== 'Query') {
-    return false;
-  }
-
-  const mutationType = schema.getMutationType();
-  if (mutationType && mutationType.name !== 'Mutation') {
-    return false;
-  }
-
-  const subscriptionType = schema.getSubscriptionType();
-  if (subscriptionType && subscriptionType.name !== 'Subscription') {
-    return false;
-  }
-
-  return true;
 }
 
 export function printType(type: GraphQLNamedType): string {

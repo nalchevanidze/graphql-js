@@ -3,23 +3,14 @@ import { describe, it } from 'mocha';
 
 import { dedent } from '../../__testUtils__/dedent';
 
-import { invariant } from '../../jsutils/invariant';
-import type { Maybe } from '../../jsutils/Maybe';
-
-import type { ASTNode } from '../../language/ast';
 import { Kind } from '../../language/kinds';
 import { parse } from '../../language/parser';
-import { print } from '../../language/printer';
 
 import {
-  assertEnumType,
-  assertInputObjectType,
+  assertDataType,
   assertObjectType,
-  assertScalarType,
-  assertUnionType,
 } from '../../type/definition';
 import {
-  assertDirective,
   GraphQLDeprecatedDirective,
   GraphQLIncludeDirective,
   GraphQLSkipDirective,
@@ -48,11 +39,6 @@ import { printSchema } from '../printSchema';
  */
 function cycleSDL(sdl: string): string {
   return printSchema(buildSchema(sdl));
-}
-
-function expectASTNode(obj: Maybe<{ readonly astNode: Maybe<ASTNode> }>) {
-  invariant(obj?.astNode != null);
-  return expect(print(obj.astNode));
 }
 
 describe('Schema Builder', () => {
@@ -165,11 +151,6 @@ describe('Schema Builder', () => {
 
   it('Supports descriptions', () => {
     const sdl = dedent`
-      """Do you agree that this is the most creative schema ever?"""
-      schema {
-        query: Query
-      }
-
       """This is a directive"""
       directive @foo(
         """It has an argument"""
@@ -453,39 +434,14 @@ describe('Schema Builder', () => {
 
   it('Simple type with mutation', () => {
     const sdl = dedent`
-      schema {
-        query: HelloScalars
-        mutation: Mutation
-      }
-
-      type HelloScalars {
+      type Query {
         str: String
         int: Int
         bool: Boolean
       }
 
       type Mutation {
-        addHelloScalars(str: String, int: Int, bool: Boolean): HelloScalars
-      }
-    `;
-    expect(cycleSDL(sdl)).to.equal(sdl);
-  });
-
-  it('Simple type with subscription', () => {
-    const sdl = dedent`
-      schema {
-        query: HelloScalars
-        subscription: Subscription
-      }
-
-      type HelloScalars {
-        str: String
-        int: Int
-        bool: Boolean
-      }
-
-      type Subscription {
-        subscribeHelloScalars(str: String, int: Int, bool: Boolean): HelloScalars
+        addHelloScalars(str: String, int: Int, bool: Boolean): Query
       }
     `;
     expect(cycleSDL(sdl)).to.equal(sdl);
@@ -529,7 +485,7 @@ describe('Schema Builder', () => {
 
     const schema = buildSchema(sdl);
 
-    const myEnum = assertEnumType(schema.getType('MyEnum'));
+    const myEnum = assertDataType(schema.getType('MyEnum'));
 
     const value = myEnum.getValue('VALUE');
     expect(value).to.include({ deprecationReason: undefined });
@@ -552,7 +508,7 @@ describe('Schema Builder', () => {
       deprecationReason: 'Because I said so',
     });
 
-    const inputFields = assertInputObjectType(
+    const inputFields = assertDataType(
       schema.getType('MyInput'),
     ).getFields();
 
@@ -596,90 +552,6 @@ describe('Schema Builder', () => {
 
     expect(schema.getType('Foo')).to.include({
       specifiedByURL: 'https://example.com/foo_spec',
-    });
-  });
-
-  it('Correctly assign AST nodes', () => {
-    const sdl = dedent`
-      schema {
-        query: Query
-      }
-
-      type Query {
-        testField(testArg: TestInput): TestUnion
-      }
-
-      data  TestInput {
-        testInputField: TestEnum
-      }
-
-      data TestEnum = TEST_VALUE
-
-      resolver TestUnion = TestType
-
-      type TestType {
-        interfaceField: String
-      }
-
-      scalar TestScalar
-
-      directive @test(arg: TestScalar) on FIELD
-    `;
-    const ast = parse(sdl, { noLocation: true });
-
-    const schema = buildASTSchema(ast);
-    const query = assertObjectType(schema.getType('Query'));
-    const testInput = assertInputObjectType(schema.getType('TestInput'));
-    const testEnum = assertEnumType(schema.getType('TestEnum'));
-    const testUnion = assertUnionType(schema.getType('TestUnion'));
-    const testType = assertObjectType(schema.getType('TestType'));
-    const testScalar = assertScalarType(schema.getType('TestScalar'));
-    const testDirective = assertDirective(schema.getDirective('test'));
-
-    expect([
-      schema.astNode,
-      query.astNode,
-      testInput.astNode,
-      testEnum.astNode,
-      testUnion.astNode,
-      testType.astNode,
-      testScalar.astNode,
-      testDirective.astNode,
-    ]).to.be.deep.equal(ast.definitions);
-
-    const testField = query.getFields().testField;
-    expectASTNode(testField).to.equal(
-      'testField(testArg: TestInput): TestUnion',
-    );
-    expectASTNode(testField.args[0]).to.equal('testArg: TestInput');
-    expectASTNode(testInput.getFields().testInputField).to.equal(
-      'testInputField: TestEnum',
-    );
-
-    expectASTNode(testEnum.getValue('TEST_VALUE')).to.equal('TEST_VALUE');
-
-    expectASTNode(testType.getFields().interfaceField).to.equal(
-      'interfaceField: String',
-    );
-    expectASTNode(testDirective.args[0]).to.equal('arg: TestScalar');
-  });
-
-  it('Root operation types with custom names', () => {
-    const schema = buildSchema(`
-      schema {
-        query: SomeQuery
-        mutation: SomeMutation
-        subscription: SomeSubscription
-      }
-      type SomeQuery
-      type SomeMutation
-      type SomeSubscription
-    `);
-
-    expect(schema.getQueryType()).to.include({ name: 'SomeQuery' });
-    expect(schema.getMutationType()).to.include({ name: 'SomeMutation' });
-    expect(schema.getSubscriptionType()).to.include({
-      name: 'SomeSubscription',
     });
   });
 

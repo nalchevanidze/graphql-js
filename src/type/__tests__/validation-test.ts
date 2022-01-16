@@ -13,13 +13,11 @@ import { buildSchema } from '../../utilities/buildASTSchema';
 import type {
   GraphQLArgumentConfig,
   GraphQLFieldConfig,
-  GraphQLInputFieldConfig,
   GraphQLInputType,
   GraphQLNamedType,
   GraphQLOutputType} from '../definition';
 import {
-  assertEnumType,
-  assertInputObjectType,
+  assertDataType,
   assertObjectType,
   assertScalarType,
   assertUnionType,
@@ -51,8 +49,8 @@ const SomeSchema = buildSchema(`
 const SomeScalarType = assertScalarType(SomeSchema.getType('SomeScalar'));
 const SomeObjectType = assertObjectType(SomeSchema.getType('SomeObject'));
 const SomeUnionType = assertUnionType(SomeSchema.getType('SomeUnion'));
-const SomeEnumType = assertEnumType(SomeSchema.getType('SomeEnum'));
-const SomeInputObjectType = assertInputObjectType(
+const SomeEnumType = assertDataType(SomeSchema.getType('SomeEnum'));
+const SomeInputObjectType = assertDataType(
   SomeSchema.getType('SomeInputObject'),
 );
 
@@ -103,113 +101,6 @@ function schemaWithFieldType(type: GraphQLOutputType): GraphQLSchema {
 }
 
 describe('Type System: A Schema must have Object root types', () => {
-  it('accepts a Schema whose query type is an object type', () => {
-    const schema = buildSchema(`
-      type Query {
-        test: String
-      }
-    `);
-    expectJSON(validateSchema(schema)).toDeepEqual([]);
-
-    const schemaWithDef = buildSchema(`
-      schema {
-        query: QueryRoot
-      }
-
-      type QueryRoot {
-        test: String
-      }
-    `);
-    expectJSON(validateSchema(schemaWithDef)).toDeepEqual([]);
-  });
-
-  it('accepts a Schema whose query and mutation types are object types', () => {
-    const schema = buildSchema(`
-      type Query {
-        test: String
-      }
-
-      type Mutation {
-        test: String
-      }
-    `);
-    expectJSON(validateSchema(schema)).toDeepEqual([]);
-
-    const schemaWithDef = buildSchema(`
-      schema {
-        query: QueryRoot
-        mutation: MutationRoot
-      }
-
-      type QueryRoot {
-        test: String
-      }
-
-      type MutationRoot {
-        test: String
-      }
-    `);
-    expectJSON(validateSchema(schemaWithDef)).toDeepEqual([]);
-  });
-
-  it('accepts a Schema whose query and subscription types are object types', () => {
-    const schema = buildSchema(`
-      type Query {
-        test: String
-      }
-
-      type Subscription {
-        test: String
-      }
-    `);
-    expectJSON(validateSchema(schema)).toDeepEqual([]);
-
-    const schemaWithDef = buildSchema(`
-      schema {
-        query: QueryRoot
-        subscription: SubscriptionRoot
-      }
-
-      type QueryRoot {
-        test: String
-      }
-
-      type SubscriptionRoot {
-        test: String
-      }
-    `);
-    expectJSON(validateSchema(schemaWithDef)).toDeepEqual([]);
-  });
-
-  it('rejects a Schema without a query type', () => {
-    const schema = buildSchema(`
-      type Mutation {
-        test: String
-      }
-    `);
-    expectJSON(validateSchema(schema)).toDeepEqual([
-      {
-        message: 'Query root type must be provided.',
-      },
-    ]);
-
-    const schemaWithDef = buildSchema(`
-      schema {
-        mutation: MutationRoot
-      }
-
-      type MutationRoot {
-        test: String
-      }
-    `);
-    expectJSON(validateSchema(schemaWithDef)).toDeepEqual([
-      {
-        message: 'Query root type must be provided.',
-        locations: [{ line: 2, column: 7 }],
-      },
-    ]);
-  });
-
   it('rejects a Schema whose query root type is not an Object type', () => {
     const schema = buildSchema(`
       data Query = {
@@ -220,23 +111,6 @@ describe('Type System: A Schema must have Object root types', () => {
       {
         message: 'Query root type must be Object type, it cannot be Query.',
         locations: [{ line: 2, column: 7 }],
-      },
-    ]);
-
-    const schemaWithDef = buildSchema(`
-      schema {
-        query: SomeInputObject
-      }
-
-      data SomeInputObject {
-        test: String
-      }
-    `);
-    expectJSON(validateSchema(schemaWithDef)).toDeepEqual([
-      {
-        message:
-          'Query root type must be Object type, it cannot be SomeInputObject.',
-        locations: [{ line: 3, column: 16 }],
       },
     ]);
   });
@@ -256,28 +130,6 @@ describe('Type System: A Schema must have Object root types', () => {
         message:
           'Mutation root type must be Object type if provided, it cannot be Mutation.',
         locations: [{ line: 6, column: 7 }],
-      },
-    ]);
-
-    const schemaWithDef = buildSchema(`
-      schema {
-        query: Query
-        mutation: SomeInputObject
-      }
-
-      type Query {
-        field: String
-      }
-
-      data SomeInputObject {
-        test: String
-      }
-    `);
-    expectJSON(validateSchema(schemaWithDef)).toDeepEqual([
-      {
-        message:
-          'Mutation root type must be Object type if provided, it cannot be SomeInputObject.',
-        locations: [{ line: 4, column: 19 }],
       },
     ]);
   });
@@ -300,27 +152,6 @@ describe('Type System: A Schema must have Object root types', () => {
       },
     ]);
 
-    const schemaWithDef = buildSchema(`
-      schema {
-        query: Query
-        subscription: SomeInputObject
-      }
-
-      type Query {
-        field: String
-      }
-
-      data SomeInputObject {
-        test: String
-      }
-    `);
-    expectJSON(validateSchema(schemaWithDef)).toDeepEqual([
-      {
-        message:
-          'Subscription root type must be Object type if provided, it cannot be SomeInputObject.',
-        locations: [{ line: 4, column: 23 }],
-      },
-    ]);
   });
 
   it('rejects a Schema whose types are incorrectly typed', () => {
@@ -1072,103 +903,6 @@ describe('Type System: Arguments must have data  types', () => {
     ]);
   });
 });
-
-describe('Type System: Input Object fields must have input types', () => {
-  function schemaWithInputField(
-    inputFieldConfig: GraphQLInputFieldConfig,
-  ): GraphQLSchema {
-    const BadInputObjectType = new IrisDataType({
-      name: 'BadInputObject',
-      fields: {
-        badField: inputFieldConfig,
-      },
-    });
-
-    return new GraphQLSchema({
-      query: new GraphQLObjectType({
-        name: 'Query',
-        fields: {
-          f: {
-            type: GraphQLString,
-            args: {
-              badArg: { type: BadInputObjectType },
-            },
-          },
-        },
-      }),
-    });
-  }
-
-  for (const type of inputTypes) {
-    const typeName = inspect(type);
-    it(`accepts an input type as an input field type: ${typeName}`, () => {
-      const schema = schemaWithInputField({ type });
-      expectJSON(validateSchema(schema)).toDeepEqual([]);
-    });
-  }
-
-  it('rejects an empty input field type', () => {
-    // @ts-expect-error (type field must not be undefined)
-    const schema = schemaWithInputField({ type: undefined });
-    expectJSON(validateSchema(schema)).toDeepEqual([
-      {
-        message:
-          'The type of BadInputObject.badField must be Input Type but got: undefined.',
-      },
-    ]);
-  });
-
-  for (const type of notInputTypes) {
-    const typeStr = inspect(type);
-    it(`rejects a non-input type as an input field type: ${typeStr}`, () => {
-      // @ts-expect-error
-      const schema = schemaWithInputField({ type });
-      expectJSON(validateSchema(schema)).toDeepEqual([
-        {
-          message: `The type of BadInputObject.badField must be Input Type but got: ${typeStr}.`,
-        },
-      ]);
-    });
-  }
-
-  it('rejects a non-type value as an input field type', () => {
-    // @ts-expect-error
-    const schema = schemaWithInputField({ type: Number });
-    expectJSON(validateSchema(schema)).toDeepEqual([
-      {
-        message:
-          'The type of BadInputObject.badField must be Input Type but got: [function Number].',
-      },
-      {
-        message: 'Expected GraphQL named type but got: [function Number].',
-      },
-    ]);
-  });
-
-  it('rejects a non-input type as an input object field with locations', () => {
-    const schema = buildSchema(`
-      type Query {
-        test(arg: SomeInputObject): String
-      }
-
-      data  SomeInputObject {
-        foo: SomeObject
-      }
-
-      type SomeObject {
-        bar: String
-      }
-    `);
-    expectJSON(validateSchema(schema)).toDeepEqual([
-      {
-        message:
-          'The type of SomeInputObject.foo must be Input Type but got: SomeObject.',
-        locations: [{ line: 7, column: 14 }],
-      },
-    ]);
-  });
-});
-
 
 describe('assertValidSchema', () => {
   it('do not throw on valid schemas', () => {

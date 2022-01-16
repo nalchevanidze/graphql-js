@@ -12,11 +12,7 @@ import type {
   GraphQLArgument,
   GraphQLFieldConfigArgumentMap,
 } from './definition';
-import {
-  argsToArgsConfig,
-  defineArguments,
-  GraphQLNonNull,
-} from './definition';
+import { defineArguments, GraphQLNonNull } from './definition';
 import { GraphQLBoolean, GraphQLString } from './scalars';
 
 /**
@@ -85,17 +81,6 @@ export class GraphQLDirective {
     return 'GraphQLDirective';
   }
 
-  toConfig(): GraphQLDirectiveNormalizedConfig {
-    return {
-      name: this.name,
-      description: this.description,
-      locations: this.locations,
-      args: argsToArgsConfig(this.args),
-      isRepeatable: this.isRepeatable,
-      astNode: this.astNode,
-    };
-  }
-
   toString(): string {
     return '@' + this.name;
   }
@@ -112,11 +97,6 @@ export interface GraphQLDirectiveConfig {
   args?: Maybe<GraphQLFieldConfigArgumentMap>;
   isRepeatable?: Maybe<boolean>;
   astNode?: Maybe<DirectiveDefinitionNode>;
-}
-
-interface GraphQLDirectiveNormalizedConfig extends GraphQLDirectiveConfig {
-  args: GraphQLFieldConfigArgumentMap;
-  isRepeatable: boolean;
 }
 
 /**

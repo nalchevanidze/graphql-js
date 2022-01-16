@@ -52,7 +52,6 @@ import { UniqueFragmentNamesRule } from './rules/UniqueFragmentNamesRule';
 import { UniqueInputFieldNamesRule } from './rules/UniqueInputFieldNamesRule';
 // Spec Section: "Operation Name Uniqueness"
 import { UniqueOperationNamesRule } from './rules/UniqueOperationNamesRule';
-import { UniqueOperationTypesRule } from './rules/UniqueOperationTypesRule';
 import { UniqueTypeNamesRule } from './rules/UniqueTypeNamesRule';
 // Spec Section: "Variable Uniqueness"
 import { UniqueVariableNamesRule } from './rules/UniqueVariableNamesRule';
@@ -106,7 +105,6 @@ export const specifiedRules: ReadonlyArray<ValidationRule> = Object.freeze([
 export const specifiedSDLRules: ReadonlyArray<SDLValidationRule> =
   Object.freeze([
     LoneSchemaDefinitionRule,
-    UniqueOperationTypesRule,
     UniqueTypeNamesRule,
     UniqueVariantAndFieldDefinitionNamesRule,
     UniqueArgumentDefinitionNamesRule,

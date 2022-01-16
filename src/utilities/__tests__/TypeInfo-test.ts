@@ -35,13 +35,9 @@ const testSchema = buildSchema(`
     name(surname: Boolean): String
   }
 
-  type QueryRoot {
+  type Query {
     human(id: ID): Human
     alien: Alien
-  }
-
-  schema {
-    query: QueryRoot
   }
 `);
 
@@ -74,21 +70,15 @@ describe('TypeInfo', () => {
 describe('visitWithTypeInfo', () => {
   it('supports different operation types', () => {
     const schema = buildSchema(`
-      schema {
-        query: QueryRoot
-        mutation: MutationRoot
-        subscription: SubscriptionRoot
-      }
-
-      type QueryRoot {
+      type Query {
         foo: String
       }
 
-      type MutationRoot {
+      type Mutation {
         bar: String
       }
 
-      type SubscriptionRoot {
+      type Subscription {
         baz: String
       }
     `);
@@ -110,9 +100,9 @@ describe('visitWithTypeInfo', () => {
     );
 
     expect(rootTypes).to.deep.equal({
-      query: 'QueryRoot',
-      mutation: 'MutationRoot',
-      subscription: 'SubscriptionRoot',
+      query: 'Query' ,
+      mutation: 'Mutation' ,
+      subscription: 'Subscription' ,
     });
   });
 
@@ -191,17 +181,17 @@ describe('visitWithTypeInfo', () => {
 
     expect(visited).to.deep.equal([
       ['enter', 'Document', null, null, null, null],
-      ['enter', 'OperationDefinition', null, null, 'QueryRoot', null],
-      ['enter', 'SelectionSet', null, 'QueryRoot', 'QueryRoot', null],
-      ['enter', 'Field', null, 'QueryRoot', 'Human', null],
-      ['enter', 'Name', 'human', 'QueryRoot', 'Human', null],
-      ['leave', 'Name', 'human', 'QueryRoot', 'Human', null],
-      ['enter', 'Argument', null, 'QueryRoot', 'Human', 'ID'],
-      ['enter', 'Name', 'id', 'QueryRoot', 'Human', 'ID'],
-      ['leave', 'Name', 'id', 'QueryRoot', 'Human', 'ID'],
-      ['enter', 'IntValue', null, 'QueryRoot', 'Human', 'ID'],
-      ['leave', 'IntValue', null, 'QueryRoot', 'Human', 'ID'],
-      ['leave', 'Argument', null, 'QueryRoot', 'Human', 'ID'],
+      ['enter', 'OperationDefinition', null, null, 'Query' , null],
+      ['enter', 'SelectionSet', null, 'Query' , 'Query' , null],
+      ['enter', 'Field', null, 'Query' , 'Human', null],
+      ['enter', 'Name', 'human', 'Query' , 'Human', null],
+      ['leave', 'Name', 'human', 'Query' , 'Human', null],
+      ['enter', 'Argument', null, 'Query' , 'Human', 'ID'],
+      ['enter', 'Name', 'id', 'Query' , 'Human', 'ID'],
+      ['leave', 'Name', 'id', 'Query' , 'Human', 'ID'],
+      ['enter', 'IntValue', null, 'Query' , 'Human', 'ID'],
+      ['leave', 'IntValue', null, 'Query' , 'Human', 'ID'],
+      ['leave', 'Argument', null, 'Query' , 'Human', 'ID'],
       ['enter', 'SelectionSet', null, 'Human', 'Human', null],
       ['enter', 'Field', null, 'Human', 'String', null],
       ['enter', 'Name', 'name', 'Human', 'String', null],
@@ -226,9 +216,9 @@ describe('visitWithTypeInfo', () => {
       ['leave', 'Name', 'unknown', 'Human', null, null],
       ['leave', 'Field', null, 'Human', null, null],
       ['leave', 'SelectionSet', null, 'Human', 'Human', null],
-      ['leave', 'Field', null, 'QueryRoot', 'Human', null],
-      ['leave', 'SelectionSet', null, 'QueryRoot', 'QueryRoot', null],
-      ['leave', 'OperationDefinition', null, null, 'QueryRoot', null],
+      ['leave', 'Field', null, 'Query' , 'Human', null],
+      ['leave', 'SelectionSet', null, 'Query' , 'Query' , null],
+      ['leave', 'OperationDefinition', null, null, 'Query' , null],
       ['leave', 'Document', null, null, null, null],
     ]);
   });
@@ -304,17 +294,17 @@ describe('visitWithTypeInfo', () => {
 
     expect(visited).to.deep.equal([
       ['enter', 'Document', null, null, null, null],
-      ['enter', 'OperationDefinition', null, null, 'QueryRoot', null],
-      ['enter', 'SelectionSet', null, 'QueryRoot', 'QueryRoot', null],
-      ['enter', 'Field', null, 'QueryRoot', 'Human', null],
-      ['enter', 'Name', 'human', 'QueryRoot', 'Human', null],
-      ['leave', 'Name', 'human', 'QueryRoot', 'Human', null],
-      ['enter', 'Argument', null, 'QueryRoot', 'Human', 'ID'],
-      ['enter', 'Name', 'id', 'QueryRoot', 'Human', 'ID'],
-      ['leave', 'Name', 'id', 'QueryRoot', 'Human', 'ID'],
-      ['enter', 'IntValue', null, 'QueryRoot', 'Human', 'ID'],
-      ['leave', 'IntValue', null, 'QueryRoot', 'Human', 'ID'],
-      ['leave', 'Argument', null, 'QueryRoot', 'Human', 'ID'],
+      ['enter', 'OperationDefinition', null, null, 'Query' , null],
+      ['enter', 'SelectionSet', null, 'Query' , 'Query' , null],
+      ['enter', 'Field', null, 'Query' , 'Human', null],
+      ['enter', 'Name', 'human', 'Query' , 'Human', null],
+      ['leave', 'Name', 'human', 'Query' , 'Human', null],
+      ['enter', 'Argument', null, 'Query' , 'Human', 'ID'],
+      ['enter', 'Name', 'id', 'Query' , 'Human', 'ID'],
+      ['leave', 'Name', 'id', 'Query' , 'Human', 'ID'],
+      ['enter', 'IntValue', null, 'Query' , 'Human', 'ID'],
+      ['leave', 'IntValue', null, 'Query' , 'Human', 'ID'],
+      ['leave', 'Argument', null, 'Query' , 'Human', 'ID'],
       ['enter', 'SelectionSet', null, 'Human', 'Human', null],
       ['enter', 'Field', null, 'Human', 'String', null],
       ['enter', 'Name', 'name', 'Human', 'String', null],
@@ -331,19 +321,19 @@ describe('visitWithTypeInfo', () => {
       ['leave', 'SelectionSet', null, 'Pet', '[Pet]', null],
       ['leave', 'Field', null, 'Human', '[Pet]', null],
       ['leave', 'SelectionSet', null, 'Human', 'Human', null],
-      ['leave', 'Field', null, 'QueryRoot', 'Human', null],
-      ['enter', 'Field', null, 'QueryRoot', 'Alien', null],
-      ['enter', 'Name', 'alien', 'QueryRoot', 'Alien', null],
-      ['leave', 'Name', 'alien', 'QueryRoot', 'Alien', null],
+      ['leave', 'Field', null, 'Query' , 'Human', null],
+      ['enter', 'Field', null, 'Query' , 'Alien', null],
+      ['enter', 'Name', 'alien', 'Query' , 'Alien', null],
+      ['leave', 'Name', 'alien', 'Query' , 'Alien', null],
       ['enter', 'SelectionSet', null, 'Alien', 'Alien', null],
       ['enter', 'Field', null, 'Alien', 'String!', null],
       ['enter', 'Name', '__typename', 'Alien', 'String!', null],
       ['leave', 'Name', '__typename', 'Alien', 'String!', null],
       ['leave', 'Field', null, 'Alien', 'String!', null],
       ['leave', 'SelectionSet', null, 'Alien', 'Alien', null],
-      ['leave', 'Field', null, 'QueryRoot', 'Alien', null],
-      ['leave', 'SelectionSet', null, 'QueryRoot', 'QueryRoot', null],
-      ['leave', 'OperationDefinition', null, null, 'QueryRoot', null],
+      ['leave', 'Field', null, 'Query' , 'Alien', null],
+      ['leave', 'SelectionSet', null, 'Query' , 'Query' , null],
+      ['leave', 'OperationDefinition', null, null, 'Query' , null],
       ['leave', 'Document', null, null, null, null],
     ]);
   });

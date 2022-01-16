@@ -1,7 +1,4 @@
-import { inspect } from '../jsutils/inspect';
-import { invariant } from '../jsutils/invariant';
 import { keyMap } from '../jsutils/keyMap';
-import { mapValue } from '../jsutils/mapValue';
 import type { Maybe } from '../jsutils/Maybe';
 
 import type {
@@ -24,35 +21,28 @@ import { Kind } from '../language/kinds';
 import { isTypeDefinitionNode } from '../language/predicates';
 
 import type {
-  GraphQLArgumentConfig,
   GraphQLEnumValueConfigMap,
-  GraphQLFieldConfig,
   GraphQLFieldConfigArgumentMap,
   GraphQLFieldConfigMap,
-  GraphQLInputFieldConfigMap,
-GraphQLNamedType,
+  GraphQLNamedType,
   GraphQLType,
-  GraphQLUnionType} from '../type/definition';
+  IrisDataVariantFieldFields,
+} from '../type/definition';
 import {
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
-  GraphQLScalarType,  IrisDataType, 
-IrisResolverType,
-  isEnumType,
-  isInputObjectType,
-  isListType,
-  isNonNullType,
-  isObjectType,
-  isScalarType,
-  isUnionType} from '../type/definition';
+  GraphQLScalarType,
+  IrisDataType,
+  IrisResolverType,
+} from '../type/definition';
 import {
   GraphQLDeprecatedDirective,
   GraphQLDirective,
   GraphQLSpecifiedByDirective,
 } from '../type/directives';
-import { introspectionTypes, isIntrospectionType } from '../type/introspection';
-import { isSpecifiedScalarType, specifiedScalarTypes } from '../type/scalars';
+import { introspectionTypes } from '../type/introspection';
+import { specifiedScalarTypes } from '../type/scalars';
 import type {
   GraphQLSchemaNormalizedConfig,
   GraphQLSchemaValidationOptions,
@@ -104,9 +94,7 @@ export function extendSchemaImpl(
   // Schema extensions are collected which may add additional operation types.
 
   for (const def of documentAST.definitions) {
-    if (def.kind === Kind.SCHEMA_DEFINITION) {
-      schemaDef = def;
-    } else if (isTypeDefinitionNode(def)) {
+    if (isTypeDefinitionNode(def)) {
       typeDefs.push(def);
     } else if (def.kind === Kind.DIRECTIVE_DEFINITION) {
       directiveDefs.push(def);
@@ -126,7 +114,7 @@ export function extendSchemaImpl(
 
   const typeMap = Object.create(null);
   for (const existingType of schemaConfig.types) {
-    typeMap[existingType.name] = extendNamedType(existingType);
+    typeMap[existingType.name] = existingType;
   }
 
   for (const typeNode of typeDefs) {
@@ -140,8 +128,6 @@ export function extendSchemaImpl(
     mutation: schemaConfig.mutation && replaceNamedType(schemaConfig.mutation),
     subscription:
       schemaConfig.subscription && replaceNamedType(schemaConfig.subscription),
-    // Then, incorporate schema definition and all schema extensions.
-    ...(schemaDef && getOperationTypes([schemaDef])),
   };
 
   // Then produce and return a Schema config with these types.
@@ -150,7 +136,7 @@ export function extendSchemaImpl(
     ...operationTypes,
     types: Object.values(typeMap),
     directives: [
-      ...schemaConfig.directives.map(replaceDirective),
+      ...schemaConfig.directives,
       ...directiveDefs.map(buildDirective),
     ],
     extensions: Object.create(null),
@@ -158,172 +144,11 @@ export function extendSchemaImpl(
     assumeValid: options?.assumeValid ?? false,
   };
 
-  // Below are functions used for producing this schema that have closed over
-  // this scope and have access to the schema, cache, and newly defined types.
-
-  function replaceType<T extends GraphQLType>(type: T): T {
-    if (isListType(type)) {
-      // @ts-expect-error
-      return new GraphQLList(replaceType(type.ofType));
-    }
-    if (isNonNullType(type)) {
-      // @ts-expect-error
-      return new GraphQLNonNull(replaceType(type.ofType));
-    }
-    // @ts-expect-error FIXME
-    return replaceNamedType(type);
-  }
-
   function replaceNamedType<T extends GraphQLNamedType>(type: T): T {
     // Note: While this could make early assertions to get the correctly
     // typed values, that would throw immediately while type system
     // validation with validateSchema() will produce more actionable results.
     return typeMap[type.name];
-  }
-
-  function replaceDirective(directive: GraphQLDirective): GraphQLDirective {
-    const config = directive.toConfig();
-    return new GraphQLDirective({
-      ...config,
-      args: mapValue(config.args, extendArg),
-    });
-  }
-
-  function extendNamedType(type: GraphQLNamedType): GraphQLNamedType {
-    if (isIntrospectionType(type) || isSpecifiedScalarType(type)) {
-      // Builtin types are not extended.
-      return type;
-    }
-    if (isScalarType(type)) {
-      return extendScalarType(type);
-    }
-    if (isObjectType(type)) {
-      return extendObjectType(type);
-    }
-    if (isUnionType(type)) {
-      return extendUnionType(type);
-    }
-    if (isEnumType(type)) {
-      return extendEnumType(type);
-    }
-    if (isInputObjectType(type)) {
-      return extendInputObjectType(type);
-    }
-    /* c8 ignore next 3 */
-    // Not reachable, all possible type definition nodes have been considered.
-    invariant(false, 'Unexpected type: ' + inspect(type));
-  }
-
-  function extendInputObjectType(
-    type: IrisDataType,
-  ): IrisDataType {
-    const config = type.toConfig();
-    const extensions = typeExtensionsMap[config.name] ?? [];
-
-    return new IrisDataType({
-      ...config,
-      fields: () => ({
-        ...mapValue(config.fields, (field) => ({
-          ...field,
-          type: replaceType(field.type),
-        })),
-        ...buildInputFieldMap(extensions),
-      }),
-    });
-  }
-
-  function extendEnumType(type: IrisDataType): IrisDataType {
-    const config = type.toConfig();
-    const extensions = typeExtensionsMap[type.name] ?? [];
-
-    return new IrisDataType({
-      ...config,
-      values: {
-        ...config.values,
-        ...buildEnumValueMap(extensions),
-      }
-    });
-  }
-
-  function extendScalarType(type: GraphQLScalarType): GraphQLScalarType {
-    const config = type.toConfig();
-    const extensions = typeExtensionsMap[config.name] ?? [];
-
-    let specifiedByURL = config.specifiedByURL;
-    for (const extensionNode of extensions) {
-      specifiedByURL = getSpecifiedByURL(extensionNode) ?? specifiedByURL;
-    }
-
-    return new GraphQLScalarType({
-      ...config,
-      specifiedByURL
-    });
-  }
-
-  function extendObjectType(type: GraphQLObjectType): GraphQLObjectType {
-    const config = type.toConfig();
-    const extensions = typeExtensionsMap[config.name] ?? [];
-
-    return new GraphQLObjectType({
-      ...config,
-      fields: () => ({
-        ...mapValue(config.fields, extendField),
-        ...buildFieldMap(extensions),
-      })
-    });
-  }
-
-  function extendUnionType(type: GraphQLUnionType): GraphQLUnionType {
-    const config = type.toConfig();
-    const extensions = typeExtensionsMap[config.name] ?? [];
-
-    return new IrisResolverType({
-      ...config,
-      types: () => [
-        ...type.getTypes().map(replaceNamedType),
-        ...buildUnionTypes(extensions),
-      ]
-    });
-  }
-
-  function extendField(
-    field: GraphQLFieldConfig<unknown, unknown>,
-  ): GraphQLFieldConfig<unknown, unknown> {
-    return {
-      ...field,
-      type: replaceType(field.type),
-      args: field.args && mapValue(field.args, extendArg),
-    };
-  }
-
-  function extendArg(arg: GraphQLArgumentConfig) {
-    return {
-      ...arg,
-      type: replaceType(arg.type),
-    };
-  }
-
-  function getOperationTypes(nodes: ReadonlyArray<SchemaDefinitionNode>): {
-    query?: Maybe<GraphQLObjectType>;
-    mutation?: Maybe<GraphQLObjectType>;
-    subscription?: Maybe<GraphQLObjectType>;
-  } {
-    const opTypes = {};
-    for (const node of nodes) {
-      // FIXME: https://github.com/graphql/graphql-js/issues/2203
-      const operationTypesNodes =
-        /* c8 ignore next */ node.operationTypes ?? [];
-
-      for (const operationType of operationTypesNodes) {
-        // Note: While this could make early assertions to get the correctly
-        // typed values below, that would throw immediately while type system
-        // validation with validateSchema() will produce more actionable results.
-        // @ts-expect-error
-        opTypes[operationType.operation] = getNamedType(operationType.type);
-      }
-    }
-
-    return opTypes;
   }
 
   function getNamedType(node: NamedTypeNode): GraphQLNamedType {
@@ -408,7 +233,7 @@ export function extendSchemaImpl(
 
   function buildInputFieldMap(
     nodes: ReadonlyArray<DataTypeDefinitionNode>,
-  ): GraphQLInputFieldConfigMap {
+  ): IrisDataVariantFieldFields {
     const inputFieldMap = Object.create(null);
     for (const node of nodes) {
       // FIXME: https://github.com/graphql/graphql-js/issues/2203
@@ -476,7 +301,7 @@ export function extendSchemaImpl(
           name,
           description: astNode.description?.value,
           fields: () => buildFieldMap(allNodes),
-          astNode
+          astNode,
         });
       }
       case Kind.UNION_TYPE_DEFINITION: {
@@ -486,7 +311,7 @@ export function extendSchemaImpl(
           name,
           description: astNode.description?.value,
           types: () => buildUnionTypes(allNodes),
-          astNode
+          astNode,
         });
       }
       case Kind.SCALAR_TYPE_DEFINITION: {
@@ -494,7 +319,7 @@ export function extendSchemaImpl(
           name,
           description: astNode.description?.value,
           specifiedByURL: getSpecifiedByURL(astNode),
-          astNode
+          astNode,
         });
       }
       case Kind.DATA_TYPE_DEFINITION: {
@@ -513,7 +338,7 @@ export function extendSchemaImpl(
           name,
           description: astNode.description?.value,
           values: buildEnumValueMap([astNode]),
-          astNode
+          astNode,
         });
       }
     }

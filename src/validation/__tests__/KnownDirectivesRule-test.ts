@@ -248,14 +248,5 @@ describe('Validate: Known directives', () => {
         }
       `);
     });
-
-    it('with overridden standard directive', () => {
-      expectValidSDL(`
-        schema @deprecated {
-          query: Query
-        }
-        directive @deprecated on SCHEMA
-      `);
-    });
   });
 });

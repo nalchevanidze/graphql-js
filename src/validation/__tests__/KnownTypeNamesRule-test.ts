@@ -133,14 +133,10 @@ describe('Validate: Known type names', () => {
 
         scalar SomeScalar
 
-        type RootQuery {
+        type Query {
           someUnion: SomeUnion
           someScalar: SomeScalar
           someObject: SomeObject
-        }
-
-        schema {
-          query: RootQuery
         }
       `);
     });
@@ -161,12 +157,6 @@ describe('Validate: Known type names', () => {
         }
 
         directive @SomeDirective(k: K) on QUERY
-
-        schema {
-          query: L
-          mutation: M
-          subscription: N
-        }
       `).toDeepEqual([
         {
           message: 'Unknown type "D". Did you mean "A", "B", or "ID"?',
@@ -191,19 +181,7 @@ describe('Validate: Known type names', () => {
         {
           message: 'Unknown type "K". Did you mean "A" or "B"?',
           locations: [{ line: 15, column: 37 }],
-        },
-        {
-          message: 'Unknown type "L". Did you mean "A" or "B"?',
-          locations: [{ line: 18, column: 18 }],
-        },
-        {
-          message: 'Unknown type "M". Did you mean "A" or "B"?',
-          locations: [{ line: 19, column: 21 }],
-        },
-        {
-          message: 'Unknown type "N". Did you mean "A" or "B"?',
-          locations: [{ line: 20, column: 25 }],
-        },
+        }
       ]);
     });
 
@@ -243,16 +221,12 @@ describe('Validate: Known type names', () => {
     it('reference types inside extension document', () => {
       const schema = buildSchema('type Foo');
       const sdl = `
-        type QueryRoot {
+        type Query {
           foo: Foo
           bar: Bar
         }
 
         scalar Bar
-
-        schema {
-          query: QueryRoot
-        }
       `;
 
       expectValidSDL(sdl, schema);

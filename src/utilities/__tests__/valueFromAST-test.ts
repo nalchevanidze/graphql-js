@@ -94,30 +94,6 @@ describe('valueFromAST', () => {
     expectValueFrom('value', returnUndefinedScalar).to.equal(undefined);
   });
 
-  it('converts Enum values according to input coercion rules', () => {
-    const testEnum = new IrisDataType({
-      name: 'TestColor',
-      values: {
-        RED: { value: 1 },
-        GREEN: { value: 2 },
-        BLUE: { value: 3 },
-        NULL: { value: null },
-        NAN: { value: NaN },
-        NO_CUSTOM_VALUE: { value: undefined },
-      },
-    });
-
-    expectValueFrom('RED', testEnum).to.equal(1);
-    expectValueFrom('BLUE', testEnum).to.equal(3);
-    expectValueFrom('3', testEnum).to.equal(undefined);
-    expectValueFrom('"BLUE"', testEnum).to.equal(undefined);
-    expectValueFrom('null', testEnum).to.equal(null);
-    expectValueFrom('NULL', testEnum).to.equal(null);
-    expectValueFrom('NULL', new GraphQLNonNull(testEnum)).to.equal(null);
-    expectValueFrom('NAN', testEnum).to.deep.equal(NaN);
-    expectValueFrom('NO_CUSTOM_VALUE', testEnum).to.equal('NO_CUSTOM_VALUE');
-  });
-
   // Boolean!
   const nonNullBool = new GraphQLNonNull(GraphQLBoolean);
   // [Boolean]

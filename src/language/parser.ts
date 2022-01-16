@@ -39,7 +39,6 @@ import type {
   OperationTypeDefinitionNode,
   Role,
   ScalarTypeDefinitionNode,
-  SchemaDefinitionNode,
   SelectionNode,
   SelectionSetNode,
   StringValueNode,
@@ -61,7 +60,7 @@ import { TokenKind } from './tokenKind';
 /**
  * Configuration options to control parser behavior
  */
-export interface ParseOptions {
+export type ParseOptions = {
   /**
    * By default, the parser creates AST nodes that know the location
    * in the source that they correspond to. This configuration flag
@@ -218,8 +217,6 @@ export class Parser {
 
     if (keywordToken.kind === TokenKind.NAME) {
       switch (keywordToken.value) {
-        case 'schema':
-          return this.parseSchemaDefinition();
         case 'scalar':
           return this.parseScalarTypeDefinition();
         case 'type':
@@ -741,28 +738,8 @@ export class Parser {
     }
   }
 
-  /**
-   * ```
-   * SchemaDefinition : Description? schema Directives[Const]? { OperationTypeDefinition+ }
-   * ```
-   */
-  parseSchemaDefinition(): SchemaDefinitionNode {
-    const start = this._lexer.token;
-    const description = this.parseDescription();
-    this.expectKeyword('schema');
-    const directives = this.parseConstDirectives();
-    const operationTypes = this.many(
-      TokenKind.BRACE_L,
-      this.parseOperationTypeDefinition,
-      TokenKind.BRACE_R,
-    );
-    return this.node<SchemaDefinitionNode>(start, {
-      kind: Kind.SCHEMA_DEFINITION,
-      description,
-      directives,
-      operationTypes,
-    });
-  }
+
+
 
   /**
    * OperationTypeDefinition : OperationType : NamedType
@@ -806,28 +783,15 @@ export class Parser {
     const description = this.parseDescription();
     this.expectKeyword('type');
     const name = this.parseName();
-    const interfaces = this.parseImplementsInterfaces();
     const directives = this.parseConstDirectives();
     const fields = this.parseFieldsDefinition();
     return this.node<ObjectTypeDefinitionNode>(start, {
       kind: Kind.OBJECT_TYPE_DEFINITION,
       description,
       name,
-      interfaces,
       directives,
       fields,
     });
-  }
-
-  /**
-   * ImplementsInterfaces :
-   *   - implements `&`? NamedType
-   *   - ImplementsInterfaces & NamedType
-   */
-  parseImplementsInterfaces(): Array<NamedTypeNode> {
-    return this.expectOptionalKeyword('implements')
-      ? this.delimitedMany(TokenKind.AMP, this.parseNamedType)
-      : [];
   }
 
   /**
@@ -1047,7 +1011,6 @@ export class Parser {
    *   `OBJECT`
    *   `FIELD_DEFINITION`
    *   `ARGUMENT_DEFINITION`
-   *   `INTERFACE`
    *   `UNION`
    *   `ENUM`
    *   `ENUM_VALUE`

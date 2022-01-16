@@ -10,7 +10,6 @@ export {
 } from './schema';
 export type { GraphQLSchemaConfig, GraphQLSchemaExtensions } from './schema';
 
-export type { IrisDataType } from './definition';
 export type { GraphQLUnionType } from './definition';
 export {
   resolveObjMapThunk,
@@ -37,12 +36,8 @@ export {
   assertScalarType,
   assertObjectType,
   assertUnionType,
-  assertEnumType,
-  assertInputObjectType,
   assertListType,
   assertNonNullType,
-  assertInputType,
-  assertOutputType,
   assertLeafType,
   assertCompositeType,
   assertAbstractType,
@@ -63,7 +58,7 @@ export type {
   GraphQLOutputType,
   GraphQLLeafType,
   GraphQLCompositeType,
-  GraphQLAbstractType,
+  IrisResolverType,
   GraphQLWrappingType,
   GraphQLNullableType,
   GraphQLNamedType,
@@ -73,7 +68,7 @@ export type {
   ThunkObjMap,
   GraphQLArgument,
   GraphQLArgumentConfig,
-  GraphQLEnumValue,
+  IrisDataVariant as GraphQLEnumValue,
   GraphQLEnumValueConfig,
   GraphQLEnumValueConfigMap,
   GraphQLField,
@@ -83,10 +78,7 @@ export type {
   GraphQLFieldMap,
   GraphQLFieldResolver,
   GraphQLInputField,
-  GraphQLInputFieldConfig,
-  GraphQLInputFieldConfigMap,
-  GraphQLInputFieldMap,
-  IrisDataTypeConfig,
+  IrisDataVariantFieldFields,
   GraphQLIsTypeOfFn,
   GraphQLObjectTypeConfig,
   GraphQLObjectTypeExtensions,

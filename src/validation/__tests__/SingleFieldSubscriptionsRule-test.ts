@@ -24,7 +24,7 @@ const schema = buildSchema(`
     sender: String
   }
 
-  type SubscriptionRoot {
+  type Subscription {
     importantEmails: [String]
     notImportantEmails: [String]
     moreImportantEmails: [String]
@@ -33,13 +33,8 @@ const schema = buildSchema(`
     newMessage: Message
   }
 
-  type QueryRoot {
+  type Query {
     dummy: String
-  }
-
-  schema {
-    query: QueryRoot
-    subscription: SubscriptionRoot
   }
 `);
 
@@ -122,29 +117,6 @@ describe('Validate: Subscriptions with single field', () => {
     ]);
   });
 
-  it('fails with more than one root field including aliased introspection via fragment', () => {
-    expectErrors(`
-      subscription ImportantEmails {
-        importantEmails
-        ...Introspection
-      }
-      fragment Introspection on SubscriptionRoot {
-        typename: __typename
-      }
-    `).toDeepEqual([
-      {
-        message:
-          'Subscription "ImportantEmails" must select only one top level field.',
-        locations: [{ line: 7, column: 9 }],
-      },
-      {
-        message:
-          'Subscription "ImportantEmails" must not select an introspection top level field.',
-        locations: [{ line: 7, column: 9 }],
-      },
-    ]);
-  });
-
   it('fails with many more than one root field', () => {
     expectErrors(`
       subscription ImportantEmails {
@@ -164,36 +136,6 @@ describe('Validate: Subscriptions with single field', () => {
     ]);
   });
 
-  it('fails with many more than one root field via fragments', () => {
-    expectErrors(`
-      subscription ImportantEmails {
-        importantEmails
-        ... {
-          more: moreImportantEmails
-        }
-        ...NotImportantEmails
-      }
-      fragment NotImportantEmails on SubscriptionRoot {
-        notImportantEmails
-        deleted: deletedEmails
-        ...SpamEmails
-      }
-      fragment SpamEmails on SubscriptionRoot {
-        spamEmails
-      }
-    `).toDeepEqual([
-      {
-        message:
-          'Subscription "ImportantEmails" must select only one top level field.',
-        locations: [
-          { line: 5, column: 11 },
-          { line: 10, column: 9 },
-          { line: 11, column: 9 },
-          { line: 15, column: 9 },
-        ],
-      },
-    ]);
-  });
 
   it('does not infinite loop on recursive fragments', () => {
     expectErrors(`
@@ -204,44 +146,6 @@ describe('Validate: Subscriptions with single field', () => {
         ...A
       }
     `).toDeepEqual([]);
-  });
-
-  it('fails with many more than one root field via fragments (anonymous)', () => {
-    expectErrors(`
-      subscription {
-        importantEmails
-        ... {
-          more: moreImportantEmails
-          ...NotImportantEmails
-        }
-        ...NotImportantEmails
-      }
-      fragment NotImportantEmails on SubscriptionRoot {
-        notImportantEmails
-        deleted: deletedEmails
-        ... {
-          ... {
-            archivedEmails
-          }
-        }
-        ...SpamEmails
-      }
-      fragment SpamEmails on SubscriptionRoot {
-        spamEmails
-        ...NonExistentFragment
-      }
-    `).toDeepEqual([
-      {
-        message: 'Anonymous Subscription must select only one top level field.',
-        locations: [
-          { line: 5, column: 11 },
-          { line: 11, column: 9 },
-          { line: 12, column: 9 },
-          { line: 15, column: 13 },
-          { line: 21, column: 9 },
-        ],
-      },
-    ]);
   });
 
   it('fails with more than one root field in anonymous subscriptions', () => {

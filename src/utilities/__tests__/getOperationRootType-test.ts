@@ -60,35 +60,6 @@ describe('Deprecated - getOperationRootType', () => {
     expect(getOperationRootType(testSchema, operationNode)).to.equal(queryType);
   });
 
-  it('Gets a type for OperationTypeDefinitionNodes', () => {
-    const testSchema = new GraphQLSchema({
-      query: queryType,
-      mutation: mutationType,
-      subscription: subscriptionType,
-    });
-
-    const doc = parse(`
-      schema {
-        query: FooQuery
-        mutation: FooMutation
-        subscription: FooSubscription
-      }
-    `);
-
-    const schemaNode = doc.definitions[0];
-    invariant(schemaNode.kind === Kind.SCHEMA_DEFINITION);
-    const [queryNode, mutationNode, subscriptionNode] =
-      schemaNode.operationTypes;
-
-    expect(getOperationRootType(testSchema, queryNode)).to.equal(queryType);
-    expect(getOperationRootType(testSchema, mutationNode)).to.equal(
-      mutationType,
-    );
-    expect(getOperationRootType(testSchema, subscriptionNode)).to.equal(
-      subscriptionType,
-    );
-  });
-
   it('Gets a Mutation type for an OperationDefinitionNode', () => {
     const testSchema = new GraphQLSchema({
       mutation: mutationType,

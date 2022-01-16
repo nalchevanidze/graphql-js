@@ -39,9 +39,6 @@ export { buildClientSchema } from './buildClientSchema';
 export { buildASTSchema, buildSchema } from './buildASTSchema';
 export type { BuildSchemaOptions } from './buildASTSchema';
 
-// Sort a GraphQLSchema.
-export { lexicographicSortSchema } from './lexicographicSortSchema';
-
 // Print a GraphQLSchema to GraphQL Schema language.
 export {
   printSchema,

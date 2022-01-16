@@ -86,17 +86,13 @@ export const testSchema: GraphQLSchema = buildSchema(`
     multipleOptAndReq(req1: Int!, req2: Int!, opt1: Int = 0, opt2: Int = 0): String
   }
 
-  type QueryRoot {
+  type Query {
     human(id: ID): Human
     dog: Dog
     cat: Cat
     pet: Pet
     catOrDog: CatOrDog
     complicatedArgs: ComplicatedArgs
-  }
-
-  schema {
-    query: QueryRoot
   }
 
   directive @onField on FIELD

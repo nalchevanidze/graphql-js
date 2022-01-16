@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { describe, it } from 'mocha';
 
 import { dedent } from '../../__testUtils__/dedent';
@@ -90,7 +89,6 @@ describe('Schema Parser', () => {
           kind: 'ObjectTypeDefinition',
           name: nameNode('Hello', { start: 5, end: 10 }),
           description: undefined,
-          interfaces: [],
           directives: [],
           fields: [
             fieldNode(
@@ -141,22 +139,6 @@ describe('Schema Parser', () => {
     });
   });
 
-  it('parses schema with description string', () => {
-    const doc = parse(dedent`
-      "Description"
-      schema {
-        query: Foo
-      }
-    `);
-
-    expectJSON(doc).toDeepNestedProperty('definitions[0].description', {
-      kind: 'StringValue',
-      value: 'Description',
-      block: false,
-      loc: { start: 0, end: 13 },
-    });
-  });
-
   it('Description followed by something other than type system definition throws', () => {
     expectSyntaxError('"Description" 1').to.deep.equal({
       message: 'Syntax Error: Unexpected Int "1".',
@@ -178,7 +160,6 @@ describe('Schema Parser', () => {
           kind: 'ObjectTypeDefinition',
           name: nameNode('Hello', { start: 5, end: 10 }),
           description: undefined,
-          interfaces: [],
           directives: [],
           fields: [
             fieldNode(
@@ -253,7 +234,6 @@ describe('Schema Parser', () => {
           kind: 'ObjectTypeDefinition',
           name: nameNode('Hello', { start: 5, end: 10 }),
           description: undefined,
-          interfaces: [],
           directives: [],
           fields: [
             fieldNodeWithArgs(
@@ -291,7 +271,6 @@ describe('Schema Parser', () => {
           kind: 'ObjectTypeDefinition',
           name: nameNode('Hello', { start: 5, end: 10 }),
           description: undefined,
-          interfaces: [],
           directives: [],
           fields: [
             fieldNodeWithArgs(
@@ -333,7 +312,6 @@ describe('Schema Parser', () => {
           kind: 'ObjectTypeDefinition',
           name: nameNode('Hello', { start: 5, end: 10 }),
           description: undefined,
-          interfaces: [],
           directives: [],
           fields: [
             fieldNodeWithArgs(
@@ -375,7 +353,6 @@ describe('Schema Parser', () => {
           kind: 'ObjectTypeDefinition',
           name: nameNode('Hello', { start: 5, end: 10 }),
           description: undefined,
-          interfaces: [],
           directives: [],
           fields: [
             fieldNodeWithArgs(

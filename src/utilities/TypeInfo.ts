@@ -9,7 +9,7 @@ import { getEnterLeaveForKind } from '../language/visitor';
 import type {
   GraphQLArgument,
   GraphQLCompositeType,
-  GraphQLEnumValue,
+  IrisDataVariant,
   GraphQLField,
   GraphQLInputField,
   GraphQLInputType,
@@ -51,7 +51,7 @@ export class TypeInfo {
   private _defaultValueStack: Array<Maybe<unknown>>;
   private _directive: Maybe<GraphQLDirective>;
   private _argument: Maybe<GraphQLArgument>;
-  private _enumValue: Maybe<GraphQLEnumValue>;
+  private _enumValue: Maybe<IrisDataVariant>;
   private _getFieldDef: GetFieldDefFn;
 
   constructor(
@@ -136,7 +136,7 @@ export class TypeInfo {
     return this._argument;
   }
 
-  getEnumValue(): Maybe<GraphQLEnumValue> {
+  getEnumValue(): Maybe<IrisDataVariant> {
     return this._enumValue;
   }
 
@@ -243,7 +243,7 @@ export class TypeInfo {
         if (isEnumType(enumType)) {
           enumValue = enumType.getValue(node.value);
         }else if(isInputObjectType(enumType)){
-          enumValue = enumType.getVariants() as any as  GraphQLEnumValue
+          enumValue = enumType.getVariants() as any as  IrisDataVariant
         }
         this._enumValue = enumValue;
         break;

@@ -12,10 +12,10 @@ import type { SchemaDefinitionNode } from '../language/ast';
 import { OperationTypeNode } from '../language/ast';
 
 import type {
-  GraphQLAbstractType,
   GraphQLNamedType,
   GraphQLObjectType,
   GraphQLType,
+  IrisResolverType,
 } from './definition';
 import {
   getNamedType,
@@ -255,7 +255,7 @@ export class GraphQLSchema {
   }
 
   getPossibleTypes(
-    abstractType: GraphQLAbstractType,
+    abstractType: IrisResolverType,
   ): ReadonlyArray<GraphQLObjectType> {
     return isUnionType(abstractType)
       ? abstractType.getTypes()
@@ -263,7 +263,7 @@ export class GraphQLSchema {
   }
 
   isSubType(
-    abstractType: GraphQLAbstractType,
+    abstractType: IrisResolverType,
     maybeSubType: GraphQLObjectType ,
   ): boolean {
     let map = this._subTypeMap[abstractType.name];
@@ -295,20 +295,6 @@ export class GraphQLSchema {
 
   getDirective(name: string): Maybe<GraphQLDirective> {
     return this.getDirectives().find((directive) => directive.name === name);
-  }
-
-  toConfig(): GraphQLSchemaNormalizedConfig {
-    return {
-      description: this.description,
-      query: this.getQueryType(),
-      mutation: this.getMutationType(),
-      subscription: this.getSubscriptionType(),
-      types: Object.values(this.getTypeMap()),
-      directives: this.getDirectives(),
-      extensions: this.extensions,
-      astNode: this.astNode,
-      assumeValid: this.__validationErrors !== undefined,
-    };
   }
 }
 

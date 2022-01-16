@@ -86,7 +86,6 @@ export { VariablesInAllowedPositionRule } from './rules/VariablesInAllowedPositi
 
 // SDL-specific validation rules
 export { LoneSchemaDefinitionRule } from './rules/LoneSchemaDefinitionRule';
-export { UniqueOperationTypesRule } from './rules/UniqueOperationTypesRule';
 export { UniqueTypeNamesRule } from './rules/UniqueTypeNamesRule';
 export { UniqueVariantAndFieldDefinitionNamesRule } from './rules/UniqueVariantAndFieldDefinitionNamesRule';
 export { UniqueArgumentDefinitionNamesRule } from './rules/UniqueArgumentDefinitionNamesRule';
