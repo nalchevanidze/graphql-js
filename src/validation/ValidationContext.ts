@@ -29,7 +29,7 @@ import type { GraphQLSchema } from '../type/schema';
 import { TypeInfo, visitWithTypeInfo } from '../utilities/TypeInfo';
 
 type NodeWithSelectionSet = OperationDefinitionNode | FragmentDefinitionNode;
-interface VariableUsage {
+type VariableUsage = {
   readonly node: VariableNode;
   readonly type: Maybe<GraphQLInputType>;
   readonly defaultValue: Maybe<unknown>;

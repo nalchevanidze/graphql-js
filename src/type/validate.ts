@@ -6,18 +6,14 @@ import { GraphQLError } from '../error/GraphQLError';
 import type {
   ASTNode,
   DirectiveNode,
-  InterfaceTypeDefinitionNode,
   NamedTypeNode,
-  ObjectTypeDefinitionNode,
   UnionTypeDefinitionNode,
 } from '../language/ast';
 import { OperationTypeNode } from '../language/ast';
 
-import { isEqualType, isTypeSubTypeOf } from '../utilities/typeComparators';
-
+// import { isEqualType, isTypeSubTypeOf } from '../utilities/typeComparators';
 import type {
   GraphQLInputField,
-  GraphQLInterfaceType,
   GraphQLObjectType,
   GraphQLUnionType,
   IrisDataType,
@@ -26,7 +22,6 @@ import {
   isEnumType,
   isInputObjectType,
   isInputType,
-  isInterfaceType,
   isNamedType,
   isNonNullType,
   isObjectType,
@@ -229,12 +224,6 @@ function validateTypes(context: SchemaValidationContext): void {
     if (isObjectType(type)) {
       // Ensure fields are valid
       validateFields(context, type);
-
-      // Ensure objects implement the interfaces they claim to.
-      validateInterfaces(context, type);
-    } else if (isInterfaceType(type)) {
-      // Ensure fields are valid.
-      validateFields(context, type);
     } else if (isUnionType(type)) {
       // Ensure Unions include valid member types.
       validateUnionMembers(context, type);
@@ -253,7 +242,7 @@ function validateTypes(context: SchemaValidationContext): void {
 
 function validateFields(
   context: SchemaValidationContext,
-  type: GraphQLObjectType | GraphQLInterfaceType,
+  type: GraphQLObjectType ,
 ): void {
   const fields = Object.values(type.getFields());
 
@@ -303,137 +292,82 @@ function validateFields(
   }
 }
 
-function validateInterfaces(
-  context: SchemaValidationContext,
-  type: GraphQLObjectType,
-): void {
-  const ifaceTypeNames = Object.create(null);
-  for (const iface of type.getInterfaces()) {
-    if (!isInterfaceType(iface)) {
-      context.reportError(
-        `Type ${inspect(type)} must only implement Interface types, ` +
-          `it cannot implement ${inspect(iface)}.`,
-        getAllImplementsInterfaceNodes(type, iface),
-      );
-      continue;
-    }
 
-    if (type.name === iface.name) {
-      context.reportError(
-        `Type ${type.name} cannot implement itself because it would create a circular reference.`,
-        getAllImplementsInterfaceNodes(type, iface),
-      );
-      continue;
-    }
+// function validateTypeImplementsInterface(
+//   context: SchemaValidationContext,
+//   type: GraphQLObjectType,
+//   iface: GraphQLObjectType,
+// ): void {
+//   const typeFieldMap = type.getFields();
 
-    if (ifaceTypeNames[iface.name]) {
-      context.reportError(
-        `Type ${type.name} can only implement ${iface.name} once.`,
-        getAllImplementsInterfaceNodes(type, iface),
-      );
-      continue;
-    }
+//   // Assert each interface field is implemented.
+//   for (const ifaceField of Object.values(iface.getFields())) {
+//     const fieldName = ifaceField.name;
+//     const typeField = typeFieldMap[fieldName];
 
-    ifaceTypeNames[iface.name] = true;
+//     // Assert interface field exists on type.
+//     if (!typeField) {
+//       context.reportError(
+//         `Interface field ${iface.name}.${fieldName} expected but ${type.name} does not provide it.`,
+//         [ifaceField.astNode, type.astNode],
+//       );
+//       continue;
+//     }
 
-    validateTypeImplementsAncestors(context, type, iface);
-    validateTypeImplementsInterface(context, type, iface);
-  }
-}
+//     // Assert interface field type is satisfied by type field type, by being
+//     // a valid subtype. (covariant)
+//     if (!isTypeSubTypeOf(context.schema, typeField.type, ifaceField.type)) {
+//       context.reportError(
+//         `Interface field ${iface.name}.${fieldName} expects type ` +
+//           `${inspect(ifaceField.type)} but ${type.name}.${fieldName} ` +
+//           `is type ${inspect(typeField.type)}.`,
+//         [ifaceField.astNode?.type, typeField.astNode?.type],
+//       );
+//     }
 
-function validateTypeImplementsInterface(
-  context: SchemaValidationContext,
-  type: GraphQLObjectType | GraphQLInterfaceType,
-  iface: GraphQLInterfaceType,
-): void {
-  const typeFieldMap = type.getFields();
+//     // Assert each interface field arg is implemented.
+//     for (const ifaceArg of ifaceField.args) {
+//       const argName = ifaceArg.name;
+//       const typeArg = typeField.args.find((arg) => arg.name === argName);
 
-  // Assert each interface field is implemented.
-  for (const ifaceField of Object.values(iface.getFields())) {
-    const fieldName = ifaceField.name;
-    const typeField = typeFieldMap[fieldName];
+//       // Assert interface field arg exists on object field.
+//       if (!typeArg) {
+//         context.reportError(
+//           `Interface field argument ${iface.name}.${fieldName}(${argName}:) expected but ${type.name}.${fieldName} does not provide it.`,
+//           [ifaceArg.astNode, typeField.astNode],
+//         );
+//         continue;
+//       }
 
-    // Assert interface field exists on type.
-    if (!typeField) {
-      context.reportError(
-        `Interface field ${iface.name}.${fieldName} expected but ${type.name} does not provide it.`,
-        [ifaceField.astNode, type.astNode],
-      );
-      continue;
-    }
+//       // Assert interface field arg type matches object field arg type.
+//       // (invariant)
+//       // TODO: change to contravariant?
+//       if (!isEqualType(ifaceArg.type, typeArg.type)) {
+//         context.reportError(
+//           `Interface field argument ${iface.name}.${fieldName}(${argName}:) ` +
+//             `expects type ${inspect(ifaceArg.type)} but ` +
+//             `${type.name}.${fieldName}(${argName}:) is type ` +
+//             `${inspect(typeArg.type)}.`,
+//           [ifaceArg.astNode?.type, typeArg.astNode?.type],
+//         );
+//       }
 
-    // Assert interface field type is satisfied by type field type, by being
-    // a valid subtype. (covariant)
-    if (!isTypeSubTypeOf(context.schema, typeField.type, ifaceField.type)) {
-      context.reportError(
-        `Interface field ${iface.name}.${fieldName} expects type ` +
-          `${inspect(ifaceField.type)} but ${type.name}.${fieldName} ` +
-          `is type ${inspect(typeField.type)}.`,
-        [ifaceField.astNode?.type, typeField.astNode?.type],
-      );
-    }
+//       // TODO: validate default values?
+//     }
 
-    // Assert each interface field arg is implemented.
-    for (const ifaceArg of ifaceField.args) {
-      const argName = ifaceArg.name;
-      const typeArg = typeField.args.find((arg) => arg.name === argName);
-
-      // Assert interface field arg exists on object field.
-      if (!typeArg) {
-        context.reportError(
-          `Interface field argument ${iface.name}.${fieldName}(${argName}:) expected but ${type.name}.${fieldName} does not provide it.`,
-          [ifaceArg.astNode, typeField.astNode],
-        );
-        continue;
-      }
-
-      // Assert interface field arg type matches object field arg type.
-      // (invariant)
-      // TODO: change to contravariant?
-      if (!isEqualType(ifaceArg.type, typeArg.type)) {
-        context.reportError(
-          `Interface field argument ${iface.name}.${fieldName}(${argName}:) ` +
-            `expects type ${inspect(ifaceArg.type)} but ` +
-            `${type.name}.${fieldName}(${argName}:) is type ` +
-            `${inspect(typeArg.type)}.`,
-          [ifaceArg.astNode?.type, typeArg.astNode?.type],
-        );
-      }
-
-      // TODO: validate default values?
-    }
-
-    // Assert additional arguments must not be required.
-    for (const typeArg of typeField.args) {
-      const argName = typeArg.name;
-      const ifaceArg = ifaceField.args.find((arg) => arg.name === argName);
-      if (!ifaceArg && isRequiredArgument(typeArg)) {
-        context.reportError(
-          `Object field ${type.name}.${fieldName} includes required argument ${argName} that is missing from the Interface field ${iface.name}.${fieldName}.`,
-          [typeArg.astNode, ifaceField.astNode],
-        );
-      }
-    }
-  }
-}
-
-function validateTypeImplementsAncestors(
-  context: SchemaValidationContext,
-  type: GraphQLObjectType,
-  iface: GraphQLInterfaceType,
-): void {
-  if (!type.getInterfaces().includes(iface)) {
-    context.reportError(
-      iface.name === type.name
-        ? `Type ${type.name} cannot implement ${iface.name} because it would create a circular reference.`
-        : `Type ${type.name} must implement ${iface.name} because it is implemented by ${iface.name}.`,
-      [
-        ...getAllImplementsInterfaceNodes(iface, iface),
-        ...getAllImplementsInterfaceNodes(type, iface),
-      ],
-    );
-  }
-}
+//     // Assert additional arguments must not be required.
+//     for (const typeArg of typeField.args) {
+//       const argName = typeArg.name;
+//       const ifaceArg = ifaceField.args.find((arg) => arg.name === argName);
+//       if (!ifaceArg && isRequiredArgument(typeArg)) {
+//         context.reportError(
+//           `Object field ${type.name}.${fieldName} includes required argument ${argName} that is missing from the Interface field ${iface.name}.${fieldName}.`,
+//           [typeArg.astNode, ifaceField.astNode],
+//         );
+//       }
+//     }
+//   }
+// }
 
 function validateUnionMembers(
   context: SchemaValidationContext,
@@ -566,21 +500,6 @@ function createInputObjectCircularRefsValidator(
 
     fieldPathIndexByTypeName[inputObj.name] = undefined;
   }
-}
-
-function getAllImplementsInterfaceNodes(
-  type: GraphQLObjectType | GraphQLInterfaceType,
-  iface: GraphQLInterfaceType,
-): ReadonlyArray<NamedTypeNode> {
-  const { astNode } = type;
-  const nodes: ReadonlyArray<
-    ObjectTypeDefinitionNode | InterfaceTypeDefinitionNode
-  > = astNode != null ? [astNode] : [];
-
-  // FIXME: https://github.com/graphql/graphql-js/issues/2203
-  return nodes
-    .flatMap((typeNode) => /* c8 ignore next */ typeNode.interfaces ?? [])
-    .filter((ifaceNode) => ifaceNode.name.value === iface.name);
 }
 
 function getUnionMemberTypeNodes(

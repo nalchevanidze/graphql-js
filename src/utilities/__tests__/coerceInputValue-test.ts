@@ -12,12 +12,12 @@ import { GraphQLInt } from '../../type/scalars';
 
 import { coerceInputValue } from '../coerceInputValue';
 
-interface CoerceResult {
+type CoerceResult = {
   value: unknown;
   errors: ReadonlyArray<CoerceError>;
 }
 
-interface CoerceError {
+type CoerceError = {
   path: ReadonlyArray<string | number>;
   value: unknown;
   error: string;

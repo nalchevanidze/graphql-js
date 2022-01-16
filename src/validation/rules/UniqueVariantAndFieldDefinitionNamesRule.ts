@@ -9,11 +9,7 @@ import type {
 import type { ASTVisitor } from '../../language/visitor';
 
 import type { GraphQLNamedType } from '../../type/definition';
-import {
-  isInputObjectType,
-  isInterfaceType,
-  isObjectType,
-} from '../../type/definition';
+import { isInputObjectType, isObjectType } from '../../type/definition';
 
 import type { SDLValidationContext } from '../ValidationContext';
 
@@ -35,21 +31,21 @@ export function UniqueVariantAndFieldDefinitionNamesRule(
   };
 
   function checkVariantUniqueness({ variants, name }: DataTypeDefinitionNode) {
-    const knownVariantNames:{ [key: string]: NameNode } = {};
+    const knownVariantNames: { [key: string]: NameNode } = {};
     const typeName = name.value;
 
     for (const variant of variants) {
       const variantName = variant.name.value;
-      
+
       if (knownVariantNames[variantName]) {
         context.reportError(
           new GraphQLError(
             `Variant "${typeName}.${variantName}" can only be defined once.`,
             [knownVariantNames[variantName], variant.name],
-            ),
+          ),
         );
       } else {
-        checkFieldUniqueness(variant)
+        checkFieldUniqueness(variant);
         knownVariantNames[variantName] = variant.name;
       }
     }
@@ -101,7 +97,7 @@ export function UniqueVariantAndFieldDefinitionNamesRule(
 }
 
 function hasField(type: GraphQLNamedType, fieldName: string): boolean {
-  if (isObjectType(type) || isInterfaceType(type) || isInputObjectType(type)) {
+  if (isObjectType(type) || isInputObjectType(type)) {
     return type.getFields()[fieldName] != null;
   }
   return false;

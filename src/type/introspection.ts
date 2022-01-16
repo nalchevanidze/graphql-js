@@ -21,7 +21,6 @@ import {
   isAbstractType,
   isEnumType,
   isInputObjectType,
-  isInterfaceType,
   isListType,
   isNonNullType,
   isObjectType,
@@ -217,9 +216,6 @@ export const __Type: GraphQLObjectType = new GraphQLObjectType({
           if (isObjectType(type)) {
             return TypeKind.OBJECT;
           }
-          if (isInterfaceType(type)) {
-            return TypeKind.INTERFACE;
-          }
           if (isUnionType(type)) {
             return TypeKind.UNION;
           }
@@ -262,21 +258,11 @@ export const __Type: GraphQLObjectType = new GraphQLObjectType({
           includeDeprecated: { type: GraphQLBoolean, defaultValue: false },
         },
         resolve(type, { includeDeprecated }) {
-          if (isObjectType(type) || isInterfaceType(type)) {
+          if (isObjectType(type)) {
             const fields = Object.values(type.getFields());
             return includeDeprecated
               ? fields
               : fields.filter((field) => field.deprecationReason == null);
-          }
-        },
-      },
-      interfaces: {
-        type: new GraphQLList(new GraphQLNonNull(__Type)),
-        resolve(type) {
-          if (isObjectType(type)) {
-            return type.getInterfaces();
-          }else if (isInterfaceType(type)){
-            return []
           }
         },
       },

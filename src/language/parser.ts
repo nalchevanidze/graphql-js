@@ -25,7 +25,6 @@ import type {
   FragmentSpreadNode,
   InlineFragmentNode,
   InputValueDefinitionNode,
-  InterfaceTypeDefinitionNode,
   IntValueNode,
   ListTypeNode,
   ListValueNode,
@@ -206,27 +205,6 @@ export class Parser {
     });
   }
 
-  /**
-   * Definition :
-   *   - ExecutableDefinition
-   *   - TypeSystemDefinition
-   *   - TypeSystemExtension
-   *
-   * ExecutableDefinition :
-   *   - OperationDefinition
-   *   - FragmentDefinition
-   *
-   * TypeSystemDefinition :
-   *   - SchemaDefinition
-   *   - TypeDefinition
-   *   - DirectiveDefinition
-   *
-   * TypeDefinition :
-   *   - ScalarTypeDefinition
-   *   - ObjectTypeDefinition
-   *   - UnionTypeDefinition
-   *   - DataTypeDefinition
-   */
   parseDefinition(): DefinitionNode {
     if (this.peek(TokenKind.BRACE_L)) {
       return this.parseOperationDefinition();
@@ -246,8 +224,6 @@ export class Parser {
           return this.parseScalarTypeDefinition();
         case 'type':
           return this.parseObjectTypeDefinition();
-        case 'interface':
-          return this.parseInterfaceTypeDefinition();
         case 'resolver':
           return this.parseResolverTypeDefinition();
         case 'data':
@@ -925,27 +901,7 @@ export class Parser {
     });
   }
 
-  /**
-   * InterfaceTypeDefinition :
-   *   - Description? interface Name Directives[Const]? FieldsDefinition?
-   */
-  parseInterfaceTypeDefinition(): InterfaceTypeDefinitionNode {
-    const start = this._lexer.token;
-    const description = this.parseDescription();
-    this.expectKeyword('interface');
-    const name = this.parseName();
-    const interfaces = this.parseImplementsInterfaces();
-    const directives = this.parseConstDirectives();
-    const fields = this.parseFieldsDefinition();
-    return this.node<InterfaceTypeDefinitionNode>(start, {
-      kind: Kind.UNION_TYPE_DEFINITION,
-      description,
-      name,
-      interfaces,
-      directives,
-      fields,
-    });
-  }
+
 
   parseResolverTypeDefinition(): UnionTypeDefinitionNode {
     const start = this._lexer.token;

@@ -87,13 +87,6 @@ export {
 export { assertValidName, isValidNameError } from './assertValidName';
 
 // Compares two GraphQLSchemas and detects breaking changes.
-export {
-  BreakingChangeType,
-  DangerousChangeType,
-  findBreakingChanges,
-  findDangerousChanges,
-} from './findBreakingChanges';
-export type { BreakingChange, DangerousChange } from './findBreakingChanges';
 
 // Wrapper type that contains DocumentNode and types that can be deduced from it.
 export type { TypedQueryDocumentNode } from './typedQueryDocumentNode';

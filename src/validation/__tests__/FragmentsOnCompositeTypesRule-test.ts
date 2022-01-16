@@ -21,29 +21,12 @@ describe('Validate: Fragments on composite types', () => {
     `);
   });
 
-  it('interface is valid fragment type', () => {
-    expectValid(`
-      fragment validFragment on Pet {
-        name
-      }
-    `);
-  });
 
   it('object is valid inline fragment type', () => {
     expectValid(`
       fragment validFragment on Pet {
         ... on Dog {
           barks
-        }
-      }
-    `);
-  });
-
-  it('interface is valid inline fragment type', () => {
-    expectValid(`
-      fragment validFragment on Mammal {
-        ... on Canine {
-          name
         }
       }
     `);

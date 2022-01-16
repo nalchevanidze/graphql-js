@@ -35,20 +35,6 @@ describe('Validate: Scalar leafs', () => {
     ]);
   });
 
-  it('interface type missing selection', () => {
-    expectErrors(`
-      {
-        human { pets }
-      }
-    `).toDeepEqual([
-      {
-        message:
-          'Field "pets" of type "[Pet]" must have a selection of subfields. Did you mean "pets { ... }"?',
-        locations: [{ line: 3, column: 17 }],
-      },
-    ]);
-  });
-
   it('valid scalar selection with args', () => {
     expectValid(`
       fragment scalarSelectionWithArgs on Dog {

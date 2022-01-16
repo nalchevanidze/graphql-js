@@ -13,7 +13,6 @@ import { OperationTypeNode } from '../language/ast';
 
 import type {
   GraphQLAbstractType,
-  GraphQLInterfaceType,
   GraphQLNamedType,
   GraphQLObjectType,
   GraphQLType,
@@ -21,7 +20,6 @@ import type {
 import {
   getNamedType,
   isInputObjectType,
-  isInterfaceType,
   isObjectType,
   isUnionType,
 } from './definition';
@@ -79,14 +77,9 @@ export interface GraphQLSchemaExtensions {
  * Example:
  *
  * ```ts
- * const characterInterface = new GraphQLInterfaceType({
- *   name: 'Character',
- *   ...
- * });
- *
  * const humanType = new GraphQLObjectType({
  *   name: 'Human',
- *   interfaces: [characterInterface],
+ *   interfaces: [],
  *   ...
  * });
  *
@@ -140,7 +133,6 @@ export class GraphQLSchema {
   private _subTypeMap: ObjMap<ObjMap<boolean>>;
   private _implementationsMap: ObjMap<{
     objects: Array<GraphQLObjectType>;
-    interfaces: Array<GraphQLInterfaceType>;
   }>;
 
   constructor(config: Readonly<GraphQLSchemaConfig>) {
@@ -224,32 +216,6 @@ export class GraphQLSchema {
         );
       }
       this._typeMap[typeName] = namedType;
-
-      if (isInterfaceType(namedType)) {
-        let implementations = this._implementationsMap[namedType.name];
-        if (implementations === undefined) {
-          implementations = this._implementationsMap[namedType.name] = {
-            objects: [],
-            interfaces: [],
-          };
-        }
-        implementations.interfaces.push(namedType);
-      } else if (isObjectType(namedType)) {
-        // Store implementations by objects.
-        for (const iface of namedType.getInterfaces()) {
-          if (isInterfaceType(iface)) {
-            let implementations = this._implementationsMap[iface.name];
-            if (implementations === undefined) {
-              implementations = this._implementationsMap[iface.name] = {
-                objects: [],
-                interfaces: [],
-              };
-            }
-
-            implementations.objects.push(namedType);
-          }
-        }
-      }
     }
   }
 
@@ -293,20 +259,12 @@ export class GraphQLSchema {
   ): ReadonlyArray<GraphQLObjectType> {
     return isUnionType(abstractType)
       ? abstractType.getTypes()
-      : this.getImplementations(abstractType).objects;
-  }
-
-  getImplementations(interfaceType: GraphQLInterfaceType): {
-    objects: ReadonlyArray<GraphQLObjectType>;
-    interfaces: ReadonlyArray<GraphQLInterfaceType>;
-  } {
-    const implementations = this._implementationsMap[interfaceType.name];
-    return implementations ?? { objects: [], interfaces: [] };
+      : [];
   }
 
   isSubType(
     abstractType: GraphQLAbstractType,
-    maybeSubType: GraphQLObjectType | GraphQLInterfaceType,
+    maybeSubType: GraphQLObjectType ,
   ): boolean {
     let map = this._subTypeMap[abstractType.name];
     if (map === undefined) {
@@ -317,13 +275,13 @@ export class GraphQLSchema {
           map[type.name] = true;
         }
       } else {
-        const implementations = this.getImplementations(abstractType);
-        for (const type of implementations.objects) {
-          map[type.name] = true;
-        }
-        for (const type of implementations.interfaces) {
-          map[type.name] = true;
-        }
+        // const implementations = this.getImplementations(abstractType);
+        // for (const type of implementations.objects) {
+        //   map[type.name] = true;
+        // }
+        // for (const type of implementations.interfaces) {
+        //   map[type.name] = true;
+        // }
       }
 
       this._subTypeMap[abstractType.name] = map;
@@ -402,10 +360,6 @@ function collectReferencedTypes(
         collectReferencedTypes(memberType, typeSet);
       }
     } else if (isObjectType(namedType)) {
-      for (const interfaceType of namedType.getInterfaces()) {
-        collectReferencedTypes(interfaceType, typeSet);
-      }
-
       for (const field of Object.values(namedType.getFields())) {
         collectReferencedTypes(field.type, typeSet);
         for (const arg of field.args) {

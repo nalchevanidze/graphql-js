@@ -22,7 +22,6 @@ describe('Validate: Unique field definition names', () => {
   it('no fields', () => {
     expectValidSDL(`
       type SomeObject
-      interface SomeInterface
       data SomeInputObject
     `);
   });

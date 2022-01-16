@@ -34,7 +34,6 @@ GraphQLNamedType,
   GraphQLType,
   GraphQLUnionType} from '../type/definition';
 import {
-  GraphQLInterfaceType,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
@@ -42,7 +41,6 @@ import {
 IrisResolverType,
   isEnumType,
   isInputObjectType,
-  isInterfaceType,
   isListType,
   isNonNullType,
   isObjectType,
@@ -202,9 +200,6 @@ export function extendSchemaImpl(
     if (isObjectType(type)) {
       return extendObjectType(type);
     }
-    if (isInterfaceType(type)) {
-      return extendInterfaceType(type);
-    }
     if (isUnionType(type)) {
       return extendUnionType(type);
     }
@@ -270,22 +265,6 @@ export function extendSchemaImpl(
     const extensions = typeExtensionsMap[config.name] ?? [];
 
     return new GraphQLObjectType({
-      ...config,
-      interfaces: () => type.getInterfaces().map(replaceNamedType),
-      fields: () => ({
-        ...mapValue(config.fields, extendField),
-        ...buildFieldMap(extensions),
-      })
-    });
-  }
-
-  function extendInterfaceType(
-    type: GraphQLInterfaceType,
-  ): GraphQLInterfaceType {
-    const config = type.toConfig();
-    const extensions = typeExtensionsMap[config.name] ?? [];
-
-    return new GraphQLInterfaceType({
       ...config,
       fields: () => ({
         ...mapValue(config.fields, extendField),
@@ -496,7 +475,6 @@ export function extendSchemaImpl(
         return new GraphQLObjectType({
           name,
           description: astNode.description?.value,
-          interfaces: () => [],
           fields: () => buildFieldMap(allNodes),
           astNode
         });

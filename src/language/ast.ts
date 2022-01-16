@@ -540,7 +540,6 @@ export interface OperationTypeDefinitionNode {
 export type TypeDefinitionNode =
   | ScalarTypeDefinitionNode
   | ObjectTypeDefinitionNode
-  | InterfaceTypeDefinitionNode
   | UnionTypeDefinitionNode
   | DataTypeDefinitionNode;
 
@@ -580,16 +579,6 @@ export interface InputValueDefinitionNode {
   readonly type: TypeNode;
   readonly defaultValue?: ConstValueNode;
   readonly directives?: ReadonlyArray<ConstDirectiveNode>;
-}
-
-export interface InterfaceTypeDefinitionNode {
-  readonly kind: Kind.UNION_TYPE_DEFINITION;
-  readonly loc?: Location;
-  readonly description?: StringValueNode;
-  readonly name: NameNode;
-  readonly interfaces?: ReadonlyArray<NamedTypeNode>;
-  readonly directives?: ReadonlyArray<ConstDirectiveNode>;
-  readonly fields?: ReadonlyArray<FieldDefinitionNode>;
 }
 
 export interface UnionTypeDefinitionNode {

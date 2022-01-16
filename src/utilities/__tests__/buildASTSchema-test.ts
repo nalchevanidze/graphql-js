@@ -14,7 +14,6 @@ import { print } from '../../language/printer';
 import {
   assertEnumType,
   assertInputObjectType,
-  assertInterfaceType,
   assertObjectType,
   assertScalarType,
   assertUnionType,

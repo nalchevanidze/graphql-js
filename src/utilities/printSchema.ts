@@ -9,7 +9,6 @@ import { print } from '../language/printer';
 import type {
   GraphQLArgument,
   GraphQLInputField,
-  GraphQLInterfaceType,
   GraphQLNamedType,
   GraphQLObjectType,
   GraphQLScalarType,
@@ -19,7 +18,6 @@ import type {
 import {
   isEnumType,
   isInputObjectType,
-  isInterfaceType,
   isObjectType,
   isScalarType,
   isUnionType,
@@ -134,9 +132,6 @@ export function printType(type: GraphQLNamedType): string {
   if (isObjectType(type)) {
     return printObject(type);
   }
-  if (isInterfaceType(type)) {
-    return printInterface(type);
-  }
   if (isUnionType(type)) {
     return printUnion(type);
   }
@@ -154,28 +149,8 @@ function printScalar(type: GraphQLScalarType): string {
   );
 }
 
-function printImplementedInterfaces(
-  type: GraphQLObjectType ,
-): string {
-  const interfaces = type.getInterfaces();
-  return interfaces.length
-    ? ' implements ' + interfaces.map((i) => i.name).join(' & ')
-    : '';
-}
-
 function printObject(type: GraphQLObjectType): string {
-  return (
-    printDescription(type) +
-    `type ${type.name}` +
-    printImplementedInterfaces(type) +
-    printFields(type)
-  );
-}
-
-function printInterface(type: GraphQLInterfaceType): string {
-  return (
-    printDescription(type) + `interface ${type.name}` + printFields(type)
-  );
+  return printDescription(type) + `type ${type.name}` + printFields(type);
 }
 
 function printUnion(type: GraphQLUnionType): string {
@@ -207,14 +182,16 @@ function printDATA(type: IrisDataType): string {
         printDeprecated(value.deprecationReason),
     );
 
-  if(possibleTypes.length === 1 && possibleTypes[0] === type.name){
+  if (possibleTypes.length === 1 && possibleTypes[0] === type.name) {
     return start;
   }
 
-  return start + (possibleTypes.length ? ' = ' + possibleTypes.join(' | ') : '');
+  return (
+    start + (possibleTypes.length ? ' = ' + possibleTypes.join(' | ') : '')
+  );
 }
 
-function printFields(type: GraphQLObjectType | GraphQLInterfaceType): string {
+function printFields(type: GraphQLObjectType): string {
   const fields = Object.values(type.getFields()).map(
     (f, i) =>
       printDescription(f, '  ', !i) +

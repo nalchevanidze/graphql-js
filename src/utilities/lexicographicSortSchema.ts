@@ -12,14 +12,12 @@ import type {
   GraphQLNamedType,
   GraphQLType} from '../type/definition';
 import {
-  GraphQLInterfaceType,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
   IrisDataType,
   IrisResolverType,
   isDataType,
-  isInterfaceType,
   isListType,
   isNonNullType,
   isObjectType,
@@ -118,14 +116,6 @@ export function lexicographicSortSchema(schema: GraphQLSchema): GraphQLSchema {
     if (isObjectType(type)) {
       const config = type.toConfig();
       return new GraphQLObjectType({
-        ...config,
-        interfaces: () => sortTypes(config.interfaces),
-        fields: () => sortFields(config.fields),
-      });
-    }
-    if (isInterfaceType(type)) {
-      const config = type.toConfig();
-      return new GraphQLInterfaceType({
         ...config,
         fields: () => sortFields(config.fields),
       });

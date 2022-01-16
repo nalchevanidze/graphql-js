@@ -23,10 +23,6 @@ describe('Validate: Unique argument definition names', () => {
         someField: String
       }
 
-      interface SomeInterface {
-        someField: String
-      }
-
       directive @someDirective on QUERY
     `);
   });
@@ -36,11 +32,7 @@ describe('Validate: Unique argument definition names', () => {
       type SomeObject {
         someField(foo: String): String
       }
-
-      interface SomeInterface {
-        someField(foo: String): String
-      }
-
+  
       directive @someDirective(foo: String) on QUERY
     `);
   });
@@ -48,13 +40,6 @@ describe('Validate: Unique argument definition names', () => {
   it('multiple arguments', () => {
     expectValidSDL(`
       type SomeObject {
-        someField(
-          foo: String
-          bar: String
-        ): String
-      }
-
-      interface SomeInterface {
         someField(
           foo: String
           bar: String

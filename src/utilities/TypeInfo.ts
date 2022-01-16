@@ -23,7 +23,6 @@ import {
   isEnumType,
   isInputObjectType,
   isInputType,
-  isInterfaceType,
   isListType,
   isObjectType,
   isOutputType,
@@ -322,7 +321,7 @@ function getFieldDef(
   if (name === TypeNameMetaFieldDef.name && isCompositeType(parentType)) {
     return TypeNameMetaFieldDef;
   }
-  if (isObjectType(parentType) || isInterfaceType(parentType)) {
+  if (isObjectType(parentType)) {
     return parentType.getFields()[name];
   }
 }

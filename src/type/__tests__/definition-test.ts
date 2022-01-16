@@ -381,31 +381,6 @@ describe('Type System: Objects', () => {
     );
   });
 
-  it('rejects an Object type with incorrectly typed interfaces', () => {
-    const objType = new GraphQLObjectType({
-      name: 'SomeObject',
-      fields: {},
-      // @ts-expect-error
-      interfaces: {},
-    });
-    expect(() => objType.getInterfaces()).to.throw(
-      'SomeObject interfaces must be an Array or a function which returns an Array.',
-    );
-  });
-
-  it('rejects an Object type with interfaces as a function returning an incorrect type', () => {
-    const objType = new GraphQLObjectType({
-      name: 'SomeObject',
-      fields: {},
-      // @ts-expect-error (Expected interfaces to return array)
-      interfaces() {
-        return {};
-      },
-    });
-    expect(() => objType.getInterfaces()).to.throw(
-      'SomeObject interfaces must be an Array or a function which returns an Array.',
-    );
-  });
 
   it('rejects an empty Object field resolver', () => {
     const objType = new GraphQLObjectType({

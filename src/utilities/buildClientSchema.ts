@@ -12,10 +12,8 @@ import type {
   GraphQLType,
 } from '../type/definition';
 import {
-  assertInterfaceType,
   assertNullableType,
   assertObjectType,
-  GraphQLInterfaceType,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
@@ -161,12 +159,6 @@ export function buildClientSchema(
     return assertObjectType(getNamedType(typeRef));
   }
 
-  function getInterfaceType(
-    typeRef: IntrospectionNamedTypeRef<IntrospectionInterfaceType>,
-  ): GraphQLInterfaceType {
-    return assertInterfaceType(getNamedType(typeRef));
-  }
-
   // Given a type's introspection result, construct the correct
   // GraphQLType instance.
   function buildType(type: IntrospectionType): GraphQLNamedType {
@@ -179,8 +171,6 @@ export function buildClientSchema(
           return buildScalarDef(type);
         case TypeKind.OBJECT:
           return buildObjectDef(type);
-        case TypeKind.INTERFACE:
-          return buildInterfaceDef(type);
         case TypeKind.UNION:
           return buildUnionDef(type);
         case TypeKind.ENUM:
@@ -205,29 +195,6 @@ export function buildClientSchema(
     });
   }
 
-  function buildImplementationsList(
-    implementingIntrospection:
-      | IntrospectionObjectType
-      | IntrospectionInterfaceType,
-  ): Array<GraphQLInterfaceType> {
-    // TODO: Temporary workaround until GraphQL ecosystem will fully support
-    // 'interfaces' on interface types.
-    if (
-      implementingIntrospection.interfaces === null &&
-      implementingIntrospection.kind === TypeKind.INTERFACE
-    ) {
-      return [];
-    }
-
-    if (!implementingIntrospection.interfaces) {
-      const implementingIntrospectionStr = inspect(implementingIntrospection);
-      throw new Error(
-        `Introspection result missing interfaces: ${implementingIntrospectionStr}.`,
-      );
-    }
-
-    return implementingIntrospection.interfaces.map(getInterfaceType);
-  }
 
   function buildObjectDef(
     objectIntrospection: IntrospectionObjectType,
@@ -235,20 +202,11 @@ export function buildClientSchema(
     return new GraphQLObjectType({
       name: objectIntrospection.name,
       description: objectIntrospection.description,
-      interfaces: () => buildImplementationsList(objectIntrospection),
       fields: () => buildFieldDefMap(objectIntrospection),
     });
   }
 
-  function buildInterfaceDef(
-    interfaceIntrospection: IntrospectionInterfaceType,
-  ): GraphQLInterfaceType {
-    return new GraphQLInterfaceType({
-      name: interfaceIntrospection.name,
-      description: interfaceIntrospection.description,
-      fields: () => buildFieldDefMap(interfaceIntrospection),
-    });
-  }
+
 
   function buildUnionDef(
     unionIntrospection: IntrospectionUnionType,
