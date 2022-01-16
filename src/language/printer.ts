@@ -153,18 +153,9 @@ const printDocASTReducer: ASTReducer<string> = {
   },
 
   ObjectTypeDefinition: {
-    leave: ({ description, name, interfaces, directives, fields }) =>
+    leave: ({ description, name, directives, fields }) =>
       wrap('', description, '\n') +
-      join(
-        [
-          'type',
-          name,
-          wrap('implements ', join(interfaces, ' & ')),
-          join(directives, ' '),
-          block(fields),
-        ],
-        ' ',
-      ),
+      join(['type', name, join(directives, ' '), block(fields)], ' '),
   },
 
   FieldDefinition: {
@@ -276,7 +267,6 @@ function indent(str: string): string {
 }
 
 function hasMultilineItems(maybeArray: Maybe<ReadonlyArray<string>>): boolean {
-  // FIXME: https://github.com/graphql/graphql-js/issues/2203
   /* c8 ignore next */
   return maybeArray?.some((str) => str.includes('\n')) ?? false;
 }

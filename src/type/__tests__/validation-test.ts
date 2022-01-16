@@ -20,7 +20,6 @@ import type {
 import {
   assertEnumType,
   assertInputObjectType,
-  assertInterfaceType,
   assertObjectType,
   assertScalarType,
   assertUnionType,
@@ -38,9 +37,7 @@ import { assertValidSchema, validateSchema } from '../validate';
 const SomeSchema = buildSchema(`
   scalar SomeScalar
 
-  interface SomeInterface { f: SomeObject }
-
-  type SomeObject implements SomeInterface { f: SomeObject }
+  type SomeObject  { f: SomeObject }
 
   resolver SomeUnion = SomeObject
 
@@ -52,9 +49,6 @@ const SomeSchema = buildSchema(`
 `);
 
 const SomeScalarType = assertScalarType(SomeSchema.getType('SomeScalar'));
-const SomeInterfaceType = assertInterfaceType(
-  SomeSchema.getType('SomeInterface'),
-);
 const SomeObjectType = assertObjectType(SomeSchema.getType('SomeObject'));
 const SomeUnionType = assertUnionType(SomeSchema.getType('SomeUnion'));
 const SomeEnumType = assertEnumType(SomeSchema.getType('SomeEnum'));
@@ -81,7 +75,6 @@ const outputTypes: ReadonlyArray<GraphQLOutputType> = [
   ...withModifiers(SomeEnumType),
   ...withModifiers(SomeObjectType),
   ...withModifiers(SomeUnionType),
-  ...withModifiers(SomeInterfaceType),
 ];
 
 const notOutputTypes: ReadonlyArray<GraphQLInputType> = [
@@ -98,7 +91,6 @@ const inputTypes: ReadonlyArray<GraphQLInputType> = [
 const notInputTypes: ReadonlyArray<GraphQLOutputType> = [
   ...withModifiers(SomeObjectType),
   ...withModifiers(SomeUnionType),
-  ...withModifiers(SomeInterfaceType),
 ];
 
 function schemaWithFieldType(type: GraphQLOutputType): GraphQLSchema {
@@ -343,7 +335,7 @@ describe('Type System: A Schema must have Object root types', () => {
       },
       {
         message: 'Expected GraphQL named type but got: @SomeDirective.',
-        locations: [{ line: 14, column: 3 }],
+        locations: [{ line: 12, column: 3 }],
       },
     ]);
   });
@@ -603,7 +595,6 @@ describe('Type System: Union types must be valid', () => {
       GraphQLString,
       new GraphQLNonNull(SomeObjectType),
       new GraphQLList(SomeObjectType),
-      SomeInterfaceType,
       SomeUnionType,
       SomeEnumType,
       SomeInputObjectType,

@@ -25,23 +25,19 @@ function expectValid(queryStr: string) {
 }
 
 const testSchema = buildSchema(`
-  interface Pet {
-    name: String
-  }
-
-  type Dog implements Pet {
+  type Dog  {
     name: String
     nickname: String
     barkVolume: Int
   }
 
-  type Cat implements Pet {
+  type Cat {
     name: String
     nickname: String
     meowVolume: Int
   }
 
-  resolver CatOrDog = Cat | Dog
+  resolver Pet = Cat | Dog
 
   type Human {
     name: String
@@ -67,23 +63,6 @@ describe('Validate: Fields on correct type', () => {
     expectValid(`
       fragment aliasedObjectFieldSelection on Dog {
         tn : __typename
-        otherName : name
-      }
-    `);
-  });
-
-  it('Interface field selection', () => {
-    expectValid(`
-      fragment interfaceFieldSelection on Pet {
-        __typename
-        name
-      }
-    `);
-  });
-
-  it('Aliased interface field selection', () => {
-    expectValid(`
-      fragment interfaceFieldSelection on Pet {
         otherName : name
       }
     `);
@@ -230,37 +209,12 @@ describe('Validate: Fields on correct type', () => {
 
   it('Meta field selection on unions', () => {
     expectValid(`
-      fragment directFieldSelectionOnUnion on CatOrDog {
+      fragment directFieldSelectionOnUnion on Pat {
         __typename
       }
     `);
   });
 
-  it('Direct field selection on union', () => {
-    expectErrors(`
-      fragment directFieldSelectionOnUnion on CatOrDog {
-        directField
-      }
-    `).toDeepEqual([
-      {
-        message: 'Cannot query field "directField" on type "CatOrDog".',
-        locations: [{ line: 3, column: 9 }],
-      },
-    ]);
-  });
-
-  it('valid field in inline fragment', () => {
-    expectValid(`
-      fragment objectFieldSelection on Pet {
-        ... on Dog {
-          name
-        }
-        ... {
-          name
-        }
-      }
-    `);
-  });
 
   describe('Fields on correct type error message', () => {
     function expectErrorMessage(schema: GraphQLSchema, queryStr: string) {

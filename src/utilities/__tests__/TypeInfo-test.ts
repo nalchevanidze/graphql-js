@@ -14,15 +14,15 @@ import { buildSchema } from '../buildASTSchema';
 import { TypeInfo, visitWithTypeInfo } from '../TypeInfo';
 
 const testSchema = buildSchema(`
-  interface Pet {
+  type Pet {
     name: String
   }
 
-  type Dog implements Pet {
+  type Dog {
     name: String
   }
 
-  type Cat implements Pet {
+  type Cat {
     name: String
   }
 

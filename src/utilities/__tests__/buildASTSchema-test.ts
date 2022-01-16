@@ -637,11 +637,7 @@ describe('Schema Builder', () => {
 
       resolver TestUnion = TestType
 
-      interface TestInterface {
-        interfaceField: String
-      }
-
-      type TestType implements TestInterface {
+      type TestType {
         interfaceField: String
       }
 
@@ -656,7 +652,6 @@ describe('Schema Builder', () => {
     const testInput = assertInputObjectType(schema.getType('TestInput'));
     const testEnum = assertEnumType(schema.getType('TestEnum'));
     const testUnion = assertUnionType(schema.getType('TestUnion'));
-    const testInterface = assertInterfaceType(schema.getType('TestInterface'));
     const testType = assertObjectType(schema.getType('TestType'));
     const testScalar = assertScalarType(schema.getType('TestScalar'));
     const testDirective = assertDirective(schema.getDirective('test'));
@@ -667,7 +662,6 @@ describe('Schema Builder', () => {
       testInput.astNode,
       testEnum.astNode,
       testUnion.astNode,
-      testInterface.astNode,
       testType.astNode,
       testScalar.astNode,
       testDirective.astNode,
@@ -684,9 +678,6 @@ describe('Schema Builder', () => {
 
     expectASTNode(testEnum.getValue('TEST_VALUE')).to.equal('TEST_VALUE');
 
-    expectASTNode(testInterface.getFields().interfaceField).to.equal(
-      'interfaceField: String',
-    );
     expectASTNode(testType.getFields().interfaceField).to.equal(
       'interfaceField: String',
     );
