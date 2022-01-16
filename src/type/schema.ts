@@ -4,7 +4,6 @@ import { instanceOf } from '../jsutils/instanceOf';
 import { isObjectLike } from '../jsutils/isObjectLike';
 import type { Maybe } from '../jsutils/Maybe';
 import type { ObjMap } from '../jsutils/ObjMap';
-import { toObjMap } from '../jsutils/toObjMap';
 
 import type { GraphQLError } from '../error/GraphQLError';
 
@@ -153,7 +152,7 @@ export class GraphQLSchema {
     );
 
     this.description = config.description;
-    this.extensions = toObjMap(config.extensions);
+    this.extensions = {...config.extensions};
     this.astNode = config.astNode;
 
     this._queryType = config.query;
