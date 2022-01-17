@@ -93,13 +93,9 @@ describe('Schema Parser', () => {
         world: String
       }
     `);
+    expect(toJSONDeep(doc).definitions[0].description).toMatchSnapshot();
 
-    expectJSON(doc).toDeepNestedProperty('definitions[0].description', {
-      kind: 'StringValue',
-      value: 'Description',
-      block: false,
-      loc: { start: 0, end: 13 },
-    });
+
   });
 
   it('parses type with description multi-line string', () => {
