@@ -32,7 +32,6 @@ import type {
   NonNullTypeNode,
   NullValueNode,
   ObjectFieldNode,
-  ObjectTypeDefinitionNode,
   ObjectValueNode,
   OperationDefinitionNode,
   OperationTypeDefinitionNode,
@@ -42,7 +41,6 @@ import type {
   StringValueNode,
   Token,
   TypeNode,
-  UnionTypeDefinitionNode,
   ValueNode,
   VariableDefinitionNode,
   VariableNode,
@@ -238,6 +236,14 @@ export class Parser {
     }
 
     throw this.unexpected(keywordToken);
+  }
+
+  invalidToken(message: string) {
+    throw syntaxError(
+      this._lexer.source,
+      this._lexer.token.start,
+      `${getTokenDesc(this._lexer.token)} ${message}.`,
+    );
   }
 
   // Implements the parsing rules in the Operations section.
@@ -761,27 +767,6 @@ export class Parser {
   }
 
   /**
-   * ObjectTypeDefinition :
-   *   Description?
-   *   type Name ImplementsInterfaces? Directives[Const]? FieldsDefinition?
-   */
-  parseObjectTypeDefinition(): ObjectTypeDefinitionNode {
-    const start = this._lexer.token;
-    const description = this.parseDescription();
-    this.expectKeyword('type');
-    const name = this.parseName();
-    const directives = this.parseConstDirectives();
-    const fields = this.parseFieldsDefinition();
-    return this.node<ObjectTypeDefinitionNode>(start, {
-      kind: Kind.OBJECT_TYPE_DEFINITION,
-      description,
-      name,
-      directives,
-      fields,
-    });
-  }
-
-  /**
    * ```
    * FieldsDefinition : { FieldDefinition+ }
    * ```
@@ -850,53 +835,6 @@ export class Parser {
       defaultValue,
       directives,
     });
-  }
-
-  parseResolverTypeDefinition(): UnionTypeDefinitionNode {
-    const start = this._lexer.token;
-    const description = this.parseDescription();
-    this.expectKeyword('resolver');
-    const name = this.parseName();
-    const directives = this.parseConstDirectives();
-    const types = this.parseUnionMemberTypes();
-    return this.node<UnionTypeDefinitionNode>(start, {
-      kind: Kind.UNION_TYPE_DEFINITION,
-      description,
-      name,
-      directives,
-      types,
-    });
-  }
-
-  /**
-   * UnionMemberTypes :
-   *   - = `|`? NamedType
-   *   - UnionMemberTypes | NamedType
-   */
-  parseUnionMemberTypes(): Array<NamedTypeNode> {
-    return this.expectOptionalToken(TokenKind.EQUALS)
-      ? this.delimitedMany(TokenKind.PIPE, this.parseNamedType)
-      : [];
-  }
-
-  /**
-   * EnumValue : Name but not `true`, `false` or `null`
-   */
-  parseVariantName(): NameNode {
-    if (
-      this._lexer.token.value === 'true' ||
-      this._lexer.token.value === 'false' ||
-      this._lexer.token.value === 'null'
-    ) {
-      throw syntaxError(
-        this._lexer.source,
-        this._lexer.token.start,
-        `${getTokenDesc(
-          this._lexer.token,
-        )} is reserved and cannot be used for an enum value.`,
-      );
-    }
-    return this.parseName();
   }
 
   /**
