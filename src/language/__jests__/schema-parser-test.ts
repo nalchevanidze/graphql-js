@@ -1,7 +1,9 @@
-import { describe, it } from 'mocha';
-
 import { dedent } from '../../__testUtils__/dedent';
-import { expectJSON, expectToThrowJSON } from '../../__testUtils__/expectJSON';
+import {
+  expectJSON,
+  expectToThrowJSON,
+  toJSONDeep,
+} from '../../__testUtils__/expectJSON';
 
 import { parse } from '../parser';
 
@@ -81,27 +83,7 @@ describe('Schema Parser', () => {
         world: String
       }
     `);
-
-    expectJSON(doc).toDeepEqual({
-      kind: 'Document',
-      definitions: [
-        {
-          kind: 'ResolverTypeDefinition',
-          name: nameNode('Hello', { start: 5, end: 10 }),
-          description: undefined,
-          directives: [],
-          variants: [
-            fieldNode(
-              nameNode('world', { start: 15, end: 20 }),
-              typeNode('String', { start: 22, end: 28 }),
-              { start: 15, end: 28 },
-            ),
-          ],
-          loc: { start: 0, end: 34 },
-        },
-      ],
-      loc: { start: 0, end: 30 },
-    });
+    expect(toJSONDeep(doc)).toMatchSnapshot();
   });
 
   it('parses type with description string', () => {
@@ -141,8 +123,8 @@ describe('Schema Parser', () => {
 
   it('Description followed by something other than type system definition throws', () => {
     expectSyntaxError('"Description" 1').to.deep.equal({
+      locations: [{ column: 15, line: 1 }],
       message: 'Syntax Error: Unexpected Int "1".',
-      locations: [{ line: 1, column: 15 }],
     });
   });
 

@@ -1,0 +1,66 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Schema Parser Simple type 1`] = `
+Object {
+  "definitions": Array [
+    Object {
+      "description": undefined,
+      "directives": Array [],
+      "kind": "ResolverTypeDefinition",
+      "loc": Object {
+        "end": 34,
+        "start": 0,
+      },
+      "name": Object {
+        "kind": "Name",
+        "loc": Object {
+          "end": 14,
+          "start": 9,
+        },
+        "value": "Hello",
+      },
+      "types": Array [],
+      "variants": Array [
+        Object {
+          "arguments": Array [],
+          "description": undefined,
+          "directives": Array [],
+          "kind": "FieldDefinition",
+          "loc": Object {
+            "end": 32,
+            "start": 19,
+          },
+          "name": Object {
+            "kind": "Name",
+            "loc": Object {
+              "end": 24,
+              "start": 19,
+            },
+            "value": "world",
+          },
+          "type": Object {
+            "kind": "NamedType",
+            "loc": Object {
+              "end": 32,
+              "start": 26,
+            },
+            "name": Object {
+              "kind": "Name",
+              "loc": Object {
+                "end": 32,
+                "start": 26,
+              },
+              "value": "String",
+            },
+          },
+        },
+      ],
+    },
+  ],
+  "kind": "Document",
+  "loc": Object {
+    "end": 34,
+    "start": 0,
+  },
+}
+`;

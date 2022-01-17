@@ -1,5 +1,5 @@
 {
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "tsconfig.base.json"],
   "compilerOptions": {
     "module": "commonjs",
     "lib": ["es2019", "es2020.promise", "es2020.bigint", "es2020.string"],
@@ -10,5 +10,6 @@
     "isolatedModules": true,
     "importsNotUsedAsValues": "error",
     "forceConsistentCasingInFileNames": true
-  }
+  },
+  "exclude": ["**/__jests__/*", "**/__mocks__/*"]
 }

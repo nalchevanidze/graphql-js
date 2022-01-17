@@ -7,7 +7,7 @@ import { mapValue } from '../jsutils/mapValue';
  * Deeply transforms an arbitrary value to a JSON-safe value by calling toJSON
  * on any nested value which defines it.
  */
-function toJSONDeep(value: unknown): unknown {
+export function toJSONDeep(value: unknown): unknown {
   if (!isObjectLike(value)) {
     return value;
   }
