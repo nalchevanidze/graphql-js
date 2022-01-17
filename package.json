@@ -30,13 +30,14 @@
     "node": "^12.22.0 || ^14.16.0 || >=16.0.0"
   },
   "scripts": {
+    "test": "jest",
     "preversion": ". ./resources/checkgit.sh && npm ci --ignore-scripts",
     "version": "node resources/gen-version.js && npm test && git add src/version.ts",
     "fuzzonly": "mocha --full-trace src/**/__tests__/**/*-fuzz.ts",
     "changelog": "node resources/gen-changelog.js",
     "benchmark": "node benchmark/benchmark.js",
     "test:lite": "npm run check && npm run testonly",
-    "test": "npm run lint && npm run check && npm run testonly && npm run prettier:check && npm run check:spelling && npm run check:integrations",
+    "test:old": "npm run lint && npm run check && npm run testonly && npm run prettier:check && npm run check:spelling && npm run check:integrations",
     "lint": "eslint --cache --max-warnings 0 .",
     "check": "tsc --pretty",
     "testonly": "mocha --full-trace src/**/__tests__/**/*-test.ts",
@@ -73,12 +74,42 @@
     "eslint-plugin-tsdoc": "0.2.14",
     "mocha": "9.1.3",
     "prettier": "2.5.1",
-    "typescript": "4.5.4"
+    "typescript": "4.5.4",
+    "jest": "24.9.0",
+    "jest-environment-node": "24.9.0",
+    "jest-matcher-utils": "24.9.0",
+    "ts-jest": "24.3.0"
   },
   "publishConfig": {
     "tag": "latest"
   },
   "dependencies": {
     "ramda": "^0.27.2"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "transformIgnorePatterns": [
+      "/node_modules/"
+    ],
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/__jests__/*.(js|ts)"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/node_modules/",
+      "<rootDir>/lib/",
+      "<rootDir>/test/fixtures/",
+      "<rootDir>/test/test-utils"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "globals": {
+      "ts-jest": {
+        "tsConfig": "<rootDir>/tsconfig.test.json",
+        "diagnostics": false
+      }
+    }
   }
 }

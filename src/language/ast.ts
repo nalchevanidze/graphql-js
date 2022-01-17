@@ -587,6 +587,7 @@ export interface UnionTypeDefinitionNode {
   readonly name: NameNode;
   readonly directives?: ReadonlyArray<ConstDirectiveNode>;
   readonly types?: ReadonlyArray<NamedTypeNode>;
+  readonly variants?: ReadonlyArray<FieldDefinitionNode>;
 }
 
 export interface EnumValueDefinitionNode {

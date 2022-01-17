@@ -41,12 +41,14 @@ const parseResolverTypeDefinition = (
   const name = parser.parseName();
   const directives = parser.parseConstDirectives();
   const types = parseUnionMemberTypes(parser);
+  const variants = types.length === 0 ? parser.parseFieldsDefinition() : []
   return parser.node<UnionTypeDefinitionNode>(start, {
     kind: Kind.RESOLVER_TYPE_DEFINITION,
     description,
     name,
     directives,
     types,
+    variants
   });
 };
 

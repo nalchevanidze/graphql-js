@@ -77,7 +77,7 @@ function inputValueNode(
 describe('Schema Parser', () => {
   it('Simple type', () => {
     const doc = parse(dedent`
-      type Hello {
+      resolver Hello {
         world: String
       }
     `);
@@ -86,18 +86,18 @@ describe('Schema Parser', () => {
       kind: 'Document',
       definitions: [
         {
-          kind: 'ObjectTypeDefinition',
+          kind: 'ResolverTypeDefinition',
           name: nameNode('Hello', { start: 5, end: 10 }),
           description: undefined,
           directives: [],
-          fields: [
+          variants: [
             fieldNode(
               nameNode('world', { start: 15, end: 20 }),
               typeNode('String', { start: 22, end: 28 }),
               { start: 15, end: 28 },
             ),
           ],
-          loc: { start: 0, end: 30 },
+          loc: { start: 0, end: 34 },
         },
       ],
       loc: { start: 0, end: 30 },
@@ -393,6 +393,7 @@ describe('Schema Parser', () => {
           name: nameNode('Hello', { start: 9, end: 14 }),
           description: undefined,
           directives: [],
+          variants: [],
           types: [typeNode('World', { start: 17, end: 22 })],
           loc: { start: 0, end: 22 },
         },
@@ -412,6 +413,7 @@ describe('Schema Parser', () => {
           name: nameNode('Hello', { start: 9, end: 14 }),
           description: undefined,
           directives: [],
+          variants: [],
           types: [
             typeNode('Wo', { start: 17, end: 19 }),
             typeNode('Rld', { start: 22, end: 25 }),
@@ -434,6 +436,7 @@ describe('Schema Parser', () => {
           name: nameNode('Hello', { start: 9, end: 14 }),
           description: undefined,
           directives: [],
+          variants: [],
           types: [
             typeNode('Wo', { start: 19, end: 21 }),
             typeNode('Rld', { start: 24, end: 27 }),
@@ -544,86 +547,4 @@ describe('Schema Parser', () => {
       locations: [{ line: 3, column: 14 }],
     });
   });
-
-  it('Directive definition', () => {
-    const body = 'directive @foo on OBJECT | INTERFACE';
-    const doc = parse(body);
-
-    expectJSON(doc).toDeepEqual({
-      kind: 'Document',
-      definitions: [
-        {
-          kind: 'DirectiveDefinition',
-          description: undefined,
-          name: {
-            kind: 'Name',
-            value: 'foo',
-            loc: { start: 11, end: 14 },
-          },
-          arguments: [],
-          repeatable: false,
-          locations: [
-            {
-              kind: 'Name',
-              value: 'OBJECT',
-              loc: { start: 18, end: 24 },
-            },
-            {
-              kind: 'Name',
-              value: 'INTERFACE',
-              loc: { start: 27, end: 36 },
-            },
-          ],
-          loc: { start: 0, end: 36 },
-        },
-      ],
-      loc: { start: 0, end: 36 },
-    });
-  });
-
-  it('Repeatable directive definition', () => {
-    const body = 'directive @foo repeatable on OBJECT | INTERFACE';
-    const doc = parse(body);
-
-    expectJSON(doc).toDeepEqual({
-      kind: 'Document',
-      definitions: [
-        {
-          kind: 'DirectiveDefinition',
-          description: undefined,
-          name: {
-            kind: 'Name',
-            value: 'foo',
-            loc: { start: 11, end: 14 },
-          },
-          arguments: [],
-          repeatable: true,
-          locations: [
-            {
-              kind: 'Name',
-              value: 'OBJECT',
-              loc: { start: 29, end: 35 },
-            },
-            {
-              kind: 'Name',
-              value: 'INTERFACE',
-              loc: { start: 38, end: 47 },
-            },
-          ],
-          loc: { start: 0, end: 47 },
-        },
-      ],
-      loc: { start: 0, end: 47 },
-    });
-  });
-
-  it('Directive with incorrect locations', () => {
-    expectSyntaxError(
-      'directive @foo on FIELD | INCORRECT_LOCATION',
-    ).to.deep.equal({
-      message: 'Syntax Error: Unexpected Name "INCORRECT_LOCATION".',
-      locations: [{ line: 1, column: 27 }],
-    });
-  });
-
 });
