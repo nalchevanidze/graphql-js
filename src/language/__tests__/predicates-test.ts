@@ -30,7 +30,7 @@ describe('AST node predicates', () => {
       'SchemaDefinition',
       'ScalarTypeDefinition',
       'ObjectTypeDefinition',
-      'UnionTypeDefinition',
+      'ResolverTypeDefinition',
       'DataTypeDefinition',
       'DirectiveDefinition'
     ]);
@@ -89,7 +89,7 @@ describe('AST node predicates', () => {
       'SchemaDefinition',
       'ScalarTypeDefinition',
       'ObjectTypeDefinition',
-      'UnionTypeDefinition',
+      'ResolverTypeDefinition',
       'DataTypeDefinition',
       'DirectiveDefinition',
     ]);
@@ -99,7 +99,7 @@ describe('AST node predicates', () => {
     expect(filterNodes(isTypeDefinitionNode)).to.deep.equal([
       'ScalarTypeDefinition',
       'ObjectTypeDefinition',
-      'UnionTypeDefinition',
+      'ResolverTypeDefinition',
       'DataTypeDefinition',
     ]);
   });

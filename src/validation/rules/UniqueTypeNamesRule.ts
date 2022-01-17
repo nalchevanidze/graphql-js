@@ -17,7 +17,7 @@ export function UniqueTypeNamesRule(context: SDLValidationContext): ASTVisitor {
   return {
     ScalarTypeDefinition: checkTypeName,
     ObjectTypeDefinition: checkTypeName,
-    UnionTypeDefinition: checkTypeName,
+    ResolverTypeDefinition: checkTypeName,
     DataTypeDefinition: checkTypeName,
   };
 

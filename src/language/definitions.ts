@@ -42,7 +42,7 @@ const parseResolverTypeDefinition = (
   const directives = parser.parseConstDirectives();
   const types = parseUnionMemberTypes(parser);
   return parser.node<UnionTypeDefinitionNode>(start, {
-    kind: Kind.UNION_TYPE_DEFINITION,
+    kind: Kind.RESOLVER_TYPE_DEFINITION,
     description,
     name,
     directives,

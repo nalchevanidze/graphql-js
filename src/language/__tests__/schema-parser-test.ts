@@ -389,7 +389,7 @@ describe('Schema Parser', () => {
       kind: 'Document',
       definitions: [
         {
-          kind: 'UnionTypeDefinition',
+          kind: 'ResolverTypeDefinition',
           name: nameNode('Hello', { start: 9, end: 14 }),
           description: undefined,
           directives: [],
@@ -408,7 +408,7 @@ describe('Schema Parser', () => {
       kind: 'Document',
       definitions: [
         {
-          kind: 'UnionTypeDefinition',
+          kind: 'ResolverTypeDefinition',
           name: nameNode('Hello', { start: 9, end: 14 }),
           description: undefined,
           directives: [],
@@ -430,7 +430,7 @@ describe('Schema Parser', () => {
       kind: 'Document',
       definitions: [
         {
-          kind: 'UnionTypeDefinition',
+          kind: 'ResolverTypeDefinition',
           name: nameNode('Hello', { start: 9, end: 14 }),
           description: undefined,
           directives: [],

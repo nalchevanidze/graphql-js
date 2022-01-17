@@ -47,7 +47,7 @@ export enum Kind {
   OBJECT_TYPE_DEFINITION = 'ObjectTypeDefinition',
   FIELD_DEFINITION = 'FieldDefinition',
   INPUT_VALUE_DEFINITION = 'InputValueDefinition',
-  UNION_TYPE_DEFINITION = 'UnionTypeDefinition',
+  RESOLVER_TYPE_DEFINITION = 'ResolverTypeDefinition',
   ENUM_VALUE_DEFINITION = 'EnumValueDefinition',
   DATA_TYPE_DEFINITION = 'DataTypeDefinition',
 

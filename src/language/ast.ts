@@ -247,7 +247,7 @@ export const QueryDocumentKeys: {
     'defaultValue',
     'directives',
   ],
-  UnionTypeDefinition: ['description', 'name', 'directives', 'types'],
+  ResolverTypeDefinition: ['description', 'name', 'directives', 'types'],
   DataTypeDefinition: ['description', 'name', 'directives', 'variants'],
   EnumValueDefinition: ['description', 'name', 'directives'],
   VariantDefinition: ['name', 'fields'],
@@ -581,7 +581,7 @@ export interface InputValueDefinitionNode {
 }
 
 export interface UnionTypeDefinitionNode {
-  readonly kind: Kind.UNION_TYPE_DEFINITION;
+  readonly kind: Kind.RESOLVER_TYPE_DEFINITION;
   readonly loc?: Location;
   readonly description?: StringValueNode;
   readonly name: NameNode;

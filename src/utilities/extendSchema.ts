@@ -304,7 +304,7 @@ export function extendSchemaImpl(
           astNode,
         });
       }
-      case Kind.UNION_TYPE_DEFINITION: {
+      case Kind.RESOLVER_TYPE_DEFINITION: {
         const allNodes = [astNode, ...extensionASTNodes];
 
         return new IrisResolverType({

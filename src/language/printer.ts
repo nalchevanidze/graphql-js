@@ -179,7 +179,7 @@ const printDocASTReducer: ASTReducer<string> = {
       ),
   },
 
-  UnionTypeDefinition: {
+  ResolverTypeDefinition: {
     leave: ({ description, name, directives, types }) =>
       wrap('', description, '\n') +
       join(

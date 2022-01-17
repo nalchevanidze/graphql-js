@@ -96,7 +96,7 @@ function getDirectiveLocationForASTPath(
       return DirectiveLocation.OBJECT;
     case Kind.FIELD_DEFINITION:
       return DirectiveLocation.FIELD_DEFINITION;
-    case Kind.UNION_TYPE_DEFINITION:
+    case Kind.RESOLVER_TYPE_DEFINITION:
       return DirectiveLocation.UNION;
     case Kind.ENUM_VALUE_DEFINITION:
       return DirectiveLocation.ENUM_VALUE;

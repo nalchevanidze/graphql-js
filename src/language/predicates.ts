@@ -84,7 +84,7 @@ export function isTypeDefinitionNode(
   return (
     node.kind === Kind.SCALAR_TYPE_DEFINITION ||
     node.kind === Kind.OBJECT_TYPE_DEFINITION ||
-    node.kind === Kind.UNION_TYPE_DEFINITION ||
+    node.kind === Kind.RESOLVER_TYPE_DEFINITION ||
     node.kind === Kind.DATA_TYPE_DEFINITION
   );
 }
