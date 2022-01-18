@@ -1,6 +1,3 @@
-import { expect } from 'chai';
-import { describe, it } from 'mocha';
-
 import { dedent } from '../../__testUtils__/dedent';
 
 import { DirectiveLocation } from '../../language/directiveLocation';
@@ -91,7 +88,7 @@ describe('Type System: Schema', () => {
       subscription: BlogSubscription,
     });
 
-    expect(printSchema(schema)).to.equal(dedent`
+    expect(printSchema(schema)).toEqual(dedent`
       type Query {
         article(id: String): Article
         feed: [Article]
@@ -128,28 +125,6 @@ describe('Type System: Schema', () => {
     `);
   });
 
-  describe('Root types', () => {
-    const testType = new GraphQLObjectType({ name: 'TestType', fields: {} });
-
-    it('defines a query root', () => {
-      const schema = new GraphQLSchema({ query: testType });
-      expect(schema.getQueryType()).to.equal(testType);
-      expect(schema.getTypeMap()).to.include.keys('TestType');
-    });
-
-    it('defines a mutation root', () => {
-      const schema = new GraphQLSchema({ mutation: testType });
-      expect(schema.getMutationType()).to.equal(testType);
-      expect(schema.getTypeMap()).to.include.keys('TestType');
-    });
-
-    it('defines a subscription root', () => {
-      const schema = new GraphQLSchema({ subscription: testType });
-      expect(schema.getSubscriptionType()).to.equal(testType);
-      expect(schema.getTypeMap()).to.include.keys('TestType');
-    });
-  });
-
   describe('Type Map', () => {
     it('includes nested data  objects in the map', () => {
       const NestedInputObject = new IrisDataType({
@@ -174,8 +149,8 @@ describe('Type System: Schema', () => {
         }),
       });
 
-      expect(schema.getType('SomeInputObject')).to.equal(SomeInputObject);
-      expect(schema.getType('NestedInputObject')).to.equal(NestedInputObject);
+      expect(schema.getType('SomeInputObject')).toEqual(SomeInputObject);
+      expect(schema.getType('NestedInputObject')).toEqual(NestedInputObject);
     });
 
     it('includes data types only used in directives', () => {
@@ -195,14 +170,16 @@ describe('Type System: Schema', () => {
       });
       const schema = new GraphQLSchema({ directives: [directive] });
 
-      expect(schema.getTypeMap()).to.include.keys('Foo', 'Bar');
+      expect(Object.keys(schema.getTypeMap())).toEqual(
+        expect.arrayContaining(['Foo', 'Bar'])
+        );
     });
   });
 
   it('can be Object.toStringified', () => {
     const schema = new GraphQLSchema({});
 
-    expect(Object.prototype.toString.call(schema)).to.equal(
+    expect(Object.prototype.toString.call(schema)).toEqual(
       '[object GraphQLSchema]',
     );
   });
@@ -214,16 +191,16 @@ describe('Type System: Schema', () => {
           new GraphQLSchema({
             assumeValid: false,
           }).__validationErrors,
-        ).to.equal(undefined);
+        ).toEqual(undefined);
       });
 
       it('checks the configuration for mistakes', () => {
         // @ts-expect-error
-        expect(() => new GraphQLSchema(JSON.parse)).to.throw();
+        expect(() => new GraphQLSchema(JSON.parse)).toThrow();
         // @ts-expect-error
-        expect(() => new GraphQLSchema({ types: {} })).to.throw();
+        expect(() => new GraphQLSchema({ types: {} })).toThrow();
         // @ts-expect-error
-        expect(() => new GraphQLSchema({ directives: {} })).to.throw();
+        expect(() => new GraphQLSchema({ directives: {} })).toThrow();
       });
     });
 
@@ -239,7 +216,7 @@ describe('Type System: Schema', () => {
           },
         });
 
-        expect(() => new GraphQLSchema({ query: QueryType })).to.throw(
+        expect(() => new GraphQLSchema({ query: QueryType })).toThrow(
           'Schema must contain uniquely named types but contains multiple types named "String".',
         );
       });
@@ -252,7 +229,7 @@ describe('Type System: Schema', () => {
         const types = [{}, query, {}];
 
         // @ts-expect-error
-        expect(() => new GraphQLSchema({ query, types })).to.throw(
+        expect(() => new GraphQLSchema({ query, types })).toThrow(
           'One of the provided types for building the Schema is missing a name.',
         );
       });
@@ -263,7 +240,7 @@ describe('Type System: Schema', () => {
           new GraphQLObjectType({ name: 'SameName', fields: {} }),
         ];
 
-        expect(() => new GraphQLSchema({ types })).to.throw(
+        expect(() => new GraphQLSchema({ types })).toThrow(
           'Schema must contain uniquely named types but contains multiple types named "SameName".',
         );
       });
@@ -278,7 +255,7 @@ describe('Type System: Schema', () => {
           },
         });
 
-        expect(() => new GraphQLSchema({ query: QueryType })).to.throw(
+        expect(() => new GraphQLSchema({ query: QueryType })).toThrow(
           'Schema must contain uniquely named types but contains multiple types named "SameName".',
         );
       });
@@ -290,7 +267,7 @@ describe('Type System: Schema', () => {
           new GraphQLSchema({
             assumeValid: true,
           }).__validationErrors,
-        ).to.deep.equal([]);
+        ).toEqual([]);
       });
     });
   });
