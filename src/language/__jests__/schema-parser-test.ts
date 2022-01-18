@@ -14,7 +14,7 @@ function expectSyntaxError(text: string) {
 const JSONSnapshot = (doc: unknown) => expect(toJSONDeep(doc)).toMatchSnapshot();
 
 describe('Schema Parser', () => {
-  it('Simple type', () => {
+  it('Simple resolver', () => {
     const doc = parse(dedent`
       resolver Hello {
         world: String
@@ -23,23 +23,23 @@ describe('Schema Parser', () => {
     JSONSnapshot(doc);
   });
 
-  it('parses type with description string', () => {
+  it('parses resolver with description string', () => {
     const doc = parse(dedent`
       "Description"
-      type Hello {
+      resolver Hello {
         world: String
       }
     `);
     JSONSnapshot(doc)
   });
 
-  it('parses type with description multi-line string', () => {
+  it('parses resolver with description multi-line string', () => {
     const doc = parse(dedent`
       """
       Description
       """
       # Even with comments between them
-      type Hello {
+      resolver Hello {
         world: String
       }
     `);
@@ -47,16 +47,16 @@ describe('Schema Parser', () => {
     JSONSnapshot(doc)
   });
 
-  it('Description followed by something other than type system definition throws', () => {
+  it('Description followed by something other than resolver system definition throws', () => {
     expectSyntaxError('"Description" 1').to.deep.equal({
       locations: [{ column: 15, line: 1 }],
       message: 'Syntax Error: Unexpected Int "1".',
     });
   });
 
-  it('Simple non-null type', () => {
+  it('Simple non-null resolver', () => {
     const doc = parse(dedent`
-      type Hello {
+      resolver Hello {
         world: String!
       }
     `);
@@ -78,7 +78,7 @@ describe('Schema Parser', () => {
 
   it('Simple field with arg', () => {
     const doc = parse(dedent`
-      type Hello {
+      resolver Hello {
         world(flag: Boolean): String
       }
     `);
@@ -88,7 +88,7 @@ describe('Schema Parser', () => {
 
   it('Simple field with arg with default value', () => {
     const doc = parse(dedent`
-      type Hello {
+      resolver Hello {
         world(flag: Boolean = true): String
       }
     `);
@@ -98,7 +98,7 @@ describe('Schema Parser', () => {
 
   it('Simple field with list arg', () => {
     const doc = parse(dedent`
-      type Hello {
+      resolver Hello {
         world(things: [String]): String
       }
     `);
@@ -108,7 +108,7 @@ describe('Schema Parser', () => {
 
   it('Simple field with two args', () => {
     const doc = parse(dedent`
-      type Hello {
+      resolver Hello {
         world(argOne: Boolean, argTwo: Int): String
       }
     `);
@@ -120,17 +120,17 @@ describe('Schema Parser', () => {
     JSONSnapshot(doc);
   });
 
-  it('Union with two types', () => {
+  it('Union with two resolvers', () => {
     const doc = parse('resolver Hello = Wo | Rld');
     JSONSnapshot(doc);
   });
 
-  it('Union with two types and leading pipe', () => {
+  it('Union with two resolvers and leading pipe', () => {
     const doc = parse('resolver Hello = | Wo | Rld');
     JSONSnapshot(doc);
   });
 
-  it('Union fails with no types', () => {
+  it('Union fails with no resolvers', () => {
     expectSyntaxError('resolver Hello = |').to.deep.equal({
       message: 'Syntax Error: Expected Name, found <EOF>.',
       locations: [{ line: 1, column: 19 }],
