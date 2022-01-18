@@ -42,16 +42,14 @@ const parseResolverTypeDefinition = (
   const afterEquals = parser.lookAhead().kind;
 
   if (!isEquals) {
-    return parser.node<UnionTypeDefinitionNode>(start, {
-      kind: Kind.RESOLVER_TYPE_DEFINITION,
+    return parser.node<ObjectTypeDefinitionNode>(start, {
+      kind: Kind.OBJECT_TYPE_DEFINITION,
       description,
       name,
       directives,
-      types: [],
-      variants: [],
+      fields: [],
     });
   }
-
 
   if (isEquals && ![TokenKind.BRACE_L,TokenKind.NAME].includes(afterEquals)) {
     parser.throwExpected('Variant')

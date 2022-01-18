@@ -17,7 +17,6 @@ import type {
   DirectiveNode,
   DocumentNode,
   EnumValueNode,
-  FieldDefinitionNode,
   FieldNode,
   FloatValueNode,
   FragmentDefinitionNode,

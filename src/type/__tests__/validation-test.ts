@@ -1,6 +1,3 @@
-import { expect } from 'chai';
-import { describe, it } from 'mocha';
-
 import { dedent } from '../../__testUtils__/dedent';
 import { expectJSON } from '../../__testUtils__/expectJSON';
 
@@ -15,7 +12,8 @@ import type {
   GraphQLFieldConfig,
   GraphQLInputType,
   GraphQLNamedType,
-  GraphQLOutputType} from '../definition';
+  GraphQLOutputType,
+} from '../definition';
 import {
   assertDataType,
   assertObjectType,
@@ -35,7 +33,7 @@ import { assertValidSchema, validateSchema } from '../validate';
 const SomeSchema = buildSchema(`
   scalar SomeScalar
 
-  type SomeObject  { f: SomeObject }
+  resolver SomeObject = { f: SomeObject }
 
   resolver SomeUnion = SomeObject
 
@@ -101,7 +99,7 @@ function schemaWithFieldType(type: GraphQLOutputType): GraphQLSchema {
 }
 
 describe('Type System: A Schema must have Object root types', () => {
-  it('rejects a Schema whose query root type is not an Object type', () => {
+  it('rejects a Schema whose query root resolver is not an Object', () => {
     const schema = buildSchema(`
       data Query = {
         test: String
@@ -117,7 +115,7 @@ describe('Type System: A Schema must have Object root types', () => {
 
   it('rejects a Schema whose mutation type is an data type', () => {
     const schema = buildSchema(`
-      type Query {
+      resolver Query = {
         field: String
       }
 
@@ -136,7 +134,7 @@ describe('Type System: A Schema must have Object root types', () => {
 
   it('rejects a Schema whose subscription type is an data type', () => {
     const schema = buildSchema(`
-      type Query {
+      resolver Query = {
         field: String
       }
 
@@ -151,7 +149,6 @@ describe('Type System: A Schema must have Object root types', () => {
         locations: [{ line: 6, column: 7 }],
       },
     ]);
-
   });
 
   it('rejects a Schema whose types are incorrectly typed', () => {
@@ -195,57 +192,26 @@ describe('Type System: A Schema must have Object root types', () => {
 describe('Type System: Objects must have fields', () => {
   it('accepts an Object type with fields object', () => {
     const schema = buildSchema(`
-      type Query {
+      resolver Query = {
         field: SomeObject
       }
 
-      type SomeObject {
+      resolver SomeObject = {
         field: String
       }
     `);
     expectJSON(validateSchema(schema)).toDeepEqual([]);
   });
 
-  it('rejects an Object type with missing fields', () => {
-    const schema = buildSchema(`
-      type Query {
+  it('accept an resolver with empty fields', () => {
+    const schema = `
+      resolver Query = {
         test: IncompleteObject
       }
 
-      type IncompleteObject
-    `);
-    expectJSON(validateSchema(schema)).toDeepEqual([
-      {
-        message: 'Type IncompleteObject must define one or more fields.',
-        locations: [{ line: 6, column: 7 }],
-      },
-    ]);
-
-    const manualSchema = schemaWithFieldType(
-      new GraphQLObjectType({
-        name: 'IncompleteObject',
-        fields: {},
-      }),
-    );
-    expectJSON(validateSchema(manualSchema)).toDeepEqual([
-      {
-        message: 'Type IncompleteObject must define one or more fields.',
-      },
-    ]);
-
-    const manualSchema2 = schemaWithFieldType(
-      new GraphQLObjectType({
-        name: 'IncompleteObject',
-        fields() {
-          return {};
-        },
-      }),
-    );
-    expectJSON(validateSchema(manualSchema2)).toDeepEqual([
-      {
-        message: 'Type IncompleteObject must define one or more fields.',
-      },
-    ]);
+      resolver IncompleteObject
+    `;
+    expectJSON(validateSchema(buildSchema(schema))).toDeepEqual([]);
   });
 
   it('rejects an Object type with incorrectly named fields', () => {
@@ -311,58 +277,41 @@ describe('Type System: Fields args must be properly named', () => {
 describe('Type System: Union types must be valid', () => {
   it('accepts a Union type with member types', () => {
     const schema = buildSchema(`
-      type Query {
+      resolver Query = {
         test: GoodUnion
       }
 
-      type TypeA {
+      resolver TypeA = {
         field: String
       }
 
-      type TypeB {
+      resolver TypeB = {
         field: String
       }
 
-      resolver GoodUnion =
-        | TypeA
+      resolver GoodUnion 
+        = TypeA
         | TypeB
     `);
     expectJSON(validateSchema(schema)).toDeepEqual([]);
   });
 
-  it('rejects a Union type with empty types', () => {
-    const schema = buildSchema(`
-      type Query {
-        test: BadUnion
-      }
-
-      resolver BadUnion
-    `);
-
-    expectJSON(validateSchema(schema)).toDeepEqual([
-      {
-        message: 'Union type BadUnion must define one or more member types.',
-        locations: [{ line: 6, column: 7 }],
-      },
-    ]);
-  });
-
   it('rejects a Union type with duplicated member type', () => {
     const schema = buildSchema(`
-      type Query {
+      resolver Query = {
         test: BadUnion
       }
 
-      type TypeA {
+      resolver TypeA = {
         field: String
       }
 
-      type TypeB {
+      resolver TypeB = {
         field: String
       }
 
-      resolver BadUnion =
-        | TypeA
+      resolver BadUnion 
+        = TypeA
         | TypeB
         | TypeA
     `);
@@ -390,20 +339,20 @@ describe('Type System: Union types must be valid', () => {
 
   it('rejects a Union type with non-Object members types', () => {
     const schema = buildSchema(`
-      type Query {
+      resolver Query = {
         test: BadUnion
       }
 
-      type TypeA {
+      resolver TypeA = {
         field: String
       }
 
-      type TypeB {
+      resolver TypeB = {
         field: String
       }
 
-      resolver BadUnion =
-        | TypeA
+      resolver BadUnion
+        = TypeA
         | String
         | TypeB
         | Int
@@ -451,7 +400,7 @@ describe('Type System: Union types must be valid', () => {
 describe('Type System: Input Objects must have fields', () => {
   it('accepts an Input Object type with fields', () => {
     const schema = buildSchema(`
-      type Query {
+      resolver Query = {
         field(arg: SomeInputObject): String
       }
 
@@ -464,7 +413,7 @@ describe('Type System: Input Objects must have fields', () => {
 
   it('accept empty data type', () => {
     const schema = buildSchema(`
-      type Query {
+      resolver Query = {
         field(arg: SomeInputObject): String
       }
 
@@ -476,7 +425,7 @@ describe('Type System: Input Objects must have fields', () => {
 
   it('accepts an Input Object with breakable circular reference', () => {
     const schema = buildSchema(`
-      type Query {
+      resolver Query = {
         field(arg: SomeInputObject): String
       }
 
@@ -498,7 +447,7 @@ describe('Type System: Input Objects must have fields', () => {
 
   it('rejects an Input Object with non-breakable circular reference', () => {
     const schema = buildSchema(`
-      type Query {
+      resolver Query = {
         field(arg: SomeInputObject): String
       }
 
@@ -518,7 +467,7 @@ describe('Type System: Input Objects must have fields', () => {
 
   it('rejects Input Objects with non-breakable circular reference spread across them', () => {
     const schema = buildSchema(`
-      type Query {
+      resolver Query = {
         field(arg: SomeInputObject): String
       }
 
@@ -550,7 +499,7 @@ describe('Type System: Input Objects must have fields', () => {
 
   it('rejects Input Objects with multiple non-breakable circular reference', () => {
     const schema = buildSchema(`
-      type Query {
+      resolver Query = {
         field(arg: SomeInputObject): String
       }
 
@@ -596,11 +545,11 @@ describe('Type System: Input Objects must have fields', () => {
 
   it('rejects an Input Object type with incorrectly typed fields', () => {
     const schema = buildSchema(`
-      type Query {
+      resolver Query = {
         field(arg: SomeInputObject): String
       }
 
-      type SomeObject {
+      resolver SomeObject = {
         field: String
       }
 
@@ -628,7 +577,7 @@ describe('Type System: Input Objects must have fields', () => {
 
   it('rejects an Input Object type with required argument that is deprecated', () => {
     const schema = buildSchema(`
-      type Query {
+      resolver Query = {
         field(arg: SomeInputObject): String
       }
 
@@ -740,7 +689,7 @@ describe('Type System: Object fields must have output types', () => {
 
   it('rejects with relevant locations for a non-output type as an Object field type', () => {
     const schema = buildSchema(`
-      type Query {
+      resolver Query = {
         field: [SomeInputObject]
       }
 
@@ -757,7 +706,6 @@ describe('Type System: Object fields must have output types', () => {
     ]);
   });
 });
-
 
 describe('Type System: Arguments must have data  types', () => {
   function schemaWithArg(argConfig: GraphQLArgumentConfig): GraphQLSchema {
@@ -857,7 +805,7 @@ describe('Type System: Arguments must have data  types', () => {
         anotherOptionalArg: String! = "" @deprecated
       ) on FIELD
 
-      type Query {
+      resolver Query = {
         test(
           badArg: String! @deprecated
           optionalArg: String @deprecated
@@ -886,11 +834,11 @@ describe('Type System: Arguments must have data  types', () => {
 
   it('rejects a non-input type as a field arg with locations', () => {
     const schema = buildSchema(`
-      type Query {
+      resolver Query = {
         test(arg: SomeObject): String
       }
 
-      type SomeObject {
+      resolver SomeObject = {
         foo: String
       }
     `);
@@ -907,18 +855,17 @@ describe('Type System: Arguments must have data  types', () => {
 describe('assertValidSchema', () => {
   it('do not throw on valid schemas', () => {
     const schema = buildSchema(`
-      type Query {
+      resolver Query = {
         foo: String
       }
     `);
-    expect(() => assertValidSchema(schema)).to.not.throw();
+    expect(() => assertValidSchema(schema)).not.toThrow();
   });
 
   it('include multiple errors into a description', () => {
-    const schema = buildSchema('type SomeType');
-    expect(() => assertValidSchema(schema)).to.throw(dedent`
-      Query root type must be provided.
-
-      Type SomeType must define one or more fields.`);
+    const schema = buildSchema('resolver SomeType');
+    expect(() => assertValidSchema(schema)).toThrow(
+      dedent`Query root type must be provided.`,
+    );
   });
 });

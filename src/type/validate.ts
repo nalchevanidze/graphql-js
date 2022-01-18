@@ -246,13 +246,6 @@ function validateFields(
 ): void {
   const fields = Object.values(type.getFields());
 
-  // Objects and Interfaces both must define one or more fields.
-  if (fields.length === 0) {
-    context.reportError(`Type ${type.name} must define one or more fields.`, [
-      type.astNode,
-    ]);
-  }
-
   for (const field of fields) {
     // Ensure they are named correctly.
     validateName(context, field);
