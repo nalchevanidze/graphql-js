@@ -908,10 +908,15 @@ export class Parser {
       return token;
     }
 
+    return this.throwExpected(getTokenKindDesc(kind))
+  }
+
+  throwExpected(kind: string): Token {
+    const token = this._lexer.token;
     throw syntaxError(
       this._lexer.source,
       token.start,
-      `Expected ${getTokenKindDesc(kind)}, found ${getTokenDesc(token)}.`,
+      `Expected ${kind}, found ${getTokenDesc(token)}.`,
     );
   }
 

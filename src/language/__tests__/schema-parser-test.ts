@@ -16,7 +16,7 @@ const JSONSnapshot = (doc: unknown) => expect(toJSONDeep(doc)).toMatchSnapshot()
 describe('Schema Parser', () => {
   it('Simple resolver', () => {
     const doc = parse(dedent`
-      resolver Hello {
+      resolver Hello = {
         world: String
       }
     `);
@@ -26,7 +26,7 @@ describe('Schema Parser', () => {
   it('parses resolver with description string', () => {
     const doc = parse(dedent`
       "Description"
-      resolver Hello {
+      resolver Hello = {
         world: String
       }
     `);
@@ -39,7 +39,7 @@ describe('Schema Parser', () => {
       Description
       """
       # Even with comments between them
-      resolver Hello {
+      resolver Hello = {
         world: String
       }
     `);
@@ -56,7 +56,7 @@ describe('Schema Parser', () => {
 
   it('Simple non-null resolver', () => {
     const doc = parse(dedent`
-      resolver Hello {
+      resolver Hello = {
         world: String!
       }
     `);
@@ -78,7 +78,7 @@ describe('Schema Parser', () => {
 
   it('Simple field with arg', () => {
     const doc = parse(dedent`
-      resolver Hello {
+      resolver Hello = {
         world(flag: Boolean): String
       }
     `);
@@ -88,7 +88,7 @@ describe('Schema Parser', () => {
 
   it('Simple field with arg with default value', () => {
     const doc = parse(dedent`
-      resolver Hello {
+      resolver Hello = {
         world(flag: Boolean = true): String
       }
     `);
@@ -98,7 +98,7 @@ describe('Schema Parser', () => {
 
   it('Simple field with list arg', () => {
     const doc = parse(dedent`
-      resolver Hello {
+      resolver Hello = {
         world(things: [String]): String
       }
     `);
@@ -108,7 +108,7 @@ describe('Schema Parser', () => {
 
   it('Simple field with two args', () => {
     const doc = parse(dedent`
-      resolver Hello {
+      resolver Hello = {
         world(argOne: Boolean, argTwo: Int): String
       }
     `);
@@ -125,22 +125,17 @@ describe('Schema Parser', () => {
     JSONSnapshot(doc);
   });
 
-  it('Union with two resolvers and leading pipe', () => {
-    const doc = parse('resolver Hello = | Wo | Rld');
-    JSONSnapshot(doc);
-  });
-
   it('Union fails with no resolvers', () => {
-    expectSyntaxError('resolver Hello = |').to.deep.equal({
-      message: 'Syntax Error: Expected Name, found <EOF>.',
+    expectSyntaxError('resolver Hello =  ').to.deep.equal({
+      message: 'Syntax Error: Expected Variant, found <EOF>.',
       locations: [{ line: 1, column: 19 }],
     });
   });
 
-  it('Union fails with leading double pipe', () => {
-    expectSyntaxError('resolver Hello = || Wo | Rld').to.deep.equal({
-      message: 'Syntax Error: Expected Name, found "|".',
-      locations: [{ line: 1, column: 19 }],
+  it('Union fails with leading pipe', () => {
+    expectSyntaxError('resolver Hello = | Wo | Rld').to.deep.equal({
+      message: 'Syntax Error: Expected Variant, found "|".',
+      locations: [{ line: 1, column: 18 }],
     });
   });
 
@@ -152,9 +147,9 @@ describe('Schema Parser', () => {
   });
 
   it('Union fails with trailing pipe', () => {
-    expectSyntaxError('resolver Hello = | Wo | Rld |').to.deep.equal({
+    expectSyntaxError('resolver Hello = Wo | Rld |').to.deep.equal({
       message: 'Syntax Error: Expected Name, found <EOF>.',
-      locations: [{ line: 1, column: 30 }],
+      locations: [{ line: 1, column: 28 }],
     });
   });
 
