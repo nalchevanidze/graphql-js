@@ -10,7 +10,6 @@ import type {
   InputValueDefinitionNode,
   NamedTypeNode,
   ObjectTypeDefinitionNode,
-  ResolverTypeDefinitionNode,
   ResolverVariantDefinitionNode,
   ScalarTypeDefinitionNode,
   SchemaDefinitionNode,

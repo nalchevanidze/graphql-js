@@ -6,7 +6,6 @@ import { GraphQLError } from '../error/GraphQLError';
 import type {
   ASTNode,
   DirectiveNode,
-  NamedTypeNode,
   NameNode,
   ResolverTypeDefinitionNode,
 } from '../language/ast';
