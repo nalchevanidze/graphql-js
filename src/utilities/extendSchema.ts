@@ -14,7 +14,7 @@ import type {
   SchemaDefinitionNode,
   TypeDefinitionNode,
   TypeNode,
-  UnionTypeDefinitionNode,
+  ResolverTypeDefinitionNode,
   VariantDefinitionNode,
 } from '../language/ast';
 import { Kind } from '../language/kinds';
@@ -277,7 +277,7 @@ export function extendSchemaImpl(
   }
 
   function buildUnionTypes(
-    nodes: ReadonlyArray<UnionTypeDefinitionNode>,
+    nodes: ReadonlyArray<ResolverTypeDefinitionNode>,
   ): Array<GraphQLObjectType> {
     // Note: While this could make assertions to get the correctly typed
     // values below, that would throw immediately while type system

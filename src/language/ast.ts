@@ -167,7 +167,7 @@ export type ASTNode =
   | ObjectTypeDefinitionNode
   | FieldDefinitionNode
   | InputValueDefinitionNode
-  | UnionTypeDefinitionNode
+  | ResolverTypeDefinitionNode
   | EnumValueDefinitionNode
   | DataTypeDefinitionNode
   | DirectiveDefinitionNode
@@ -539,7 +539,7 @@ export interface OperationTypeDefinitionNode {
 export type TypeDefinitionNode =
   | ScalarTypeDefinitionNode
   | ObjectTypeDefinitionNode
-  | UnionTypeDefinitionNode
+  | ResolverTypeDefinitionNode
   | DataTypeDefinitionNode;
 
 export interface ScalarTypeDefinitionNode {
@@ -580,7 +580,7 @@ export interface InputValueDefinitionNode {
   readonly directives?: ReadonlyArray<ConstDirectiveNode>;
 }
 
-export interface UnionTypeDefinitionNode {
+export interface ResolverTypeDefinitionNode {
   readonly kind: Kind.RESOLVER_TYPE_DEFINITION;
   readonly loc?: Location;
   readonly description?: StringValueNode;

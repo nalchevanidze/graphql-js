@@ -25,7 +25,7 @@ import type {
   ObjectTypeDefinitionNode,
   OperationDefinitionNode,
   ScalarTypeDefinitionNode,
-  UnionTypeDefinitionNode,
+  ResolverTypeDefinitionNode,
   ValueNode,
   VariantDefinitionNode,
 } from '../language/ast';
@@ -724,7 +724,7 @@ export class IrisResolverType {
   name: string;
   description: Maybe<string>;
   resolveType: Maybe<GraphQLTypeResolver<any, any>>;
-  astNode: Maybe<UnionTypeDefinitionNode>;
+  astNode: Maybe<ResolverTypeDefinitionNode>;
 
   private _types: ThunkReadonlyArray<GraphQLObjectType>;
 
@@ -766,7 +766,7 @@ export interface GraphQLUnionTypeConfig<TSource, TContext> {
   description?: Maybe<string>;
   types: ThunkReadonlyArray<GraphQLObjectType>;
   resolveType?: Maybe<GraphQLTypeResolver<TSource, TContext>>;
-  astNode?: Maybe<UnionTypeDefinitionNode>;
+  astNode?: Maybe<ResolverTypeDefinitionNode>;
 }
 
 export type IrisDataVariantFieldFields = ObjMap<IrisDataVariantField>;

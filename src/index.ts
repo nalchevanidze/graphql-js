@@ -255,7 +255,7 @@ export type {
   ObjectTypeDefinitionNode,
   FieldDefinitionNode,
   InputValueDefinitionNode,
-  UnionTypeDefinitionNode,
+  ResolverTypeDefinitionNode,
   EnumValueDefinitionNode,
   DirectiveDefinitionNode,
 } from './language/index';

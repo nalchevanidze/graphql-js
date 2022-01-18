@@ -7,7 +7,7 @@ import type {
   ASTNode,
   DirectiveNode,
   NamedTypeNode,
-  UnionTypeDefinitionNode,
+  ResolverTypeDefinitionNode,
 } from '../language/ast';
 import { OperationTypeNode } from '../language/ast';
 
@@ -500,7 +500,7 @@ function getUnionMemberTypeNodes(
   typeName: string,
 ): Maybe<ReadonlyArray<NamedTypeNode>> {
   const { astNode } = union;
-  const nodes: ReadonlyArray<UnionTypeDefinitionNode> =
+  const nodes: ReadonlyArray<ResolverTypeDefinitionNode> =
     astNode != null ? [astNode] : [];
 
   // FIXME: https://github.com/graphql/graphql-js/issues/2203

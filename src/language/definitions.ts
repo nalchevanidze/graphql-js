@@ -5,7 +5,7 @@ import type {
   NameNode,
   ObjectTypeDefinitionNode,
   Role,
-  UnionTypeDefinitionNode,
+  ResolverTypeDefinitionNode,
   VariantDefinitionNode,
 } from './ast';
 import { Kind } from './kinds';
@@ -32,7 +32,7 @@ export const parseDefinitions = (
 
 const parseResolverTypeDefinition = (
   parser: Parser,
-): UnionTypeDefinitionNode | ObjectTypeDefinitionNode => {
+): ResolverTypeDefinitionNode | ObjectTypeDefinitionNode => {
   const start = parser.lookAhead();
   const description = parser.parseDescription();
   parser.expectKeyword('resolver');
@@ -59,7 +59,7 @@ const parseResolverTypeDefinition = (
 
   if (isEquals && isUnion) {
     const types = parser.delimitedMany(TokenKind.PIPE, parser.parseNamedType);
-    return parser.node<UnionTypeDefinitionNode>(start, {
+    return parser.node<ResolverTypeDefinitionNode>(start, {
       kind: Kind.RESOLVER_TYPE_DEFINITION,
       description,
       name,

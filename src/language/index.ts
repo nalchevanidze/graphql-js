@@ -75,7 +75,7 @@ export type {
   ObjectTypeDefinitionNode,
   FieldDefinitionNode,
   InputValueDefinitionNode,
-  UnionTypeDefinitionNode,
+  ResolverTypeDefinitionNode,
   EnumValueDefinitionNode,
   DataTypeDefinitionNode,
   DirectiveDefinitionNode,
