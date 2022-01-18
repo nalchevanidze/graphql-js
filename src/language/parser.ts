@@ -767,41 +767,6 @@ export class Parser {
   }
 
   /**
-   * ```
-   * FieldsDefinition : { FieldDefinition+ }
-   * ```
-   */
-  parseFieldsDefinition(): Array<FieldDefinitionNode> {
-    return this.optionalMany(
-      TokenKind.BRACE_L,
-      this.parseFieldDefinition,
-      TokenKind.BRACE_R,
-    );
-  }
-
-  /**
-   * FieldDefinition :
-   *   - Description? Name ArgumentsDefinition? : Type Directives[Const]?
-   */
-  parseFieldDefinition(): FieldDefinitionNode {
-    const start = this._lexer.token;
-    const description = this.parseDescription();
-    const name = this.parseName();
-    const args = this.parseArgumentDefs();
-    this.expectToken(TokenKind.COLON);
-    const type = this.parseTypeReference();
-    const directives = this.parseConstDirectives();
-    return this.node<FieldDefinitionNode>(start, {
-      kind: Kind.FIELD_DEFINITION,
-      description,
-      name,
-      arguments: args,
-      type,
-      directives,
-    });
-  }
-
-  /**
    * ArgumentsDefinition : ( InputValueDefinition+ )
    */
   parseArgumentDefs(): Array<InputValueDefinitionNode> {

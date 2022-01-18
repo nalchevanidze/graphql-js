@@ -1191,7 +1191,7 @@ describe('Execute: Handles basic execution tasks', () => {
     const document = parse(`
       { foo }
 
-      resolver Query { bar: String }
+      resolver Query = { bar: String }
     `);
 
     const result = executeSync({ schema, document });

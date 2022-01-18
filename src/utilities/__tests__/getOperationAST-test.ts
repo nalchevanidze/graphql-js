@@ -22,7 +22,7 @@ describe('getOperationAST', () => {
   });
 
   it('Does not get missing operation', () => {
-    const doc = parse('resolver Foo { field: String }');
+    const doc = parse('resolver Foo = { field: String }');
     expect(getOperationAST(doc)).to.equal(null);
   });
 

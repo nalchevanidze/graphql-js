@@ -273,7 +273,7 @@ describe('toString', () => {
     const docA = parse(
       new Source(
         dedent`
-          resolver Foo {
+          resolver Foo = {
             field: String
           }
         `,
@@ -287,7 +287,7 @@ describe('toString', () => {
     const docB = parse(
       new Source(
         dedent`
-          resolver Foo {
+          resolver Foo = {
             field: Int
           }
         `,
@@ -307,13 +307,13 @@ describe('toString', () => {
       Example error with two nodes
 
       SourceA:2:10
-      1 | resolver Foo {
+      1 | resolver Foo = {
       2 |   field: String
         |          ^
       3 | }
 
       SourceB:2:10
-      1 | resolver Foo {
+      1 | resolver Foo = {
       2 |   field: Int
         |          ^
       3 | }

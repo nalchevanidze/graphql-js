@@ -1,7 +1,7 @@
 import type {
   DataTypeDefinitionNode,
   DefinitionNode,
-  NamedTypeNode,
+  FieldDefinitionNode,
   NameNode,
   ObjectTypeDefinitionNode,
   Role,
@@ -38,34 +38,66 @@ const parseResolverTypeDefinition = (
   parser.expectKeyword('resolver');
   const name = parser.parseName();
   const directives = parser.parseConstDirectives();
-  const types = parseUnionMemberTypes(parser);
-  const variants = types.length === 0 ? parser.parseFieldsDefinition() : []
-
-  if( types.length === 0){
-    return parser.node<ObjectTypeDefinitionNode>(start, {
-      kind: Kind.OBJECT_TYPE_DEFINITION,
+  const isEquals = parser.expectOptionalToken(TokenKind.EQUALS);
+  if (!isEquals) {
+    return parser.node<UnionTypeDefinitionNode>(start, {
+      kind: Kind.RESOLVER_TYPE_DEFINITION,
       description,
       name,
       directives,
-      fields: variants,
+      types: [],
+      variants: [],
     });
   }
-  return parser.node<UnionTypeDefinitionNode>(start, {
-    kind: Kind.RESOLVER_TYPE_DEFINITION,
+
+  const isUnion = parser.lookAhead().kind !== TokenKind.BRACE_L;
+
+  if (isEquals && isUnion) {
+    const types = parser.delimitedMany(TokenKind.PIPE, parser.parseNamedType);
+    return parser.node<UnionTypeDefinitionNode>(start, {
+      kind: Kind.RESOLVER_TYPE_DEFINITION,
+      description,
+      name,
+      directives,
+      types,
+      variants: [],
+    });
+  }
+
+  const fields = parseFieldsDefinition(parser);
+  return parser.node<ObjectTypeDefinitionNode>(start, {
+    kind: Kind.OBJECT_TYPE_DEFINITION,
     description,
     name,
     directives,
-    types,
-    variants
+    fields,
   });
 };
 
-const parseUnionMemberTypes = (parser: Parser): Array<NamedTypeNode> =>
-  parser.expectOptionalToken(TokenKind.EQUALS)
-    ? parser.delimitedMany(TokenKind.PIPE, parser.parseNamedType)
-    : [];
+const parseFieldsDefinition = (parser: Parser): Array<FieldDefinitionNode> =>
+  parser.optionalMany(
+    TokenKind.BRACE_L,
+    parseFieldDefinition(parser),
+    TokenKind.BRACE_R,
+  );
 
-
+const parseFieldDefinition =(parser: Parser) => (): FieldDefinitionNode => {
+    const start = parser.lookAhead();
+    const description = parser.parseDescription();
+    const name = parser.parseName();
+    const args = parser.parseArgumentDefs();
+    parser.expectToken(TokenKind.COLON);
+    const type = parser.parseTypeReference();
+    const directives = parser.parseConstDirectives();
+    return parser.node<FieldDefinitionNode>(start, {
+      kind: Kind.FIELD_DEFINITION,
+      description,
+      name,
+      arguments: args,
+      type,
+      directives,
+    });
+  }
 
 export const parseDataTypeDefinition = (
   parser: Parser,

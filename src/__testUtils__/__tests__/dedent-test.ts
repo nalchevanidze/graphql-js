@@ -6,22 +6,22 @@ import { dedent, dedentString } from '../dedent';
 describe('dedentString', () => {
   it('removes indentation in typical usage', () => {
     const output = dedentString(`
-      resolver Query {
+      resolver Query = {
         me: User
       }
 
-      resolver User {
+      resolver User = {
         id: ID
         name: String
       }
     `);
     expect(output).to.equal(
       [
-        'resolver Query {',
+        'resolver Query = {',
         '  me: User',
         '}',
         '',
-        'resolver User {',
+        'resolver User = {',
         '  id: ID',
         '  name: String',
         '}',
@@ -43,13 +43,13 @@ describe('dedentString', () => {
 
   it('does not escape special characters', () => {
     const output = dedentString(`
-      resolver Root {
+      resolver Root = {
         field(arg: String = "wi\th de\fault"): String
       }
     `);
     expect(output).to.equal(
       [
-        'resolver Root {',
+        'resolver Root = {',
         '  field(arg: String = "wi\th de\fault"): String',
         '}',
       ].join('\n'),
@@ -58,52 +58,52 @@ describe('dedentString', () => {
 
   it('also removes indentation using tabs', () => {
     const output = dedentString(`
-        \t\t    resolver Query {
+        \t\t    resolver Query = {
         \t\t      me: User
         \t\t    }
     `);
-    expect(output).to.equal(['resolver Query {', '  me: User', '}'].join('\n'));
+    expect(output).to.equal(['resolver Query = {', '  me: User', '}'].join('\n'));
   });
 
   it('removes leading and trailing newlines', () => {
     const output = dedentString(`
 
 
-      resolver Query {
+      resolver Query = {
         me: User
       }
 
 
     `);
-    expect(output).to.equal(['resolver Query {', '  me: User', '}'].join('\n'));
+    expect(output).to.equal(['resolver Query = {', '  me: User', '}'].join('\n'));
   });
 
   it('removes all trailing spaces and tabs', () => {
     const output = dedentString(`
-      resolver Query {
+      resolver Query = {
         me: User
       }
           \t\t  \t `);
-    expect(output).to.equal(['resolver Query {', '  me: User', '}'].join('\n'));
+    expect(output).to.equal(['resolver Query = {', '  me: User', '}'].join('\n'));
   });
 
   it('works on text without leading newline', () => {
-    const output = dedentString(`      resolver Query {
+    const output = dedentString(`      resolver Query = {
         me: User
       }
     `);
-    expect(output).to.equal(['resolver Query {', '  me: User', '}'].join('\n'));
+    expect(output).to.equal(['resolver Query = {', '  me: User', '}'].join('\n'));
   });
 });
 
 describe('dedent', () => {
   it('removes indentation in typical usage', () => {
     const output = dedent`
-      resolver Query {
+      resolver Query = {
         me: User
       }
     `;
-    expect(output).to.equal(['resolver Query {', '  me: User', '}'].join('\n'));
+    expect(output).to.equal(['resolver Query = {', '  me: User', '}'].join('\n'));
   });
 
   it('supports expression interpolation', () => {
