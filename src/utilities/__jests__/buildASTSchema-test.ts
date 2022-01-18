@@ -1,6 +1,3 @@
-import { expect } from 'chai';
-import { describe, it } from 'mocha';
-
 import { dedent } from '../../__testUtils__/dedent';
 
 import { Kind } from '../../language/kinds';
@@ -107,7 +104,7 @@ describe('Schema Builder', () => {
     const sdl = dedent`
       type EmptyType
     `;
-    expect(cycleSDL(sdl)).to.equal(sdl);
+    expect(cycleSDL(sdl)).toEqual(sdl);
   });
 
   it('Simple type', () => {
@@ -120,24 +117,24 @@ describe('Schema Builder', () => {
         bool: Boolean
       }
     `;
-    expect(cycleSDL(sdl)).to.equal(sdl);
+    expect(cycleSDL(sdl)).toEqual(sdl);
 
     const schema = buildSchema(sdl);
     // Built-ins are used
-    expect(schema.getType('Int')).to.equal(GraphQLInt);
-    expect(schema.getType('Float')).to.equal(GraphQLFloat);
-    expect(schema.getType('String')).to.equal(GraphQLString);
-    expect(schema.getType('Boolean')).to.equal(GraphQLBoolean);
-    expect(schema.getType('ID')).to.equal(GraphQLID);
+    expect(schema.getType('Int')).toEqual(GraphQLInt);
+    expect(schema.getType('Float')).toEqual(GraphQLFloat);
+    expect(schema.getType('String')).toEqual(GraphQLString);
+    expect(schema.getType('Boolean')).toEqual(GraphQLBoolean);
+    expect(schema.getType('ID')).toEqual(GraphQLID);
   });
 
   it('include standard type only if it is used', () => {
     const schema = buildSchema('type Query');
 
     // String and Boolean are always included through introspection types
-    expect(schema.getType('Int')).to.equal(undefined);
-    expect(schema.getType('Float')).to.equal(undefined);
-    expect(schema.getType('ID')).to.equal(undefined);
+    expect(schema.getType('Int')).toEqual(undefined);
+    expect(schema.getType('Float')).toEqual(undefined);
+    expect(schema.getType('ID')).toEqual(undefined);
   });
 
   it('With directives', () => {
@@ -146,7 +143,7 @@ describe('Schema Builder', () => {
 
       directive @repeatableFoo(arg: Int) repeatable on FIELD
     `;
-    expect(cycleSDL(sdl)).to.equal(sdl);
+    expect(cycleSDL(sdl)).toEqual(sdl);
   });
 
   it('Supports descriptions', () => {
@@ -178,19 +175,19 @@ describe('Schema Builder', () => {
         str: String
       }
     `;
-    expect(cycleSDL(sdl)).to.equal(sdl);
+    expect(cycleSDL(sdl)).toEqual(sdl);
   });
 
   it('Maintains @include, @skip & @specifiedBy', () => {
     const schema = buildSchema('type Query');
 
     expect(schema.getDirectives()).to.have.lengthOf(4);
-    expect(schema.getDirective('skip')).to.equal(GraphQLSkipDirective);
-    expect(schema.getDirective('include')).to.equal(GraphQLIncludeDirective);
-    expect(schema.getDirective('deprecated')).to.equal(
+    expect(schema.getDirective('skip')).toEqual(GraphQLSkipDirective);
+    expect(schema.getDirective('include')).toEqual(GraphQLIncludeDirective);
+    expect(schema.getDirective('deprecated')).toEqual(
       GraphQLDeprecatedDirective,
     );
-    expect(schema.getDirective('specifiedBy')).to.equal(
+    expect(schema.getDirective('specifiedBy')).toEqual(
       GraphQLSpecifiedByDirective,
     );
   });
@@ -238,7 +235,7 @@ describe('Schema Builder', () => {
         nonNullListOfNonNullStrings: [String!]!
       }
     `;
-    expect(cycleSDL(sdl)).to.equal(sdl);
+    expect(cycleSDL(sdl)).toEqual(sdl);
   });
 
   it('Recursive type', () => {
@@ -248,7 +245,7 @@ describe('Schema Builder', () => {
         recurse: Query
       }
     `;
-    expect(cycleSDL(sdl)).to.equal(sdl);
+    expect(cycleSDL(sdl)).toEqual(sdl);
   });
 
   it('Two types circular', () => {
@@ -263,7 +260,7 @@ describe('Schema Builder', () => {
         typeOne: TypeOne
       }
     `;
-    expect(cycleSDL(sdl)).to.equal(sdl);
+    expect(cycleSDL(sdl)).toEqual(sdl);
   });
 
   it('Single argument field', () => {
@@ -276,7 +273,7 @@ describe('Schema Builder', () => {
         strToStr(bool: String): String
       }
     `;
-    expect(cycleSDL(sdl)).to.equal(sdl);
+    expect(cycleSDL(sdl)).toEqual(sdl);
   });
 
   it('Simple type with multiple arguments', () => {
@@ -285,14 +282,14 @@ describe('Schema Builder', () => {
         str(int: Int, bool: Boolean): String
       }
     `;
-    expect(cycleSDL(sdl)).to.equal(sdl);
+    expect(cycleSDL(sdl)).toEqual(sdl);
   });
 
   it('Empty Enum', () => {
     const sdl = dedent`
       data EmptyEnum
     `;
-    expect(cycleSDL(sdl)).to.equal(sdl);
+    expect(cycleSDL(sdl)).toEqual(sdl);
   });
 
   it('Simple output Enum', () => {
@@ -303,7 +300,7 @@ describe('Schema Builder', () => {
         hello: Hello
       }
     `;
-    expect(cycleSDL(sdl)).to.equal(sdl);
+    expect(cycleSDL(sdl)).toEqual(sdl);
   });
 
   it('Simple Enum argument', () => {
@@ -314,7 +311,7 @@ describe('Schema Builder', () => {
         str(hello: Hello): String
       }
     `;
-    expect(cycleSDL(sdl)).to.equal(sdl);
+    expect(cycleSDL(sdl)).toEqual(sdl);
   });
 
   it('Multiple value Enum', () => {
@@ -325,14 +322,14 @@ describe('Schema Builder', () => {
         hello: Hello
       }
     `;
-    expect(cycleSDL(sdl)).to.equal(sdl);
+    expect(cycleSDL(sdl)).toEqual(sdl);
   });
 
   it('Empty union', () => {
     const sdl = dedent`
       resolver EmptyUnion
     `;
-    expect(cycleSDL(sdl)).to.equal(sdl);
+    expect(cycleSDL(sdl)).toEqual(sdl);
   });
 
   it('Simple Union', () => {
@@ -347,7 +344,7 @@ describe('Schema Builder', () => {
         str: String
       }
     `;
-    expect(cycleSDL(sdl)).to.equal(sdl);
+    expect(cycleSDL(sdl)).toEqual(sdl);
   });
 
   it('Multiple Union', () => {
@@ -366,7 +363,7 @@ describe('Schema Builder', () => {
         str: String
       }
     `;
-    expect(cycleSDL(sdl)).to.equal(sdl);
+    expect(cycleSDL(sdl)).toEqual(sdl);
   });
 
   it('Can build recursive Union', () => {
@@ -389,14 +386,14 @@ describe('Schema Builder', () => {
         customScalar: CustomScalar
       }
     `;
-    expect(cycleSDL(sdl)).to.equal(sdl);
+    expect(cycleSDL(sdl)).toEqual(sdl);
   });
 
   it('Empty Input Object', () => {
     const sdl = dedent`
       data EmptyInputObject
     `;
-    expect(cycleSDL(sdl)).to.equal(sdl);
+    expect(cycleSDL(sdl)).toEqual(sdl);
   });
 
   it('Simple Input Object', () => {
@@ -409,7 +406,7 @@ describe('Schema Builder', () => {
         field(in: Input): String
       }
     `;
-    expect(cycleSDL(sdl)).to.equal(sdl);
+    expect(cycleSDL(sdl)).toEqual(sdl);
   });
 
   it('Simple argument field with default', () => {
@@ -418,7 +415,7 @@ describe('Schema Builder', () => {
         str(int: Int = 2): String
       }
     `;
-    expect(cycleSDL(sdl)).to.equal(sdl);
+    expect(cycleSDL(sdl)).toEqual(sdl);
   });
 
   it('Custom scalar argument field with default', () => {
@@ -429,7 +426,7 @@ describe('Schema Builder', () => {
         str(int: CustomScalar = 2): String
       }
     `;
-    expect(cycleSDL(sdl)).to.equal(sdl);
+    expect(cycleSDL(sdl)).toEqual(sdl);
   });
 
   it('Simple type with mutation', () => {
@@ -444,7 +441,7 @@ describe('Schema Builder', () => {
         addHelloScalars(str: String, int: Int, bool: Boolean): Query
       }
     `;
-    expect(cycleSDL(sdl)).to.equal(sdl);
+    expect(cycleSDL(sdl)).toEqual(sdl);
   });
 
   it('Unreferenced type implementing referenced union', () => {
@@ -459,7 +456,7 @@ describe('Schema Builder', () => {
 
       resolver Union = Concrete
     `;
-    expect(cycleSDL(sdl)).to.equal(sdl);
+    expect(cycleSDL(sdl)).toEqual(sdl);
   });
 
   it('Supports @deprecated', () => {
@@ -481,7 +478,7 @@ describe('Schema Builder', () => {
         field5(arg: MyInput): String
       }
     `;
-    expect(cycleSDL(sdl)).to.equal(sdl);
+    expect(cycleSDL(sdl)).toEqual(sdl);
 
     const schema = buildSchema(sdl);
 
@@ -546,7 +543,7 @@ describe('Schema Builder', () => {
         foo: Foo @deprecated
       }
     `;
-    expect(cycleSDL(sdl)).to.equal(sdl);
+    expect(cycleSDL(sdl)).toEqual(sdl);
 
     const schema = buildSchema(sdl);
 
@@ -584,8 +581,8 @@ describe('Schema Builder', () => {
       scalar __Schema
     `);
 
-    expect(schema.getType('ID')).to.equal(GraphQLID);
-    expect(schema.getType('__Schema')).to.equal(__Schema);
+    expect(schema.getType('ID')).toEqual(GraphQLID);
+    expect(schema.getType('__Schema')).toEqual(__Schema);
   });
 
   it('Allows to reference introspection types', () => {
@@ -600,7 +597,7 @@ describe('Schema Builder', () => {
       'introspectionField.type',
       __EnumValue,
     );
-    expect(schema.getType('__EnumValue')).to.equal(__EnumValue);
+    expect(schema.getType('__EnumValue')).toEqual(__EnumValue);
   });
 
   it('Rejects invalid SDL', () => {
@@ -609,7 +606,7 @@ describe('Schema Builder', () => {
         foo: String @unknown
       }
     `;
-    expect(() => buildSchema(sdl)).to.throw('Unknown directive "@unknown".');
+    expect(() => buildSchema(sdl)).toThrow('Unknown directive "@unknown".');
   });
 
   it('Allows to disable SDL validation', () => {
@@ -628,19 +625,19 @@ describe('Schema Builder', () => {
         unknown: UnknownType
       }
     `;
-    expect(() => buildSchema(sdl, { assumeValidSDL: true })).to.throw(
+    expect(() => buildSchema(sdl, { assumeValidSDL: true })).toThrow(
       'Unknown type: "UnknownType".',
     );
   });
 
   it('Rejects invalid AST', () => {
     // @ts-expect-error (First parameter expected to be DocumentNode)
-    expect(() => buildASTSchema(null)).to.throw(
+    expect(() => buildASTSchema(null)).toThrow(
       'Must provide valid Document AST',
     );
 
     // @ts-expect-error
-    expect(() => buildASTSchema({})).to.throw(
+    expect(() => buildASTSchema({})).toThrow(
       'Must provide valid Document AST',
     );
   });
