@@ -211,7 +211,6 @@ describe('separateOperations', () => {
         baz
       }
 
-      scalar Foo
       resolver Bar
     `);
 
