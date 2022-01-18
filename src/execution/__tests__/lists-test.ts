@@ -12,7 +12,7 @@ import { execute, executeSync } from '../execute';
 describe('Execute: Accepts any iterable as list value', () => {
   function complete(rootValue: unknown) {
     return executeSync({
-      schema: buildSchema('type Query { listField: [String] }'),
+      schema: buildSchema('resolver Query { listField: [String] }'),
       document: parse('{ listField }'),
       rootValue,
     });
@@ -69,7 +69,7 @@ describe('Execute: Accepts any iterable as list value', () => {
 describe('Execute: Handles list nullability', () => {
   async function complete(args: { listField: unknown; as: string }) {
     const { listField, as } = args;
-    const schema = buildSchema(`type Query { listField: ${as} }`);
+    const schema = buildSchema(`resolver Query { listField: ${as} }`);
     const document = parse('{ listField }');
 
     const result = await executeQuery(listField);

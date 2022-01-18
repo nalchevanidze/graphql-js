@@ -9,7 +9,7 @@ import {
   ProvidedRequiredArgumentsRule,
 } from '../rules/ProvidedRequiredArgumentsRule';
 
-import { expectSDLValidationErrors, expectValidationErrors } from './harness';
+import { expectSDLValidationErrors, expectValidationErrors } from '../__tests__/harness';
 
 function expectErrors(queryStr: string) {
   return expectValidationErrors(ProvidedRequiredArgumentsRule, queryStr);

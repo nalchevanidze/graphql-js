@@ -10,7 +10,7 @@ import {
   expectSDLValidationErrors,
   expectValidationErrors,
   expectValidationErrorsWithSchema,
-} from './harness';
+} from '../__tests__/harness';
 
 function expectErrors(queryStr: string) {
   return expectValidationErrors(KnownTypeNamesRule, queryStr);

@@ -19,8 +19,6 @@ export const parseDefinitions = (
   switch (keywordToken) {
     case 'scalar':
       return parser.parseScalarTypeDefinition();
-    case 'type':
-      return parseObjectTypeDefinition(parser);
     case 'resolver':
       return parseResolverTypeDefinition(parser);
     case 'data':
@@ -34,7 +32,7 @@ export const parseDefinitions = (
 
 const parseResolverTypeDefinition = (
   parser: Parser,
-): UnionTypeDefinitionNode => {
+): UnionTypeDefinitionNode | ObjectTypeDefinitionNode => {
   const start = parser.lookAhead();
   const description = parser.parseDescription();
   parser.expectKeyword('resolver');
@@ -42,6 +40,16 @@ const parseResolverTypeDefinition = (
   const directives = parser.parseConstDirectives();
   const types = parseUnionMemberTypes(parser);
   const variants = types.length === 0 ? parser.parseFieldsDefinition() : []
+
+  if( types.length === 0){
+    return parser.node<ObjectTypeDefinitionNode>(start, {
+      kind: Kind.OBJECT_TYPE_DEFINITION,
+      description,
+      name,
+      directives,
+      fields: variants,
+    });
+  }
   return parser.node<UnionTypeDefinitionNode>(start, {
     kind: Kind.RESOLVER_TYPE_DEFINITION,
     description,
@@ -57,23 +65,7 @@ const parseUnionMemberTypes = (parser: Parser): Array<NamedTypeNode> =>
     ? parser.delimitedMany(TokenKind.PIPE, parser.parseNamedType)
     : [];
 
-const parseObjectTypeDefinition = (
-  parser: Parser,
-): ObjectTypeDefinitionNode => {
-  const start = parser.lookAhead();
-  const description = parser.parseDescription();
-  parser.expectKeyword('type');
-  const name = parser.parseName();
-  const directives = parser.parseConstDirectives();
-  const fields = parser.parseFieldsDefinition();
-  return parser.node<ObjectTypeDefinitionNode>(start, {
-    kind: Kind.OBJECT_TYPE_DEFINITION,
-    description,
-    name,
-    directives,
-    fields,
-  });
-};
+
 
 export const parseDataTypeDefinition = (
   parser: Parser,

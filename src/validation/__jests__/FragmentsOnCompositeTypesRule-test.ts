@@ -2,7 +2,7 @@ import { describe, it } from 'mocha';
 
 import { FragmentsOnCompositeTypesRule } from '../rules/FragmentsOnCompositeTypesRule';
 
-import { expectValidationErrors } from './harness';
+import { expectValidationErrors } from '../__tests__/harness';
 
 function expectErrors(queryStr: string) {
   return expectValidationErrors(FragmentsOnCompositeTypesRule, queryStr);

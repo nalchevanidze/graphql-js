@@ -7,7 +7,7 @@ import {
   KnownArgumentNamesRule,
 } from '../rules/KnownArgumentNamesRule';
 
-import { expectSDLValidationErrors, expectValidationErrors } from './harness';
+import { expectSDLValidationErrors, expectValidationErrors } from '../__tests__/harness';
 
 function expectErrors(queryStr: string) {
   return expectValidationErrors(KnownArgumentNamesRule, queryStr);

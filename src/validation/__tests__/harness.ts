@@ -12,7 +12,7 @@ import { validate, validateSDL } from '../validate';
 import type { SDLValidationRule, ValidationRule } from '../ValidationContext';
 
 export const testSchema: GraphQLSchema = buildSchema(`
-  type Pet {
+  resolver Pet {
     name(surname: Boolean): String
   }
 
@@ -21,7 +21,7 @@ export const testSchema: GraphQLSchema = buildSchema(`
     | HEEL
     | DOWN
 
-  type Dog {
+  resolver Dog {
     name(surname: Boolean): String
     nickname: String
     barkVolume: Int
@@ -33,7 +33,7 @@ export const testSchema: GraphQLSchema = buildSchema(`
     father: Dog
   }
 
-  type Cat {
+  resolver Cat {
     name(surname: Boolean): String
     nickname: String
     meows: Boolean
@@ -43,7 +43,7 @@ export const testSchema: GraphQLSchema = buildSchema(`
 
   resolver CatOrDog = Cat | Dog
 
-  type Human {
+  resolver Human {
     name(surname: Boolean): String
     pets: [Pet]
     relatives: [Human]
@@ -66,10 +66,7 @@ export const testSchema: GraphQLSchema = buildSchema(`
     stringListField: [String]
   }
 
-  type ComplicatedArgs {
-    # TODO List
-    # TODO Coercion
-    # TODO NotNulls
+  resolver ComplicatedArgs {
     intArgField(intArg: Int): String
     nonNullIntArgField(nonNullIntArg: Int!): String
     stringArgField(stringArg: String): String
@@ -86,7 +83,7 @@ export const testSchema: GraphQLSchema = buildSchema(`
     multipleOptAndReq(req1: Int!, req2: Int!, opt1: Int = 0, opt2: Int = 0): String
   }
 
-  type Query {
+  resolver Query {
     human(id: ID): Human
     dog: Dog
     cat: Cat

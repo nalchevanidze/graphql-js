@@ -201,7 +201,7 @@ describe('separateOperations', () => {
     });
   });
 
-  it('ignores type definitions', () => {
+  it('ignores resolver definitions', () => {
     const ast = parse(`
       query Foo {
         ...Bar
@@ -212,7 +212,7 @@ describe('separateOperations', () => {
       }
 
       scalar Foo
-      type Bar
+      resolver Bar
     `);
 
     const separatedASTs = mapValue(separateOperations(ast), print);

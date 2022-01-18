@@ -4,7 +4,7 @@ import type { GraphQLSchema } from '../../type/schema';
 
 import { UniqueVariantAndFieldDefinitionNamesRule } from '../rules/UniqueVariantAndFieldDefinitionNamesRule';
 
-import { expectSDLValidationErrors } from './harness';
+import { expectSDLValidationErrors } from '../__tests__/harness';
 
 function expectSDLErrors(sdlStr: string, schema?: GraphQLSchema) {
   return expectSDLValidationErrors(

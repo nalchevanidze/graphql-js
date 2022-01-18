@@ -4,7 +4,7 @@ import type { GraphQLSchema } from '../../type/schema';
 
 import { UniqueDirectiveNamesRule } from '../rules/UniqueDirectiveNamesRule';
 
-import { expectSDLValidationErrors } from './harness';
+import { expectSDLValidationErrors } from '../__tests__/harness';
 
 function expectSDLErrors(sdlStr: string, schema?: GraphQLSchema) {
   return expectSDLValidationErrors(schema, UniqueDirectiveNamesRule, sdlStr);

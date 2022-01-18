@@ -4,7 +4,7 @@ import { buildSchema } from '../../utilities/buildASTSchema';
 
 import { NoDeprecatedCustomRule } from '../rules/custom/NoDeprecatedCustomRule';
 
-import { expectValidationErrorsWithSchema } from './harness';
+import { expectValidationErrorsWithSchema } from '../__tests__/harness';
 
 function buildAssertion(sdlStr: string) {
   const schema = buildSchema(sdlStr);

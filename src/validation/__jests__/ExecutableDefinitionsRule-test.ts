@@ -2,7 +2,7 @@ import { describe, it } from 'mocha';
 
 import { ExecutableDefinitionsRule } from '../rules/ExecutableDefinitionsRule';
 
-import { expectValidationErrors } from './harness';
+import { expectValidationErrors } from '../__tests__/harness';
 
 function expectErrors(queryStr: string) {
   return expectValidationErrors(ExecutableDefinitionsRule, queryStr);
