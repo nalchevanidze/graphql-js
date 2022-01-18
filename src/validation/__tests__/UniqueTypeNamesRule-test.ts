@@ -1,12 +1,7 @@
-import { describe, it } from 'mocha';
-
 import type { GraphQLSchema } from '../../type/schema';
 
-import { buildSchema } from '../../utilities/buildASTSchema';
-
+import { expectSDLValidationErrors } from '../__mocha__/harness';
 import { UniqueTypeNamesRule } from '../rules/UniqueTypeNamesRule';
-
-import { expectSDLValidationErrors } from './harness';
 
 function expectSDLErrors(sdlStr: string, schema?: GraphQLSchema) {
   return expectSDLValidationErrors(schema, UniqueTypeNamesRule, sdlStr);
@@ -25,15 +20,15 @@ describe('Validate: Unique type names', () => {
 
   it('one type', () => {
     expectValidSDL(`
-      type Foo
+      resolver Foo
     `);
   });
 
   it('many types', () => {
     expectValidSDL(`
-      type Foo
-      type Bar
-      type Baz
+      resolver Foo
+      resolver Bar
+      resolver Baz
     `);
   });
 
@@ -43,7 +38,7 @@ describe('Validate: Unique type names', () => {
       fragment Foo on Query { __typename }
       directive @Foo on SCHEMA
 
-      type Foo
+      resolver Foo
     `);
   });
 
