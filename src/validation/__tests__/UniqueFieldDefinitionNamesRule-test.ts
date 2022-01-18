@@ -1,5 +1,3 @@
-import { describe, it } from 'mocha';
-
 import type { GraphQLSchema } from '../../type/schema';
 
 import { expectSDLValidationErrors } from '../__mocha__/harness';
@@ -20,14 +18,14 @@ function expectValidSDL(sdlStr: string, schema?: GraphQLSchema) {
 describe('Validate: Unique field definition names', () => {
   it('no fields', () => {
     expectValidSDL(`
-      type SomeObject
+      resolver SomeObject
       data SomeInputObject
     `);
   });
 
   it('one field', () => {
     expectValidSDL(`
-      type SomeObject {
+      resolver SomeObject = {
         foo: String
       }
 
@@ -39,7 +37,7 @@ describe('Validate: Unique field definition names', () => {
 
   it('multiple fields', () => {
     expectValidSDL(`
-      type SomeObject {
+      resolver SomeObject = {
         foo: String
         bar: String
       }
@@ -53,7 +51,7 @@ describe('Validate: Unique field definition names', () => {
 
   it('duplicate fields inside the same type definition', () => {
     expectSDLErrors(`
-      type SomeObject {
+      resolver SomeObject = {
         foo: String
         bar: String
         foo: String

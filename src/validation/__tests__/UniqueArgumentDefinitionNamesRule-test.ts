@@ -1,8 +1,5 @@
-import { describe, it } from 'mocha';
-
+import { expectSDLValidationErrors } from '../__mocha__/harness';
 import { UniqueArgumentDefinitionNamesRule } from '../rules/UniqueArgumentDefinitionNamesRule';
-
-import { expectSDLValidationErrors } from './harness';
 
 function expectSDLErrors(sdlStr: string) {
   return expectSDLValidationErrors(
@@ -19,7 +16,7 @@ function expectValidSDL(sdlStr: string) {
 describe('Validate: Unique argument definition names', () => {
   it('no args', () => {
     expectValidSDL(`
-      type SomeObject {
+      resolver SomeObject = {
         someField: String
       }
 
@@ -29,7 +26,7 @@ describe('Validate: Unique argument definition names', () => {
 
   it('one argument', () => {
     expectValidSDL(`
-      type SomeObject {
+      resolver SomeObject = {
         someField(foo: String): String
       }
   
@@ -39,7 +36,7 @@ describe('Validate: Unique argument definition names', () => {
 
   it('multiple arguments', () => {
     expectValidSDL(`
-      type SomeObject {
+      resolver SomeObject = {
         someField(
           foo: String
           bar: String
@@ -55,7 +52,7 @@ describe('Validate: Unique argument definition names', () => {
 
   it('duplicating arguments', () => {
     expectSDLErrors(`
-      type SomeObject {
+      resolver SomeObject = {
         someField(
           foo: String
           bar: String

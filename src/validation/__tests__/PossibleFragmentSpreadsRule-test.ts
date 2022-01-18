@@ -1,10 +1,7 @@
-import { describe, it } from 'mocha';
-
 import { buildSchema } from '../../utilities/buildASTSchema';
 
+import { expectValidationErrorsWithSchema } from '../__mocha__/harness';
 import { PossibleFragmentSpreadsRule } from '../rules/PossibleFragmentSpreadsRule';
-
-import { expectValidationErrorsWithSchema } from '../__tests__/harness';
 
 function expectErrors(queryStr: string) {
   return expectValidationErrorsWithSchema(
@@ -19,19 +16,19 @@ function expectValid(queryStr: string) {
 }
 
 const testSchema = buildSchema(`
-  type Dog {
+  resolver Dog = {
     name: String
     barkVolume: Int
   }
 
-  type Cat {
+  resolver Cat = {
     name: String
     meowVolume: Int
   }
 
   resolver CatOrDog = Cat | Dog
 
-  type Query {
+  resolver Query = {
     catOrDog: CatOrDog
   }
 `);

@@ -1,16 +1,14 @@
-import { describe, it } from 'mocha';
-
 import type { GraphQLSchema } from '../../type/schema';
 
 import { buildSchema } from '../../utilities/buildASTSchema';
-
-import { KnownTypeNamesRule } from '../rules/KnownTypeNamesRule';
 
 import {
   expectSDLValidationErrors,
   expectValidationErrors,
   expectValidationErrorsWithSchema,
-} from '../__tests__/harness';
+  getSDLValidationErrors
+} from '../__mocha__/harness';
+import { KnownTypeNamesRule } from '../rules/KnownTypeNamesRule';
 
 function expectErrors(queryStr: string) {
   return expectValidationErrors(KnownTypeNamesRule, queryStr);
@@ -24,12 +22,13 @@ function expectValid(queryStr: string) {
   expectErrors(queryStr).toDeepEqual([]);
 }
 
-function expectSDLErrors(sdlStr: string, schema?: GraphQLSchema) {
-  return expectSDLValidationErrors(schema, KnownTypeNamesRule, sdlStr);
+
+function getSDLErrors(sdlStr: string, schema?: GraphQLSchema) {
+  return getSDLValidationErrors(schema, KnownTypeNamesRule, sdlStr);
 }
 
 function expectValidSDL(sdlStr: string, schema?: GraphQLSchema) {
-  expectSDLErrors(sdlStr, schema).toDeepEqual([]);
+  expect(getSDLErrors(sdlStr, schema)).toEqual([]);
 }
 
 describe('Validate: Known type names', () => {
@@ -79,7 +78,7 @@ describe('Validate: Known type names', () => {
   });
 
   it('references to standard scalars that are missing in schema', () => {
-    const schema = buildSchema('type Query { foo: String }');
+    const schema = buildSchema('resolver Query = { foo: String }');
     const query = `
       query ($id: ID, $float: Float, $int: Int) {
         __typename
@@ -104,7 +103,7 @@ describe('Validate: Known type names', () => {
   describe('within SDL', () => {
     it('use standard types', () => {
       expectValidSDL(`
-        type Query {
+        resolver Query = {
           string: String
           int: Int
           float: Float
@@ -117,13 +116,13 @@ describe('Validate: Known type names', () => {
 
     it('reference types defined inside the same document', () => {
       expectValidSDL(`
-        resolver SomeUnion= SomeObject | AnotherObject
+        resolver SomeUnion = SomeObject | AnotherObject
 
-        type SomeObject {
+        resolver SomeObject = {
           someScalar(arg: SomeInputObject): SomeScalar
         }
 
-        type AnotherObject {
+        resolver AnotherObject = {
           foo(arg: SomeInputObject): String
         }
 
@@ -133,7 +132,7 @@ describe('Validate: Known type names', () => {
 
         scalar SomeScalar
 
-        type Query {
+        resolver Query = {
           someUnion: SomeUnion
           someScalar: SomeScalar
           someObject: SomeObject
@@ -142,11 +141,11 @@ describe('Validate: Known type names', () => {
     });
 
     it('unknown type references', () => {
-      expectSDLErrors(`
-        type A
-        type B
+      expect(getSDLErrors(`
+        resolver A
+        resolver B
 
-        type SomeObject {
+        resolver SomeObject = {
           e(d: D): E
         }
 
@@ -157,79 +156,24 @@ describe('Validate: Known type names', () => {
         }
 
         directive @SomeDirective(k: K) on QUERY
-      `).toDeepEqual([
-        {
-          message: 'Unknown type "D". Did you mean "A", "B", or "ID"?',
-          locations: [{ line: 6, column: 16 }],
-        },
-        {
-          message: 'Unknown type "E". Did you mean "A" or "B"?',
-          locations: [{ line: 6, column: 20 }],
-        },
-        {
-          message: 'Unknown type "F". Did you mean "A" or "B"?',
-          locations: [{ line: 9, column: 30 }],
-        },
-        {
-          message: 'Unknown type "G". Did you mean "A" or "B"?',
-          locations: [{ line: 9, column: 34 }],
-        },
-        {
-          message: 'Unknown type "J". Did you mean "A" or "B"?',
-          locations: [{ line: 12, column: 14 }],
-        },
-        {
-          message: 'Unknown type "K". Did you mean "A" or "B"?',
-          locations: [{ line: 15, column: 37 }],
-        }
-      ]);
-    });
+      `)).toMatchSnapshot()
+      })
 
     it('does not consider non-type definitions', () => {
-      expectSDLErrors(`
+      expect(getSDLErrors(`
         query Foo { __typename }
         fragment Foo on Query { __typename }
         directive @Foo on QUERY
 
-        type Query {
+        resolver Query = {
           foo: Foo
         }
-      `).toDeepEqual([
+      `)).toEqual([
         {
           message: 'Unknown type "Foo".',
           locations: [{ line: 7, column: 16 }],
         },
       ]);
-    });
-
-    it('reference standard types inside extension document', () => {
-      const schema = buildSchema('type Foo');
-      const sdl = `
-        type SomeType {
-          string: String
-          int: Int
-          float: Float
-          boolean: Boolean
-          id: ID
-          introspectionType: __EnumValue
-        }
-      `;
-
-      expectValidSDL(sdl, schema);
-    });
-
-    it('reference types inside extension document', () => {
-      const schema = buildSchema('type Foo');
-      const sdl = `
-        type Query {
-          foo: Foo
-          bar: Bar
-        }
-
-        scalar Bar
-      `;
-
-      expectValidSDL(sdl, schema);
     });
   });
 });

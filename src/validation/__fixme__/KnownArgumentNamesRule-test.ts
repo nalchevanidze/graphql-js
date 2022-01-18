@@ -2,12 +2,11 @@ import { describe, it } from 'mocha';
 
 import type { GraphQLSchema } from '../../type/schema';
 
+import { expectSDLValidationErrors, expectValidationErrors } from '../__mocha__/harness';
 import {
   KnownArgumentNamesOnDirectivesRule,
   KnownArgumentNamesRule,
 } from '../rules/KnownArgumentNamesRule';
-
-import { expectSDLValidationErrors, expectValidationErrors } from '../__tests__/harness';
 
 function expectErrors(queryStr: string) {
   return expectValidationErrors(KnownArgumentNamesRule, queryStr);
