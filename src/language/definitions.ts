@@ -4,8 +4,9 @@ import type {
   FieldDefinitionNode,
   NameNode,
   ObjectTypeDefinitionNode,
-  Role,
   ResolverTypeDefinitionNode,
+  ResolverVariantDefinitionNode,
+  Role,
   VariantDefinitionNode,
 } from './ast';
 import { Kind } from './kinds';
@@ -51,27 +52,47 @@ const parseResolverTypeDefinition = (
     });
   }
 
-  if (isEquals && ![TokenKind.BRACE_L,TokenKind.NAME].includes(afterEquals)) {
-    parser.throwExpected('Variant')
+  if (isEquals && ![TokenKind.BRACE_L, TokenKind.NAME].includes(afterEquals)) {
+    parser.throwExpected('Variant');
   }
 
   const isUnion = parser.lookAhead().kind !== TokenKind.BRACE_L;
 
   if (isEquals && isUnion) {
-    const types = parser.delimitedMany(TokenKind.PIPE, parser.parseNamedType);
+    const variants = parser.delimitedMany(TokenKind.PIPE, () =>
+      parseResolverVariantDefinition(parser),
+    );
+
     return parser.node<ResolverTypeDefinitionNode>(start, {
       kind: Kind.RESOLVER_TYPE_DEFINITION,
       description,
       name,
       directives,
-      types,
-      variants: [],
+      variants,
     });
   }
 
   const fields = parseFieldsDefinition(parser);
   return parser.node<ObjectTypeDefinitionNode>(start, {
     kind: Kind.OBJECT_TYPE_DEFINITION,
+    description,
+    name,
+    directives,
+    fields,
+  });
+};
+
+const parseResolverVariantDefinition = (
+  parser: Parser,
+  typeName?: NameNode,
+): ResolverVariantDefinitionNode => {
+  const start = parser.lookAhead();
+  const description = parser.parseDescription();
+  const name = typeName ?? parseVariantName(parser);
+  const directives = parser.parseConstDirectives();
+  const fields = parseFieldsDefinition(parser);
+  return parser.node<ResolverVariantDefinitionNode>(start, {
+    kind: Kind.VARIANT_DEFINITION,
     description,
     name,
     directives,
@@ -86,23 +107,23 @@ const parseFieldsDefinition = (parser: Parser): Array<FieldDefinitionNode> =>
     TokenKind.BRACE_R,
   );
 
-const parseFieldDefinition =(parser: Parser) => (): FieldDefinitionNode => {
-    const start = parser.lookAhead();
-    const description = parser.parseDescription();
-    const name = parser.parseName();
-    const args = parser.parseArgumentDefs();
-    parser.expectToken(TokenKind.COLON);
-    const type = parser.parseTypeReference();
-    const directives = parser.parseConstDirectives();
-    return parser.node<FieldDefinitionNode>(start, {
-      kind: Kind.FIELD_DEFINITION,
-      description,
-      name,
-      arguments: args,
-      type,
-      directives,
-    });
-  }
+const parseFieldDefinition = (parser: Parser) => (): FieldDefinitionNode => {
+  const start = parser.lookAhead();
+  const description = parser.parseDescription();
+  const name = parser.parseName();
+  const args = parser.parseArgumentDefs();
+  parser.expectToken(TokenKind.COLON);
+  const type = parser.parseTypeReference();
+  const directives = parser.parseConstDirectives();
+  return parser.node<FieldDefinitionNode>(start, {
+    kind: Kind.FIELD_DEFINITION,
+    description,
+    name,
+    arguments: args,
+    type,
+    directives,
+  });
+};
 
 export const parseDataTypeDefinition = (
   parser: Parser,

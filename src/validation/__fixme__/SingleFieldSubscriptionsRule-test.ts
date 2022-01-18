@@ -2,9 +2,8 @@ import { describe, it } from 'mocha';
 
 import { buildSchema } from '../../utilities/buildASTSchema';
 
+import { expectValidationErrorsWithSchema } from '../__mocha__/harness';
 import { SingleFieldSubscriptionsRule } from '../rules/SingleFieldSubscriptionsRule';
-
-import { expectValidationErrorsWithSchema } from '../__tests__/harness';
 
 function expectErrors(queryStr: string) {
   return expectValidationErrorsWithSchema(

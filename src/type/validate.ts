@@ -7,6 +7,7 @@ import type {
   ASTNode,
   DirectiveNode,
   NamedTypeNode,
+  NameNode,
   ResolverTypeDefinitionNode,
 } from '../language/ast';
 import { OperationTypeNode } from '../language/ast';
@@ -380,7 +381,7 @@ function validateUnionMembers(
     if (includedTypeNames[memberType.name]) {
       context.reportError(
         `Union type ${adt.name} can only include type ${memberType.name} once.`,
-        getUnionMemberTypeNodes(adt, memberType.name),
+        getResolverVariantNames(adt, memberType.name),
       );
       continue;
     }
@@ -389,7 +390,7 @@ function validateUnionMembers(
       context.reportError(
         `Union type ${adt.name} can only include Object types, ` +
           `it cannot include ${inspect(memberType)}.`,
-        getUnionMemberTypeNodes(adt, String(memberType)),
+        getResolverVariantNames(adt, String(memberType)),
       );
     }
   }
@@ -495,18 +496,18 @@ function createInputObjectCircularRefsValidator(
   }
 }
 
-function getUnionMemberTypeNodes(
+function getResolverVariantNames(
   union: GraphQLUnionType,
   typeName: string,
-): Maybe<ReadonlyArray<NamedTypeNode>> {
+): Maybe<ReadonlyArray<NameNode>> {
   const { astNode } = union;
   const nodes: ReadonlyArray<ResolverTypeDefinitionNode> =
     astNode != null ? [astNode] : [];
 
-  // FIXME: https://github.com/graphql/graphql-js/issues/2203
+    
   return nodes
-    .flatMap((unionNode) => /* c8 ignore next */ unionNode.types ?? [])
-    .filter((typeNode) => typeNode.name.value === typeName);
+    .flatMap((unionNode) => /* c8 ignore next */ unionNode.variants?.map(x => x.name) ?? [])
+    .filter((typeNode) => typeNode.value === typeName);
 }
 
 function getDeprecatedDirectiveNode(

@@ -247,7 +247,7 @@ export const QueryDocumentKeys: {
     'defaultValue',
     'directives',
   ],
-  ResolverTypeDefinition: ['description', 'name', 'directives', 'types'],
+  ResolverTypeDefinition: ['description', 'name', 'directives', 'variants'],
   DataTypeDefinition: ['description', 'name', 'directives', 'variants'],
   EnumValueDefinition: ['description', 'name', 'directives'],
   VariantDefinition: ['name', 'fields'],
@@ -281,7 +281,7 @@ export interface DocumentNode {
 
 export type DefinitionNode =
   | ExecutableDefinitionNode
-  | TypeSystemDefinitionNode
+  | TypeSystemDefinitionNode;
 
 export type ExecutableDefinitionNode =
   | OperationDefinitionNode
@@ -586,9 +586,17 @@ export interface ResolverTypeDefinitionNode {
   readonly description?: StringValueNode;
   readonly name: NameNode;
   readonly directives?: ReadonlyArray<ConstDirectiveNode>;
-  readonly types?: ReadonlyArray<NamedTypeNode>;
-  readonly variants?: ReadonlyArray<FieldDefinitionNode>;
+  readonly variants?: ReadonlyArray<ResolverVariantDefinitionNode>;
 }
+
+export type ResolverVariantDefinitionNode = {
+  readonly kind: Kind.VARIANT_DEFINITION;
+  readonly loc?: Location;
+  readonly description?: StringValueNode;
+  readonly directives?: ReadonlyArray<ConstDirectiveNode>;
+  readonly name: NameNode;
+  readonly fields?: ReadonlyArray<FieldDefinitionNode>;
+};
 
 export interface EnumValueDefinitionNode {
   readonly kind: Kind.ENUM_VALUE_DEFINITION;

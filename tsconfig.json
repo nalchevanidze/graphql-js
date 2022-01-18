@@ -11,5 +11,5 @@
     "importsNotUsedAsValues": "error",
     "forceConsistentCasingInFileNames": true
   },
-  "exclude": ["**/__jests__/*", "**/__mocks__/*"]
+  "exclude": ["**/__tests__/*", "**/__mocks__/*"]
 }

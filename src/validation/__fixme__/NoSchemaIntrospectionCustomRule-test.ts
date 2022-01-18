@@ -4,7 +4,7 @@ import { buildSchema } from '../../utilities/buildASTSchema';
 
 import { NoSchemaIntrospectionCustomRule } from '../rules/custom/NoSchemaIntrospectionCustomRule';
 
-import { expectValidationErrorsWithSchema } from '../__tests__/harness';
+import { expectValidationErrorsWithSchema } from '../__mocha__/harness';
 
 function expectErrors(queryStr: string) {
   return expectValidationErrorsWithSchema(

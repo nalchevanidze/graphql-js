@@ -10,7 +10,7 @@ import { buildSchema } from '../../utilities/buildASTSchema';
 import { FieldsOnCorrectTypeRule } from '../rules/FieldsOnCorrectTypeRule';
 import { validate } from '../validate';
 
-import { expectValidationErrorsWithSchema } from '../__tests__/harness';
+import { expectValidationErrorsWithSchema } from '../__mocha__/harness';
 
 function expectErrors(queryStr: string) {
   return expectValidationErrorsWithSchema(

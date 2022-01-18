@@ -9,7 +9,7 @@ import { KnownDirectivesRule } from '../rules/KnownDirectivesRule';
 import {
   expectSDLValidationErrors,
   expectValidationErrorsWithSchema,
-} from '../__tests__/harness';
+} from '../__mocha__/harness';
 
 function expectErrors(queryStr: string) {
   return expectValidationErrorsWithSchema(

@@ -4,5 +4,5 @@
     "noEmit": true,
     "types": ["node", "apollo-env", "jest"]
   },
-  "include": ["**/__jests__/*"]
+  "include": ["**/__tests__/*"]
 }

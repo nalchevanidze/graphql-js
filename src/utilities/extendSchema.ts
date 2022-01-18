@@ -10,11 +10,12 @@ import type {
   InputValueDefinitionNode,
   NamedTypeNode,
   ObjectTypeDefinitionNode,
+  ResolverTypeDefinitionNode,
+  ResolverVariantDefinitionNode,
   ScalarTypeDefinitionNode,
   SchemaDefinitionNode,
   TypeDefinitionNode,
   TypeNode,
-  ResolverTypeDefinitionNode,
   VariantDefinitionNode,
 } from '../language/ast';
 import { Kind } from '../language/kinds';
@@ -276,17 +277,20 @@ export function extendSchemaImpl(
     return enumValueMap;
   }
 
-  function buildUnionTypes(
-    nodes: ReadonlyArray<ResolverTypeDefinitionNode>,
-  ): Array<GraphQLObjectType> {
-    // Note: While this could make assertions to get the correctly typed
-    // values below, that would throw immediately while type system
-    // validation with validateSchema() will produce more actionable results.
+
+
+  function getVariantType(node: ResolverVariantDefinitionNode): GraphQLObjectType {
+    // FIXME: real variant types
+    const name = node.name.value;
+
+    const type = stdTypeMap[name] ?? typeMap[name];
+
+    if (type === undefined) {
+      throw new Error(`Unknown type: "${name}".`);
+    }
+
     // @ts-expect-error
-    return nodes.flatMap(
-      // FIXME: https://github.com/graphql/graphql-js/issues/2203
-      (node) => /* c8 ignore next */ node.types?.map(getNamedType) ?? [],
-    );
+    return type;
   }
 
   function buildType(astNode: TypeDefinitionNode): GraphQLNamedType {
@@ -307,10 +311,21 @@ export function extendSchemaImpl(
       case Kind.RESOLVER_TYPE_DEFINITION: {
         const allNodes = [astNode, ...extensionASTNodes];
 
+        if(allNodes.length === 1 && allNodes[0]?.type){
+          return new GraphQLObjectType({
+            name,
+            description: astNode.description?.value,
+            fields: () => buildFieldMap(allNodes),
+            astNode: astNode as any,
+          });
+        }
+    
         return new IrisResolverType({
           name,
           description: astNode.description?.value,
-          types: () => buildUnionTypes(allNodes),
+          types: () => allNodes.flatMap(
+            (node) => /* c8 ignore next */ node.variants?.map(getVariantType) ?? [],
+          ),
           astNode,
         });
       }
