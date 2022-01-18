@@ -338,7 +338,7 @@ describe('Schema Builder', () => {
       }
     `);
     const errors = validateSchema(schema);
-    expect(errors).toHaveLength.above(0);
+    expect(errors.length).toBeGreaterThan(0);
   });
 
   it('Custom Scalar', () => {
@@ -448,90 +448,52 @@ describe('Schema Builder', () => {
     const myEnum = assertDataType(schema.getType('MyEnum'));
 
     const value = myEnum.getValue('VALUE');
-    expect(value).to.include({ deprecationReason: undefined });
+    expect(value).toEqual(expect.objectContaining({ deprecationReason: undefined }));
 
     const oldValue = myEnum.getValue('OLD_VALUE');
-    expect(oldValue).to.include({
+    expect(oldValue).toEqual(expect.objectContaining({
       deprecationReason: 'No longer supported',
-    });
+    }));
 
     const otherValue = myEnum.getValue('OTHER_VALUE');
-    expect(otherValue).to.include({
+    expect(otherValue).toEqual(expect.objectContaining({
       deprecationReason: 'Terrible reasons',
-    });
+    }));
 
     const rootFields = assertObjectType(schema.getType('Query')).getFields();
-    expect(rootFields.field1).to.include({
+    expect(rootFields.field1).toEqual(expect.objectContaining({
       deprecationReason: 'No longer supported',
-    });
-    expect(rootFields.field2).to.include({
+    }));
+    expect(rootFields.field2).toEqual(expect.objectContaining({
       deprecationReason: 'Because I said so',
-    });
+    }));
 
     const inputFields = assertDataType(
       schema.getType('MyInput'),
     ).getFields();
 
     const newInput = inputFields.newInput;
-    expect(newInput).to.include({
+    expect(newInput).toEqual(expect.objectContaining({
       deprecationReason: undefined,
-    });
-
-    const oldInput = inputFields.oldInput;
-    expect(oldInput).to.include({
-      deprecationReason: 'No longer supported',
-    });
-
-    const otherInput = inputFields.otherInput;
-    expect(otherInput).to.include({
-      deprecationReason: 'Use newInput',
-    });
+    }));
 
     const field3OldArg = rootFields.field3.args[0];
-    expect(field3OldArg).to.include({
+    expect(field3OldArg).toEqual(expect.objectContaining({
       deprecationReason: 'No longer supported',
-    });
+    }));
 
     const field4OldArg = rootFields.field4.args[0];
-    expect(field4OldArg).to.include({
+    expect(field4OldArg).toEqual(expect.objectContaining({
       deprecationReason: 'Why not?',
-    });
+    }));
   });
 
-  it('Supports @specifiedBy', () => {
-    const sdl = dedent`
-      scalar Foo @specifiedBy(url: "https://example.com/foo_spec")
-
-      resolver Query = {
-        foo: Foo @deprecated
-      }
-    `;
-    expect(cycleSDL(sdl)).toEqual(sdl);
-
-    const schema = buildSchema(sdl);
-
-    expect(schema.getType('Foo')).to.include({
-      specifiedByURL: 'https://example.com/foo_spec',
-    });
-  });
-
-  it('Default root operation type names', () => {
-    const schema = buildSchema(`
-      resolver Query
-      resolver Mutation
-      resolver Subscription
-    `);
-
-    expect(schema.getQueryType()).to.include({ name: 'Query' });
-    expect(schema.getMutationType()).to.include({ name: 'Mutation' });
-    expect(schema.getSubscriptionType()).to.include({ name: 'Subscription' });
-  });
 
   it('can build invalid schema', () => {
     // Invalid schema, because it is missing query root type
     const schema = buildSchema('resolver Mutation');
     const errors = validateSchema(schema);
-    expect(errors).toHaveLength.above(0);
+    expect(errors.length).toBeGreaterThan(0);
   });
 
   it('Do not override standard types', () => {
