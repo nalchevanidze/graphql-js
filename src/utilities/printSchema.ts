@@ -8,6 +8,7 @@ import { print } from '../language/printer';
 
 import type {
   GraphQLArgument,
+  GraphQLFieldMap,
   GraphQLInputField,
   GraphQLNamedType,
   GraphQLObjectType,
@@ -90,7 +91,11 @@ function printScalar(type: GraphQLScalarType): string {
 }
 
 function printObject(type: GraphQLObjectType): string {
-  return printDescription(type) + `type ${type.name}` + printFields(type);
+  const fields = type.getFields();
+  return (
+    printDescription(type) +
+    `resolver ${type.name}${Object.keys(fields).length > 0 ? ' =' : ''}${printFields(fields)}`
+  );
 }
 
 function printUnion(type: GraphQLUnionType): string {
@@ -131,8 +136,8 @@ function printDATA(type: IrisDataType): string {
   );
 }
 
-function printFields(type: GraphQLObjectType): string {
-  const fields = Object.values(type.getFields()).map(
+function printFields(fs: GraphQLFieldMap<any, any>): string {
+  const fields = Object.values(fs).map(
     (f, i) =>
       printDescription(f, '  ', !i) +
       '  ' +

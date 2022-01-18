@@ -1,6 +1,3 @@
-import { expect } from 'chai';
-import { describe, it } from 'mocha';
-
 import { invariant } from '../../jsutils/invariant';
 
 import { parse, parseValue } from '../../language/parser';
@@ -47,7 +44,7 @@ describe('TypeInfo', () => {
   it('can be Object.toStringified', () => {
     const typeInfo = new TypeInfo(schema);
 
-    expect(Object.prototype.toString.call(typeInfo)).to.equal(
+    expect(Object.prototype.toString.call(typeInfo)).toEqual(
       '[object TypeInfo]',
     );
   });
@@ -55,15 +52,15 @@ describe('TypeInfo', () => {
   it('allow all methods to be called before entering any node', () => {
     const typeInfo = new TypeInfo(schema);
 
-    expect(typeInfo.getType()).to.equal(undefined);
-    expect(typeInfo.getParentType()).to.equal(undefined);
-    expect(typeInfo.getInputType()).to.equal(undefined);
-    expect(typeInfo.getParentInputType()).to.equal(undefined);
-    expect(typeInfo.getFieldDef()).to.equal(undefined);
-    expect(typeInfo.getDefaultValue()).to.equal(undefined);
-    expect(typeInfo.getDirective()).to.equal(null);
-    expect(typeInfo.getArgument()).to.equal(null);
-    expect(typeInfo.getEnumValue()).to.equal(null);
+    expect(typeInfo.getType()).toEqual(undefined);
+    expect(typeInfo.getParentType()).toEqual(undefined);
+    expect(typeInfo.getInputType()).toEqual(undefined);
+    expect(typeInfo.getParentInputType()).toEqual(undefined);
+    expect(typeInfo.getFieldDef()).toEqual(undefined);
+    expect(typeInfo.getDefaultValue()).toEqual(undefined);
+    expect(typeInfo.getDirective()).toEqual(null);
+    expect(typeInfo.getArgument()).toEqual(null);
+    expect(typeInfo.getEnumValue()).toEqual(null);
   });
 });
 

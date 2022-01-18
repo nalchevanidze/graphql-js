@@ -89,12 +89,12 @@ describe('Type System: Schema', () => {
     });
 
     expect(printSchema(schema)).toEqual(dedent`
-      type Query {
+      resolver Query = {
         article(id: String): Article
         feed: [Article]
       }
 
-      type Article {
+      resolver Article = {
         id: String
         isPublished: Boolean
         author: Author
@@ -102,24 +102,24 @@ describe('Type System: Schema', () => {
         body: String
       }
 
-      type Author {
+      resolver Author = {
         id: String
         name: String
         pic(width: Int, height: Int): Image
         recentArticle: Article
       }
 
-      type Image {
+      resolver Image = {
         url: String
         width: Int
         height: Int
       }
 
-      type Mutation {
+      resolver Mutation = {
         writeArticle: Article
       }
 
-      type Subscription {
+      resolver Subscription = {
         articleSubscribe(id: String): Article
       }
     `);

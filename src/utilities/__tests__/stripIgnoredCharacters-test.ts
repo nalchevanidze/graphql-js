@@ -1,6 +1,3 @@
-import { expect } from 'chai';
-import { describe, it } from 'mocha';
-
 import { dedent } from '../../__testUtils__/dedent';
 import { inspectStr } from '../../__testUtils__/inspectStr';
 
@@ -109,13 +106,13 @@ describe('stripIgnoredCharacters', () => {
       }
     `;
 
-    expect(stripIgnoredCharacters(query)).to.equal(
+    expect(stripIgnoredCharacters(query)).toEqual(
       'query SomeQuery($foo:String!$bar:String){someField(foo:$foo bar:$bar){a b{c d}}}',
     );
   });
 
   it('accepts Source object', () => {
-    expect(stripIgnoredCharacters(new Source('{ a }'))).to.equal('{a}');
+    expect(stripIgnoredCharacters(new Source('{ a }'))).toEqual('{a}');
   });
 
   it('strips ignored characters from GraphQL SDL document', () => {
@@ -131,7 +128,7 @@ describe('stripIgnoredCharacters', () => {
       }
     `;
 
-    expect(stripIgnoredCharacters(sdl)).to.equal(
+    expect(stripIgnoredCharacters(sdl)).toEqual(
       '"""Type description""" type Foo{"""Field description""" bar:String}',
     );
   });
@@ -145,7 +142,7 @@ describe('stripIgnoredCharacters', () => {
       caughtError = e;
     }
 
-    expect(String(caughtError)).to.equal(dedent`
+    expect(String(caughtError)).toEqual(dedent`
       Syntax Error: Unterminated string.
 
       GraphQL request:1:13

@@ -42,7 +42,7 @@ describe('Schema Builder', () => {
   it('can use built schema for limited execution', () => {
     const schema = buildASTSchema(
       parse(`
-        type Query {
+        resolver Query = {
           str: String
         }
       `),
@@ -53,12 +53,12 @@ describe('Schema Builder', () => {
       source: '{ str }',
       rootValue: { str: 123 },
     });
-    expect(result.data).to.deep.equal({ str: '123' });
+    expect(result.data).toEqual({ str: '123' });
   });
 
   it('can build a schema directly from the source', () => {
     const schema = buildSchema(`
-      type Query {
+      resolver Query = {
         add(x: Int, y: Int): Int
       }
     `);
@@ -67,22 +67,9 @@ describe('Schema Builder', () => {
     const rootValue = {
       add: ({ x, y }: { x: number; y: number }) => x + y,
     };
-    expect(graphqlSync({ schema, source, rootValue })).to.deep.equal({
+    expect(graphqlSync({ schema, source, rootValue })).toEqual({
       data: { add: 89 },
     });
-  });
-
-  it('Ignores non-type system definitions', () => {
-    const sdl = `
-      type Query {
-        str: String
-      }
-
-      fragment SomeFragment on Query {
-        str
-      }
-    `;
-    expect(() => buildSchema(sdl)).to.not.throw();
   });
 
   it('Match order of default types and directives', () => {
@@ -92,24 +79,24 @@ describe('Schema Builder', () => {
       definitions: [],
     });
 
-    expect(sdlSchema.getDirectives()).to.deep.equal(schema.getDirectives());
+    expect(sdlSchema.getDirectives()).toEqual(schema.getDirectives());
 
-    expect(sdlSchema.getTypeMap()).to.deep.equal(schema.getTypeMap());
-    expect(Object.keys(sdlSchema.getTypeMap())).to.deep.equal(
+    expect(sdlSchema.getTypeMap()).toEqual(schema.getTypeMap());
+    expect(Object.keys(sdlSchema.getTypeMap())).toEqual(
       Object.keys(schema.getTypeMap()),
     );
   });
 
   it('Empty type', () => {
     const sdl = dedent`
-      type EmptyType
+      resolver EmptyType
     `;
     expect(cycleSDL(sdl)).toEqual(sdl);
   });
 
   it('Simple type', () => {
     const sdl = dedent`
-      type Query {
+      resolver Query = {
         str: String
         int: Int
         float: Float
@@ -129,7 +116,7 @@ describe('Schema Builder', () => {
   });
 
   it('include standard type only if it is used', () => {
-    const schema = buildSchema('type Query');
+    const schema = buildSchema('resolver Query');
 
     // String and Boolean are always included through introspection types
     expect(schema.getType('Int')).toEqual(undefined);
@@ -170,7 +157,7 @@ describe('Schema Builder', () => {
       data Color = RED | GREEN | BLUE
 
       """What a great type"""
-      type Query {
+      resolver Query = {
         """And a field to boot"""
         str: String
       }
@@ -178,19 +165,7 @@ describe('Schema Builder', () => {
     expect(cycleSDL(sdl)).toEqual(sdl);
   });
 
-  it('Maintains @include, @skip & @specifiedBy', () => {
-    const schema = buildSchema('type Query');
 
-    expect(schema.getDirectives()).to.have.lengthOf(4);
-    expect(schema.getDirective('skip')).toEqual(GraphQLSkipDirective);
-    expect(schema.getDirective('include')).toEqual(GraphQLIncludeDirective);
-    expect(schema.getDirective('deprecated')).toEqual(
-      GraphQLDeprecatedDirective,
-    );
-    expect(schema.getDirective('specifiedBy')).toEqual(
-      GraphQLSpecifiedByDirective,
-    );
-  });
 
   it('Overriding directives excludes specified', () => {
     const schema = buildSchema(`
@@ -200,34 +175,22 @@ describe('Schema Builder', () => {
       directive @specifiedBy on FIELD_DEFINITION
     `);
 
-    expect(schema.getDirectives()).to.have.lengthOf(4);
-    expect(schema.getDirective('skip')).to.not.equal(GraphQLSkipDirective);
-    expect(schema.getDirective('include')).to.not.equal(
+    expect(schema.getDirectives()).toHaveLength(4);
+    expect(schema.getDirective('skip')).not.toEqual(GraphQLSkipDirective);
+    expect(schema.getDirective('include')).not.toEqual(
       GraphQLIncludeDirective,
     );
-    expect(schema.getDirective('deprecated')).to.not.equal(
+    expect(schema.getDirective('deprecated')).not.toEqual(
       GraphQLDeprecatedDirective,
     );
-    expect(schema.getDirective('specifiedBy')).to.not.equal(
+    expect(schema.getDirective('specifiedBy')).not.toEqual(
       GraphQLSpecifiedByDirective,
     );
   });
 
-  it('Adding directives maintains @include, @skip & @specifiedBy', () => {
-    const schema = buildSchema(`
-      directive @foo(arg: Int) on FIELD
-    `);
-
-    expect(schema.getDirectives()).to.have.lengthOf(5);
-    expect(schema.getDirective('skip')).to.not.equal(undefined);
-    expect(schema.getDirective('include')).to.not.equal(undefined);
-    expect(schema.getDirective('deprecated')).to.not.equal(undefined);
-    expect(schema.getDirective('specifiedBy')).to.not.equal(undefined);
-  });
-
   it('Type modifiers', () => {
     const sdl = dedent`
-      type Query {
+      resolver Query = {
         nonNullStr: String!
         listOfStrings: [String]
         listOfNonNullStrings: [String!]
@@ -240,7 +203,7 @@ describe('Schema Builder', () => {
 
   it('Recursive type', () => {
     const sdl = dedent`
-      type Query {
+      resolver Query = {
         str: String
         recurse: Query
       }
@@ -250,12 +213,12 @@ describe('Schema Builder', () => {
 
   it('Two types circular', () => {
     const sdl = dedent`
-      type TypeOne {
+      resolver TypeOne = {
         str: String
         typeTwo: TypeTwo
       }
 
-      type TypeTwo {
+      resolver TypeTwo = {
         str: String
         typeOne: TypeOne
       }
@@ -265,7 +228,7 @@ describe('Schema Builder', () => {
 
   it('Single argument field', () => {
     const sdl = dedent`
-      type Query {
+      resolver Query = {
         str(int: Int): String
         floatToStr(float: Float): String
         idToStr(id: ID): String
@@ -278,7 +241,7 @@ describe('Schema Builder', () => {
 
   it('Simple type with multiple arguments', () => {
     const sdl = dedent`
-      type Query {
+      resolver Query = {
         str(int: Int, bool: Boolean): String
       }
     `;
@@ -296,7 +259,7 @@ describe('Schema Builder', () => {
     const sdl = dedent`
       data Hello = WORLD
 
-      type Query {
+      resolver Query = {
         hello: Hello
       }
     `;
@@ -307,7 +270,7 @@ describe('Schema Builder', () => {
     const sdl = dedent`
       data Hello = WORLD
 
-      type Query {
+      resolver Query = {
         str(hello: Hello): String
       }
     `;
@@ -318,7 +281,7 @@ describe('Schema Builder', () => {
     const sdl = dedent`
       data Hello = WO | RLD
 
-      type Query {
+      resolver Query = {
         hello: Hello
       }
     `;
@@ -336,11 +299,11 @@ describe('Schema Builder', () => {
     const sdl = dedent`
       resolver Hello = World
 
-      type Query {
+      resolver Query = {
         hello: Hello
       }
 
-      type World {
+      resolver World = {
         str: String
       }
     `;
@@ -351,15 +314,15 @@ describe('Schema Builder', () => {
     const sdl = dedent`
       resolver Hello = WorldOne | WorldTwo
 
-      type Query {
+      resolver Query = {
         hello: Hello
       }
 
-      type WorldOne {
+      resolver WorldOne = {
         str: String
       }
 
-      type WorldTwo {
+      resolver WorldTwo = {
         str: String
       }
     `;
@@ -370,19 +333,19 @@ describe('Schema Builder', () => {
     const schema = buildSchema(`
       resolver Hello = Hello
 
-      type Query {
+      resolver Query = {
         hello: Hello
       }
     `);
     const errors = validateSchema(schema);
-    expect(errors).to.have.lengthOf.above(0);
+    expect(errors).toHaveLength.above(0);
   });
 
   it('Custom Scalar', () => {
     const sdl = dedent`
       scalar CustomScalar
 
-      type Query {
+      resolver Query = {
         customScalar: CustomScalar
       }
     `;
@@ -402,7 +365,7 @@ describe('Schema Builder', () => {
         int: Int
       }
 
-      type Query {
+      resolver Query = {
         field(in: Input): String
       }
     `;
@@ -411,7 +374,7 @@ describe('Schema Builder', () => {
 
   it('Simple argument field with default', () => {
     const sdl = dedent`
-      type Query {
+      resolver Query = {
         str(int: Int = 2): String
       }
     `;
@@ -422,7 +385,7 @@ describe('Schema Builder', () => {
     const sdl = dedent`
       scalar CustomScalar
 
-      type Query {
+      resolver Query = {
         str(int: CustomScalar = 2): String
       }
     `;
@@ -431,13 +394,13 @@ describe('Schema Builder', () => {
 
   it('Simple type with mutation', () => {
     const sdl = dedent`
-      type Query {
+      resolver Query = {
         str: String
         int: Int
         bool: Boolean
       }
 
-      type Mutation {
+      resolver Mutation = {
         addHelloScalars(str: String, int: Int, bool: Boolean): Query
       }
     `;
@@ -446,11 +409,11 @@ describe('Schema Builder', () => {
 
   it('Unreferenced type implementing referenced union', () => {
     const sdl = dedent`
-      type Concrete {
+      resolver Concrete = {
         key: String
       }
 
-      type Query {
+      resolver Query = {
         union: Union
       }
 
@@ -469,7 +432,7 @@ describe('Schema Builder', () => {
         newInput: String
       }
 
-      type Query {
+      resolver Query = {
         field1: String @deprecated
         field2: Int @deprecated(reason: "Because I said so")
         enum: MyEnum
@@ -539,7 +502,7 @@ describe('Schema Builder', () => {
     const sdl = dedent`
       scalar Foo @specifiedBy(url: "https://example.com/foo_spec")
 
-      type Query {
+      resolver Query = {
         foo: Foo @deprecated
       }
     `;
@@ -554,9 +517,9 @@ describe('Schema Builder', () => {
 
   it('Default root operation type names', () => {
     const schema = buildSchema(`
-      type Query
-      type Mutation
-      type Subscription
+      resolver Query
+      resolver Mutation
+      resolver Subscription
     `);
 
     expect(schema.getQueryType()).to.include({ name: 'Query' });
@@ -566,9 +529,9 @@ describe('Schema Builder', () => {
 
   it('can build invalid schema', () => {
     // Invalid schema, because it is missing query root type
-    const schema = buildSchema('type Mutation');
+    const schema = buildSchema('resolver Mutation');
     const errors = validateSchema(schema);
-    expect(errors).to.have.lengthOf.above(0);
+    expect(errors).toHaveLength.above(0);
   });
 
   it('Do not override standard types', () => {
@@ -587,22 +550,18 @@ describe('Schema Builder', () => {
 
   it('Allows to reference introspection types', () => {
     const schema = buildSchema(`
-      type Query {
+      resolver Query = {
         introspectionField: __EnumValue
       }
     `);
 
     const queryType = assertObjectType(schema.getType('Query'));
-    expect(queryType.getFields()).to.have.nested.property(
-      'introspectionField.type',
-      __EnumValue,
-    );
-    expect(schema.getType('__EnumValue')).toEqual(__EnumValue);
+    expect(queryType.getFields()).toMatchSnapshot()
   });
 
   it('Rejects invalid SDL', () => {
     const sdl = `
-      type Query {
+      resolver Query = {
         foo: String @unknown
       }
     `;
@@ -611,7 +570,7 @@ describe('Schema Builder', () => {
 
   it('Allows to disable SDL validation', () => {
     const sdl = `
-      type Query {
+      resolver Query = {
         foo: String @unknown
       }
     `;
@@ -621,7 +580,7 @@ describe('Schema Builder', () => {
 
   it('Throws on unknown types', () => {
     const sdl = `
-      type Query {
+      resolver Query = {
         unknown: UnknownType
       }
     `;
