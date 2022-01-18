@@ -429,7 +429,7 @@ describe('Type System: Input Objects must have fields', () => {
         field(arg: SomeInputObject): String
       }
 
-      data  SomeInputObject {
+      data  SomeInputObject = {
         self: SomeInputObject
         arrayOfSelf: [SomeInputObject]
         nonNullArrayOfSelf: [SomeInputObject]!
@@ -437,7 +437,7 @@ describe('Type System: Input Objects must have fields', () => {
         intermediateSelf: AnotherInputObject
       }
 
-      data  AnotherInputObject {
+      data  AnotherInputObject = {
         parent: SomeInputObject
       }
     `);
@@ -451,7 +451,7 @@ describe('Type System: Input Objects must have fields', () => {
         field(arg: SomeInputObject): String
       }
 
-      data  SomeInputObject {
+      data SomeInputObject = {
         nonNullSelf: SomeInputObject!
       }
     `);
@@ -503,16 +503,16 @@ describe('Type System: Input Objects must have fields', () => {
         field(arg: SomeInputObject): String
       }
 
-      data  SomeInputObject {
+      data SomeInputObject = {
         startLoop: AnotherInputObject!
       }
 
-      data  AnotherInputObject {
+      data AnotherInputObject = {
         closeLoop: SomeInputObject!
         startSecondLoop: YetAnotherInputObject!
       }
 
-      data  YetAnotherInputObject {
+      data YetAnotherInputObject = {
         closeSecondLoop: AnotherInputObject!
         nonNullSelf: YetAnotherInputObject!
       }
@@ -581,7 +581,7 @@ describe('Type System: Input Objects must have fields', () => {
         field(arg: SomeInputObject): String
       }
 
-      data SomeInputObject {
+      data SomeInputObject = {
         badField: String! @deprecated
         optionalField: String @deprecated
         anotherOptionalField: String! = "" @deprecated
