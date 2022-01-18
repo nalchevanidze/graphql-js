@@ -156,21 +156,7 @@ Object {
     Object {
       "description": undefined,
       "directives": Array [],
-      "kind": "ResolverTypeDefinition",
-      "loc": Object {
-        "end": 49,
-        "start": 0,
-      },
-      "name": Object {
-        "kind": "Name",
-        "loc": Object {
-          "end": 14,
-          "start": 9,
-        },
-        "value": "Hello",
-      },
-      "types": Array [],
-      "variants": Array [
+      "fields": Array [
         Object {
           "arguments": Array [
             Object {
@@ -239,6 +225,19 @@ Object {
           },
         },
       ],
+      "kind": "ObjectTypeDefinition",
+      "loc": Object {
+        "end": 49,
+        "start": 0,
+      },
+      "name": Object {
+        "kind": "Name",
+        "loc": Object {
+          "end": 14,
+          "start": 9,
+        },
+        "value": "Hello",
+      },
     },
   ],
   "kind": "Document",
@@ -255,21 +254,7 @@ Object {
     Object {
       "description": undefined,
       "directives": Array [],
-      "kind": "ResolverTypeDefinition",
-      "loc": Object {
-        "end": 56,
-        "start": 0,
-      },
-      "name": Object {
-        "kind": "Name",
-        "loc": Object {
-          "end": 14,
-          "start": 9,
-        },
-        "value": "Hello",
-      },
-      "types": Array [],
-      "variants": Array [
+      "fields": Array [
         Object {
           "arguments": Array [
             Object {
@@ -345,6 +330,19 @@ Object {
           },
         },
       ],
+      "kind": "ObjectTypeDefinition",
+      "loc": Object {
+        "end": 56,
+        "start": 0,
+      },
+      "name": Object {
+        "kind": "Name",
+        "loc": Object {
+          "end": 14,
+          "start": 9,
+        },
+        "value": "Hello",
+      },
     },
   ],
   "kind": "Document",
@@ -361,21 +359,7 @@ Object {
     Object {
       "description": undefined,
       "directives": Array [],
-      "kind": "ResolverTypeDefinition",
-      "loc": Object {
-        "end": 52,
-        "start": 0,
-      },
-      "name": Object {
-        "kind": "Name",
-        "loc": Object {
-          "end": 14,
-          "start": 9,
-        },
-        "value": "Hello",
-      },
-      "types": Array [],
-      "variants": Array [
+      "fields": Array [
         Object {
           "arguments": Array [
             Object {
@@ -451,6 +435,19 @@ Object {
           },
         },
       ],
+      "kind": "ObjectTypeDefinition",
+      "loc": Object {
+        "end": 52,
+        "start": 0,
+      },
+      "name": Object {
+        "kind": "Name",
+        "loc": Object {
+          "end": 14,
+          "start": 9,
+        },
+        "value": "Hello",
+      },
     },
   ],
   "kind": "Document",
@@ -467,21 +464,7 @@ Object {
     Object {
       "description": undefined,
       "directives": Array [],
-      "kind": "ResolverTypeDefinition",
-      "loc": Object {
-        "end": 64,
-        "start": 0,
-      },
-      "name": Object {
-        "kind": "Name",
-        "loc": Object {
-          "end": 14,
-          "start": 9,
-        },
-        "value": "Hello",
-      },
-      "types": Array [],
-      "variants": Array [
+      "fields": Array [
         Object {
           "arguments": Array [
             Object {
@@ -583,6 +566,19 @@ Object {
           },
         },
       ],
+      "kind": "ObjectTypeDefinition",
+      "loc": Object {
+        "end": 64,
+        "start": 0,
+      },
+      "name": Object {
+        "kind": "Name",
+        "loc": Object {
+          "end": 14,
+          "start": 9,
+        },
+        "value": "Hello",
+      },
     },
   ],
   "kind": "Document",
@@ -599,21 +595,7 @@ Object {
     Object {
       "description": undefined,
       "directives": Array [],
-      "kind": "ResolverTypeDefinition",
-      "loc": Object {
-        "end": 35,
-        "start": 0,
-      },
-      "name": Object {
-        "kind": "Name",
-        "loc": Object {
-          "end": 14,
-          "start": 9,
-        },
-        "value": "Hello",
-      },
-      "types": Array [],
-      "variants": Array [
+      "fields": Array [
         Object {
           "arguments": Array [],
           "description": undefined,
@@ -655,6 +637,19 @@ Object {
           },
         },
       ],
+      "kind": "ObjectTypeDefinition",
+      "loc": Object {
+        "end": 35,
+        "start": 0,
+      },
+      "name": Object {
+        "kind": "Name",
+        "loc": Object {
+          "end": 14,
+          "start": 9,
+        },
+        "value": "Hello",
+      },
     },
   ],
   "kind": "Document",
@@ -671,21 +666,7 @@ Object {
     Object {
       "description": undefined,
       "directives": Array [],
-      "kind": "ResolverTypeDefinition",
-      "loc": Object {
-        "end": 34,
-        "start": 0,
-      },
-      "name": Object {
-        "kind": "Name",
-        "loc": Object {
-          "end": 14,
-          "start": 9,
-        },
-        "value": "Hello",
-      },
-      "types": Array [],
-      "variants": Array [
+      "fields": Array [
         Object {
           "arguments": Array [],
           "description": undefined,
@@ -720,6 +701,19 @@ Object {
           },
         },
       ],
+      "kind": "ObjectTypeDefinition",
+      "loc": Object {
+        "end": 34,
+        "start": 0,
+      },
+      "name": Object {
+        "kind": "Name",
+        "loc": Object {
+          "end": 14,
+          "start": 9,
+        },
+        "value": "Hello",
+      },
     },
   ],
   "kind": "Document",
@@ -964,21 +958,7 @@ Object {
         "value": "Description",
       },
       "directives": Array [],
-      "kind": "ResolverTypeDefinition",
-      "loc": Object {
-        "end": 88,
-        "start": 0,
-      },
-      "name": Object {
-        "kind": "Name",
-        "loc": Object {
-          "end": 68,
-          "start": 63,
-        },
-        "value": "Hello",
-      },
-      "types": Array [],
-      "variants": Array [
+      "fields": Array [
         Object {
           "arguments": Array [],
           "description": undefined,
@@ -1013,6 +993,19 @@ Object {
           },
         },
       ],
+      "kind": "ObjectTypeDefinition",
+      "loc": Object {
+        "end": 88,
+        "start": 0,
+      },
+      "name": Object {
+        "kind": "Name",
+        "loc": Object {
+          "end": 68,
+          "start": 63,
+        },
+        "value": "Hello",
+      },
     },
   ],
   "kind": "Document",
@@ -1037,21 +1030,7 @@ Object {
         "value": "Description",
       },
       "directives": Array [],
-      "kind": "ResolverTypeDefinition",
-      "loc": Object {
-        "end": 48,
-        "start": 0,
-      },
-      "name": Object {
-        "kind": "Name",
-        "loc": Object {
-          "end": 28,
-          "start": 23,
-        },
-        "value": "Hello",
-      },
-      "types": Array [],
-      "variants": Array [
+      "fields": Array [
         Object {
           "arguments": Array [],
           "description": undefined,
@@ -1086,6 +1065,19 @@ Object {
           },
         },
       ],
+      "kind": "ObjectTypeDefinition",
+      "loc": Object {
+        "end": 48,
+        "start": 0,
+      },
+      "name": Object {
+        "kind": "Name",
+        "loc": Object {
+          "end": 28,
+          "start": 23,
+        },
+        "value": "Hello",
+      },
     },
   ],
   "kind": "Document",

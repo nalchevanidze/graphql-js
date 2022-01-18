@@ -39,15 +39,10 @@ const parseResolverTypeDefinition = (
   const name = parser.parseName();
   const directives = parser.parseConstDirectives();
   const isEquals = parser.expectOptionalToken(TokenKind.EQUALS);
-  if (!isEquals) {
-    return parser.node<UnionTypeDefinitionNode>(start, {
-      kind: Kind.RESOLVER_TYPE_DEFINITION,
-      description,
-      name,
-      directives,
-      types: [],
-      variants: [],
-    });
+  const afterEquals = parser.lookAhead().kind;
+
+  if (isEquals && ![TokenKind.BRACE_L,TokenKind.NAME].includes(afterEquals)) {
+    parser.invalidToken('can\'t be  used in resolver variant definition')
   }
 
   const isUnion = parser.lookAhead().kind !== TokenKind.BRACE_L;

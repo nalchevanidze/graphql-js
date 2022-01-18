@@ -93,7 +93,7 @@
     ],
     "testEnvironment": "node",
     "testMatch": [
-      "**/__jests__/*.(js|ts)"
+      "**/__tests__/*.(js|ts)"
     ],
     "testPathIgnorePatterns": [
       "<rootDir>/node_modules/",
